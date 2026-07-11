@@ -1,0 +1,162 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   THEME 1a — THE VICTORIAN APOTHECARY
+   Palette lifted directly from the approved mockup. Do not add colors; if
+   something needs a new tone, it is almost always --ink at reduced opacity.
+   ========================================================================== */
+@theme {
+  /* Papers */
+  --color-paper:      #FAF5EB; /* page background — the raw stock */
+  --color-card:       #FBF7EF; /* label stock, one shade brighter than paper */
+  --color-panel:      #F1E8D8; /* tinted band, for alternating sections */
+
+  /* Rules & borders */
+  --color-rule:       #DCCFB9; /* hairline */
+  --color-rule-strong:#C9B896; /* the double-rule under the nav */
+
+  /* Ink */
+  --color-ink:        #3B342A; /* body & display type */
+  --color-ink-soft:   #5E574B; /* italic serif body copy */
+  --color-ink-faint:  #8A7E6C; /* eyebrows, captions, "purveyors of..." */
+
+  /* Accents */
+  --color-tincture:   #C4694B; /* the salmon/terracotta. Buttons, ornament, No. */
+  --color-tincture-dk:#A9522F; /* hover only */
+  --color-tincture-lt:#EFCBB4; /* wash */
+  --color-cobalt:     #5B7288; /* the gray-blue. Secondary labels, CONTACT US */
+  --color-cobalt-lt:  #B9C7D3;
+
+  /* Type. Montserrat does the shouting, Spectral does the talking. */
+  /* next/font injects --font-montserrat / --font-spectral on <html>. Aliasing
+     them here (rather than naming the next/font variables --font-display
+     directly) avoids a specificity collision between next/font's class and
+     Tailwind's :root block. */
+  --font-display: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-body:    var(--font-spectral), ui-serif, Georgia, serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+  ::selection {
+    background: var(--color-tincture);
+    color: var(--color-paper);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-tincture);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* An eyebrow. Small caps, letterspaced to the edge of legibility, as an
+     engraving-era label would be. */
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-cobalt);
+  }
+
+  /* Display headings. Always caps, always heavy, always letterspaced. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.08;
+    text-transform: uppercase;
+  }
+
+  /* The nav rule: hairline over a 3px double. This one detail carries most of
+     the period feel — it is the printer's rule, not a border. */
+  .double-rule {
+    border-top: 1px solid var(--color-rule);
+    border-bottom: 3px double var(--color-rule-strong);
+  }
+
+  .btn {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    padding: 0.9375rem 2.125rem;
+    display: inline-block;
+    transition: all 0.2s ease;
+  }
+  .btn-fill {
+    background: var(--color-tincture);
+    color: var(--color-paper);
+  }
+  .btn-fill:hover {
+    background: var(--color-tincture-dk);
+    transform: translateY(-2px);
+  }
+  .btn-outline {
+    border: 1.5px solid var(--color-ink);
+    color: var(--color-ink);
+  }
+  .btn-outline:hover {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  /* Long-form body copy: blog posts and case study prose. */
+  .prose-apothecary {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--color-ink-soft);
+  }
+  .prose-apothecary p { margin-bottom: 1.5rem; }
+  .prose-apothecary h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin: 2.75rem 0 1rem;
+  }
+  .prose-apothecary a {
+    color: var(--color-tincture);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  /* Drop cap on the opening paragraph — an apothecary's broadsheet would have
+     one, and it costs nothing. Opt-in: add `dropcap` alongside
+     `prose-apothecary`. Used on blog posts, NOT on the case-study sections,
+     where three drop caps in a row would look like a mistake. */
+  .prose-apothecary.dropcap > p:first-of-type::first-letter {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 3.75rem;
+    line-height: 0.85;
+    float: left;
+    padding: 0.25rem 0.625rem 0 0;
+    color: var(--color-tincture);
+  }
+}
+
+@keyframes bj-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.animate-float { animation: bj-float 4s ease-in-out infinite; }
