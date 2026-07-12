@@ -4,6 +4,15 @@
    THEME 1a — THE VICTORIAN APOTHECARY
    Palette lifted directly from the approved mockup. Do not add colors; if
    something needs a new tone, it is almost always --ink at reduced opacity.
+
+   DESIGN SYSTEM (locked in):
+   - 8pt grid. All spacing is a multiple of 8px; 4px is the only permitted
+     half-step, and only for tight type pairs (label→value, icon gaps).
+   - Type scale below is grid-aligned: every line-height is a multiple of 8,
+     so text sits on the vertical rhythm. Running prose / paragraph copy is
+     24px minimum (--text-lg). Sizes under 16px (xs/sm) are compact UI labels
+     — nav, eyebrows, captions, micro-metadata — NOT paragraphs; they are the
+     documented exception to the "fonts on the grid" rule.
    ========================================================================== */
 @theme {
   /* Papers */
@@ -34,6 +43,20 @@
      Tailwind's :root block. */
   --font-display: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-body:    var(--font-spectral), ui-serif, Georgia, serif;
+
+  /* Type scale — 8pt grid. size / line-height (line-heights all ÷8).
+     --text-lg and up is the on-grid running-prose + heading scale; xs/sm are
+     the compact-label exception. Body paragraph minimum is --text-lg = 24px. */
+  --text-xs:   0.75rem;  --text-xs--line-height:   1rem;    /* 12 / 16  micro label   */
+  --text-sm:   0.875rem; --text-sm--line-height:   1rem;    /* 14 / 16  small label    */
+  --text-base: 1rem;     --text-base--line-height: 1.5rem;  /* 16 / 24  compact chrome */
+  --text-lg:   1.5rem;   --text-lg--line-height:   2rem;    /* 24 / 32  PARAGRAPH min  */
+  --text-xl:   1.75rem;  --text-xl--line-height:   2.5rem;  /* 28 / 40                 */
+  --text-2xl:  2rem;     --text-2xl--line-height:  2.5rem;  /* 32 / 40                 */
+  --text-3xl:  2.5rem;   --text-3xl--line-height:  3rem;    /* 40 / 48                 */
+  --text-4xl:  3rem;     --text-4xl--line-height:  3.5rem;  /* 48 / 56                 */
+  --text-5xl:  4rem;     --text-5xl--line-height:  4.5rem;  /* 64 / 72                 */
+  --text-6xl:  5rem;     --text-6xl--line-height:  5.5rem;  /* 80 / 88                 */
 }
 
 @layer base {
@@ -69,7 +92,8 @@
      engraving-era label would be. */
   .eyebrow {
     font-family: var(--font-display);
-    font-size: 0.6875rem;
+    font-size: 0.75rem;   /* 12px, on the label tier */
+    line-height: 1rem;    /* 16px — grid */
     font-weight: 600;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -94,10 +118,11 @@
 
   .btn {
     font-family: var(--font-display);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;   /* 14px label */
+    line-height: 1rem;     /* 16px — grid */
     font-weight: 700;
     letter-spacing: 0.18em;
-    padding: 0.9375rem 2.125rem;
+    padding: 1rem 2rem;    /* 16 / 32 — grid */
     display: inline-block;
     transition: all 0.2s ease;
   }
@@ -121,19 +146,20 @@
   /* Long-form body copy: blog posts and case study prose. */
   .prose-apothecary {
     font-family: var(--font-body);
-    font-size: 1.125rem;
-    line-height: 1.75;
+    font-size: 1.5rem;    /* 24px — paragraph minimum */
+    line-height: 2rem;    /* 32px — grid */
     color: var(--color-ink-soft);
   }
-  .prose-apothecary p { margin-bottom: 1.5rem; }
+  .prose-apothecary p { margin-bottom: 1.5rem; }   /* 24 — grid */
   .prose-apothecary h2 {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.125rem;
+    font-size: 1.5rem;    /* 24 / 32 */
+    line-height: 2rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--color-ink);
-    margin: 2.75rem 0 1rem;
+    margin: 2.5rem 0 1rem;   /* 40 / 16 — grid */
   }
   .prose-apothecary a {
     color: var(--color-tincture);
@@ -147,10 +173,10 @@
   .prose-apothecary.dropcap > p:first-of-type::first-letter {
     font-family: var(--font-body);
     font-style: italic;
-    font-size: 3.75rem;
+    font-size: 4rem;    /* 64px — grid */
     line-height: 0.85;
     float: left;
-    padding: 0.25rem 0.625rem 0 0;
+    padding: 0.25rem 0.5rem 0 0;   /* 4 (half-step) / 8 */
     color: var(--color-tincture);
   }
 }

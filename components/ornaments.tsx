@@ -31,7 +31,7 @@ export function Swirl({ flip = false, className = "" }: { flip?: boolean; classN
 /** Rule — lozenge — rule. Sits between a headline and its subhead. */
 export function Lozenge({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
       <div className="h-px w-16 bg-rule-strong sm:w-[70px]" />
       <div className="size-[7px] rotate-45 border-[1.5px] border-tincture" />
       <div className="h-px w-16 bg-rule-strong sm:w-[70px]" />
@@ -49,10 +49,10 @@ export function SectionTitle({
 }) {
   return (
     <div className="text-center">
-      {eyebrow && <div className="eyebrow mb-3">{eyebrow}</div>}
-      <div className="flex items-center justify-center gap-5">
+      {eyebrow && <div className="eyebrow mb-2">{eyebrow}</div>}
+      <div className="flex items-center justify-center gap-4">
         <Swirl className="hidden text-tincture sm:block" />
-        <h2 className="display text-2xl text-ink sm:text-[28px]">{children}</h2>
+        <h2 className="display text-xl text-ink sm:text-2xl">{children}</h2>
         <Swirl flip className="hidden text-tincture sm:block" />
       </div>
     </div>
@@ -67,7 +67,7 @@ export function SectionTitle({
 export function Frame({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-[900px] border border-rule-strong p-2">
-      <div className="relative bg-card px-6 py-12 sm:px-16 sm:py-14">
+      <div className="relative bg-card px-6 py-12 sm:px-16 sm:py-12">
         <span className="absolute -left-px -top-px size-[26px] border-l-4 border-t-4 border-tincture" />
         <span className="absolute -right-px -top-px size-[26px] border-r-4 border-t-4 border-tincture" />
         <span className="absolute -bottom-px -left-px size-[26px] border-b-4 border-l-4 border-tincture" />

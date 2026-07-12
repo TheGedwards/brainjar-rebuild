@@ -31,15 +31,15 @@ export function BottleShelf() {
   };
 
   return (
-    <section className="bg-paper px-6 py-20" aria-labelledby="shelf-heading">
+    <section className="bg-paper px-6 py-16" aria-labelledby="shelf-heading">
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <div className="eyebrow">From the Shelf</div>
-          <h2 id="shelf-heading" className="display mt-3 text-2xl text-ink sm:text-3xl">
+          <h2 id="shelf-heading" className="display mt-2 text-2xl text-ink sm:text-3xl">
             Things We Do Well
           </h2>
-          <Lozenge className="mt-5" />
-          <p className="mt-5 text-base italic text-ink-faint">
+          <Lozenge className="mt-4" />
+          <p className="mt-4 text-base italic text-ink-faint">
             choose a bottle from the shelf
           </p>
         </div>
@@ -52,7 +52,7 @@ export function BottleShelf() {
             if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); move(1); }
             if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); move(-1); }
           }}
-          className="mt-12 flex items-end justify-center gap-2 sm:gap-6"
+          className="mt-10 flex items-end justify-center gap-2 sm:gap-6"
         >
           {SERVICES.map((service, i) => {
             const isActive = i === active;
@@ -85,7 +85,7 @@ export function BottleShelf() {
                 />
                 {/* No. plate under each bottle */}
                 <span
-                  className="mt-3 font-display text-[9px] font-bold tracking-[0.2em] transition-colors"
+                  className="mt-2 font-display text-[9px] font-bold tracking-[0.2em] transition-colors"
                   style={{ color: isActive ? "var(--color-tincture)" : "var(--color-ink-faint)" }}
                 >
                   No. {service.no}
@@ -97,22 +97,22 @@ export function BottleShelf() {
 
         {/* The shelf board itself. A rule, then its shadow. */}
         <div className="mx-auto mt-1 h-[3px] max-w-3xl bg-rule-strong" />
-        <div className="mx-auto h-3 max-w-3xl bg-gradient-to-b from-[rgba(59,52,42,0.10)] to-transparent" />
+        <div className="mx-auto h-2 max-w-3xl bg-gradient-to-b from-[rgba(59,52,42,0.10)] to-transparent" />
 
         {/* --- The label card ---------------------------------------------- */}
-        <div className="mx-auto mt-14 max-w-2xl border border-rule-strong p-2">
-          <div className="border-2 border-ink bg-card px-8 py-10 text-center">
+        <div className="mx-auto mt-10 max-w-2xl border border-rule-strong p-2">
+          <div className="border-2 border-ink bg-card px-8 py-8 text-center">
             <div className="font-display text-[10px] font-bold tracking-[0.3em] text-cobalt">
               FORMULA No. {s.no}
             </div>
-            <div className="display mt-3 text-xl text-tincture sm:text-2xl">{s.label}</div>
+            <div className="display mt-2 text-xl text-tincture sm:text-2xl">{s.label}</div>
             <div className="mt-2 font-display text-xs font-semibold tracking-[0.2em] text-ink-faint">
               {s.name.toUpperCase()}
             </div>
 
             <Lozenge className="my-6" />
 
-            <p className="mx-auto max-w-md text-lg italic leading-relaxed text-ink-soft">
+            <p className="mx-auto max-w-md text-lg italic leading-8 text-ink-soft">
               {s.desc}
             </p>
 
@@ -121,7 +121,7 @@ export function BottleShelf() {
                 {s.subs.map((sub) => (
                   <span
                     key={sub.slug}
-                    className="border border-rule-strong bg-panel px-3 py-1.5 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft"
+                    className="border border-rule-strong bg-panel px-2 py-2 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft"
                   >
                     {sub.name.toUpperCase()}
                   </span>

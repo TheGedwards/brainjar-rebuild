@@ -14,12 +14,12 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <section className="px-6 py-16 text-center sm:py-20">
+      <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">The Formulary</div>
-          <h1 className="display mt-5 text-[32px] leading-tight sm:text-[48px]">Our Remedies</h1>
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">Our Remedies</h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-relaxed text-ink-soft">
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
             Proven compounds, mixed to order. Rarely taken alone — we&rsquo;ll write the combination
             your goals call for.
           </p>
@@ -46,17 +46,17 @@ export default function ServicesPage() {
                     {s.name}
                   </Link>
                 </h2>
-                <p className="mt-3 max-w-xl text-[17px] italic leading-relaxed text-ink-soft">
+                <p className="mt-2 max-w-xl text-lg italic leading-8 text-ink-soft">
                   {s.lede}
                 </p>
 
                 {s.subs.length > 0 && (
-                  <ul className="mt-5 flex flex-wrap gap-2">
+                  <ul className="mt-4 flex flex-wrap gap-2">
                     {s.subs.map((sub) => (
                       <li key={sub.slug}>
                         <Link
                           href={`/services/${s.slug}/${sub.slug}`}
-                          className="inline-block border border-rule-strong bg-panel px-3 py-1.5 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft transition-colors hover:border-tincture hover:text-tincture"
+                          className="inline-block border border-rule-strong bg-panel px-2 py-2 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft transition-colors hover:border-tincture hover:text-tincture"
                         >
                           {sub.name.toUpperCase()}
                         </Link>
@@ -69,12 +69,12 @@ export default function ServicesPage() {
           ))}
         </div>
 
-        <div className="mx-auto mt-16 max-w-5xl">
+        <div className="mx-auto mt-12 max-w-5xl">
           <PointedRule />
         </div>
       </section>
 
-      <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-16 text-center">
+      <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-12 text-center">
         <div className="eyebrow">Everything We Mix Comes With</div>
         <h2 className="display mt-4 text-2xl sm:text-3xl">Measurable Results.</h2>
         <Link href="/contact" className="btn btn-fill mt-8">

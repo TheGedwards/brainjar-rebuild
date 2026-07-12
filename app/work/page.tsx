@@ -18,24 +18,24 @@ export default async function WorkPage() {
 
   return (
     <>
-      <section className="px-6 py-16 text-center sm:py-20">
+      <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">The Medicine Cabinet</div>
-          <h1 className="display mt-5 text-[32px] leading-tight sm:text-[48px]">Proof, Bottled</h1>
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">Proof, Bottled</h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-relaxed text-ink-soft">
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
             Every jar on this shelf holds a result we can show you.
           </p>
         </Frame>
       </section>
 
-      <section className="px-6 pb-20">
+      <section className="px-6 pb-16">
         <div className="mx-auto max-w-6xl">
           <WorkGrid projects={projects} />
         </div>
       </section>
 
-      <section className="border-y border-rule bg-panel px-6 py-16">
+      <section className="border-y border-rule bg-panel px-6 py-12">
         <div className="mx-auto grid max-w-4xl gap-8 text-center sm:grid-cols-4">
           {[
             ["20+", "YEARS PRACTICING"],
@@ -53,7 +53,7 @@ export default async function WorkPage() {
         </div>
       </section>
 
-      <section className="px-6 py-16 text-center">
+      <section className="px-6 py-12 text-center">
         <h2 className="display text-2xl sm:text-3xl">Your Results Belong on This Shelf</h2>
         <Link href="/contact" className="btn btn-fill mt-8">
           START YOUR PROJECT

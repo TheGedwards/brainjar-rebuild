@@ -55,17 +55,17 @@ export function SiteHeader() {
           <Swirl flip className="hidden text-tincture sm:block" />
         </Link>
 
-        <div className="display mt-3 text-lg tracking-[0.3em] text-ink sm:text-[26px] sm:tracking-[0.28em]">
+        <div className="display mt-2 text-lg tracking-[0.3em] text-ink sm:text-2xl sm:tracking-[0.28em]">
           BRAINJAR MEDIA
         </div>
-        <div className="mt-0.5 text-sm italic text-ink-faint">
+        <div className="mt-1 text-sm italic text-ink-faint">
           purveyors of fine digital remedies
         </div>
 
         {/* Desktop nav */}
         <nav
           aria-label="Primary"
-          className="double-rule mt-4 hidden justify-center gap-8 py-3.5 md:flex"
+          className="double-rule mt-4 hidden justify-center gap-8 py-4 md:flex"
         >
           {NAV.map((item) => (
             <Link
@@ -86,7 +86,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Mobile */}
-        <div className="double-rule mt-4 flex items-center justify-between px-5 py-3 md:hidden">
+        <div className="double-rule mt-4 flex items-center justify-between px-4 py-4 md:hidden">
           <a href="tel:+15039297436" className="font-display text-[11px] tracking-[0.15em] text-tincture">
             (503) 929-7436
           </a>

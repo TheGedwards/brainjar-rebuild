@@ -3,10 +3,10 @@ import { Frame, Lozenge } from "@/components/ornaments";
 
 export default function NotFound() {
   return (
-    <section className="px-6 py-24 text-center">
+    <section className="px-6 py-16 text-center">
       <Frame>
         <div className="eyebrow">Not on the Shelf</div>
-        <h1 className="display mt-5 text-[32px] sm:text-[44px]">
+        <h1 className="display mt-4 text-[32px] sm:text-[48px]">
           This Bottle Is <span className="text-tincture">Empty</span>
         </h1>
         <Lozenge className="my-6" />

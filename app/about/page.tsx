@@ -30,16 +30,16 @@ const METHOD = [
 export default function AboutPage() {
   return (
     <>
-      <section className="px-6 py-16 text-center sm:py-20">
+      <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">Est. 2003 · Downtown Gresham</div>
-          <h1 className="display mt-5 text-[32px] leading-tight sm:text-[48px]">
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
             Twenty Years
             <br />
             <span className="text-tincture">Behind the Counter</span>
           </h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-relaxed text-ink-soft">
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
             We&rsquo;ve worked for Intel, Microsoft, NASCAR and Pendleton Woolen Mills. We&rsquo;ve
             also worked for the pub on Main Street. Both got the same attention, and neither got a
             template.
@@ -47,18 +47,18 @@ export default function AboutPage() {
         </Frame>
       </section>
 
-      <section className="px-6 pb-20">
+      <section className="px-6 pb-16">
         <div className="mx-auto max-w-3xl">
           <SectionTitle eyebrow="How It Works">The Method</SectionTitle>
-          <div className="mt-14 space-y-12">
+          <div className="mt-10 space-y-12">
             {METHOD.map((step) => (
               <div key={step.name} className="grid gap-6 sm:grid-cols-[80px_1fr]">
-                <div className="font-body text-[52px] italic leading-none text-tincture">
+                <div className="font-body text-[48px] italic leading-none text-tincture">
                   {step.numeral}
                 </div>
                 <div>
-                  <div className="display text-[15px] tracking-[0.2em]">{step.name}</div>
-                  <p className="prose-apothecary mt-3">{step.body}</p>
+                  <div className="display text-base tracking-[0.2em]">{step.name}</div>
+                  <p className="prose-apothecary mt-2">{step.body}</p>
                 </div>
               </div>
             ))}
@@ -66,7 +66,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-y border-rule bg-panel px-6 py-16">
+      <section className="border-y border-rule bg-panel px-6 py-12">
         <div className="mx-auto grid max-w-4xl gap-8 text-center sm:grid-cols-4">
           {[
             ["20+", "YEARS PRACTICING"],
@@ -84,7 +84,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="px-6 py-16 text-center">
+      <section className="px-6 py-12 text-center">
         <h2 className="display text-2xl">What Should We Mix for You?</h2>
         <Link href="/contact" className="btn btn-fill mt-8">
           GET A DIAGNOSIS

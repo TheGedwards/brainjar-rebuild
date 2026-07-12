@@ -4,12 +4,12 @@ import { PointedRule } from "./ornaments";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-rule bg-panel">
-      <div className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="mt-20 border-t border-rule bg-panel">
+      <div className="mx-auto max-w-6xl px-6 py-12">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
             <div className="display text-base tracking-[0.25em] text-ink">BRAINJAR MEDIA</div>
-            <p className="mt-4 max-w-sm text-base italic leading-relaxed text-ink-soft">
+            <p className="mt-4 max-w-md text-lg italic leading-8 text-ink-soft">
               Two decades of remedies for recognizable brands and beloved local business alike.
               Praised in the Wall Street Journal, Barron&rsquo;s and the Portland Tribune.
             </p>
@@ -28,7 +28,7 @@ export function SiteFooter() {
 
           <div>
             <div className="eyebrow mb-4">The Formulary</div>
-            <ul className="space-y-1.5 text-base text-ink-soft">
+            <ul className="space-y-2 text-base text-ink-soft">
               {SERVICES.map((s) => (
                 <li key={s.slug}>
                   <Link href={`/services/${s.slug}`} className="hover:text-tincture">
@@ -40,7 +40,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-14">
+        <div className="mt-10">
           <PointedRule />
         </div>
 

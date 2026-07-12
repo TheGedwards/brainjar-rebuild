@@ -18,21 +18,21 @@ export default async function BlogPage() {
 
   return (
     <>
-      <section className="px-6 py-16 text-center sm:py-20">
+      <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">Notes from the Dispensary</div>
-          <h1 className="display mt-5 text-[32px] leading-tight sm:text-[48px]">The Blog</h1>
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">The Blog</h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-relaxed text-ink-soft">
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
             What we&rsquo;ve learned, written down. No snake oil.
           </p>
         </Frame>
       </section>
 
-      <section className="px-6 pb-20">
+      <section className="px-6 pb-16">
         <div className="mx-auto max-w-3xl divide-y divide-rule border-y border-rule">
           {posts.map((post) => (
-            <article key={post.id} className="group py-10">
+            <article key={post.id} className="group py-8">
               <Link href={`/blog/${post.slug}`} className="grid gap-6 sm:grid-cols-[1fr_180px]">
                 <div>
                   <time
@@ -41,11 +41,11 @@ export default async function BlogPage() {
                   >
                     {formatDate(post.published_at)}
                   </time>
-                  <h2 className="display mt-3 text-lg text-ink group-hover:text-tincture sm:text-xl">
+                  <h2 className="display mt-2 text-lg text-ink group-hover:text-tincture sm:text-xl">
                     {post.title}
                   </h2>
                   {post.excerpt && (
-                    <p className="mt-3 text-[17px] italic leading-relaxed text-ink-soft">
+                    <p className="mt-2 text-lg italic leading-8 text-ink-soft">
                       {post.excerpt}
                     </p>
                   )}

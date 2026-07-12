@@ -39,7 +39,7 @@ export default async function ProjectPage({ params }: Params) {
   ].filter((s) => s.body);
 
   return (
-    <article className="px-6 py-16">
+    <article className="px-6 py-12">
       <div className="mx-auto max-w-3xl text-center">
         <nav className="eyebrow" aria-label="Breadcrumb">
           <Link href="/work" className="hover:text-tincture">
@@ -53,7 +53,7 @@ export default async function ProjectPage({ params }: Params) {
           </div>
         )}
 
-        <h1 className="display mt-4 text-[30px] leading-tight sm:text-[44px]">{name}</h1>
+        <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">{name}</h1>
         {p.tagline && (
           <p className="mt-4 text-xl italic text-ink-soft">{p.tagline}</p>
         )}
@@ -76,7 +76,7 @@ export default async function ProjectPage({ params }: Params) {
       )}
 
       {(p.project_stats?.length ?? 0) > 0 && (
-        <div className="mx-auto mt-12 flex max-w-3xl flex-wrap justify-center gap-12 border-y border-rule py-8">
+        <div className="mx-auto mt-12 flex max-w-3xl flex-wrap justify-center gap-10 border-y border-rule py-8">
           {p.project_stats
             .slice()
             .sort((a, b) => a.sort_order - b.sort_order)
@@ -91,7 +91,7 @@ export default async function ProjectPage({ params }: Params) {
         </div>
       )}
 
-      <div className="mx-auto mt-14 max-w-2xl">
+      <div className="mx-auto mt-10 max-w-2xl">
         {p.summary && <p className="prose-apothecary">{p.summary}</p>}
 
         {sections.map((s) => (
@@ -117,7 +117,7 @@ export default async function ProjectPage({ params }: Params) {
         )}
 
         {(p.gallery?.length ?? 0) > 0 && (
-          <div className="mt-14 space-y-6">
+          <div className="mt-10 space-y-6">
             {p.gallery.map((img, i) => (
               <figure key={i}>
                 <div className="relative aspect-16/10 border border-rule">
@@ -152,7 +152,7 @@ export default async function ProjectPage({ params }: Params) {
           </div>
         )}
 
-        <div className="mt-16">
+        <div className="mt-12">
           <PointedRule />
         </div>
 

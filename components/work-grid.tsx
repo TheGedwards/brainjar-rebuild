@@ -40,7 +40,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
               key={f.key}
               onClick={() => setFilter(f.key)}
               aria-pressed={filter === f.key}
-              className={`border px-5 py-2 font-display text-[11px] font-bold tracking-[0.18em] transition-colors ${
+              className={`border px-4 py-2 font-display text-[11px] font-bold tracking-[0.18em] transition-colors ${
                 filter === f.key
                   ? "border-tincture bg-tincture text-paper"
                   : "border-rule-strong bg-card text-ink-soft hover:border-tincture hover:text-tincture"
@@ -52,7 +52,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
         </div>
       )}
 
-      <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((p) => {
           const headline = p.project_stats?.find((s) => s.is_headline) ?? p.project_stats?.[0];
           return (
@@ -98,10 +98,10 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
                   {p.clients?.name ?? p.title}
                 </div>
                 {p.tagline && (
-                  <div className="mt-1.5 text-[15px] italic text-ink-soft">{p.tagline}</div>
+                  <div className="mt-2 text-base italic text-ink-soft">{p.tagline}</div>
                 )}
                 {headline && (
-                  <div className="mt-4 inline-block self-start border border-rule-strong bg-panel px-3 py-1.5 font-display text-[10px] font-bold tracking-[0.15em] text-tincture">
+                  <div className="mt-4 inline-block self-start border border-rule-strong bg-panel px-2 py-1 font-display text-[10px] font-bold tracking-[0.15em] text-tincture">
                     {headline.value} {headline.label}
                   </div>
                 )}
@@ -112,7 +112,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
       </div>
 
       {shown.length === 0 && (
-        <p className="mt-16 text-center text-lg italic text-ink-faint">
+        <p className="mt-12 text-center text-lg italic text-ink-faint">
           Nothing on this shelf yet.
         </p>
       )}

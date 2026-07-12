@@ -5,7 +5,7 @@ import { useState } from "react";
 type State = "idle" | "sending" | "sent" | "error";
 
 const FIELD =
-  "w-full border border-rule-strong bg-card px-4 py-3 font-body text-lg text-ink placeholder:text-ink-faint/60 focus:border-tincture focus:outline-none";
+  "w-full border border-rule-strong bg-card px-4 py-4 font-body text-lg text-ink placeholder:text-ink-faint/60 focus:border-tincture focus:outline-none";
 
 export function ContactForm() {
   const [state, setState] = useState<State>("idle");
@@ -45,7 +45,7 @@ export function ContactForm() {
   if (state === "sent") {
     return (
       <div className="border border-rule-strong p-2">
-        <div className="border-2 border-ink bg-card px-8 py-14 text-center">
+        <div className="border-2 border-ink bg-card px-8 py-12 text-center">
           <div className="display text-xl text-tincture">PRESCRIPTION RECEIVED</div>
           <p className="mt-4 text-lg italic text-ink-soft">
             We&rsquo;ll be in touch within one business day. If it&rsquo;s urgent, call{" "}
@@ -60,8 +60,8 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
+    <form onSubmit={onSubmit} className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="eyebrow mb-2 block">
             Name
@@ -130,7 +130,7 @@ export function ContactForm() {
       />
 
       {state === "error" && (
-        <p role="alert" className="border border-tincture bg-tincture-lt/40 px-4 py-3 text-base text-ink">
+        <p role="alert" className="border border-tincture bg-tincture-lt/40 px-4 py-2 text-base text-ink">
           {error}
         </p>
       )}

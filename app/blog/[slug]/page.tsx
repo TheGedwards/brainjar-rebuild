@@ -34,12 +34,12 @@ export default async function PostPage({ params }: Params) {
   if (!post) notFound();
 
   return (
-    <article className="px-6 py-16">
+    <article className="px-6 py-12">
       <header className="mx-auto max-w-2xl text-center">
         <Link href="/blog" className="eyebrow hover:text-tincture">
           Notes from the Dispensary
         </Link>
-        <h1 className="display mt-5 text-[28px] leading-tight sm:text-[40px]">{post.title}</h1>
+        <h1 className="display mt-4 text-[32px] leading-tight sm:text-[40px]">{post.title}</h1>
         <Lozenge className="my-6" />
         <p className="font-display text-[10px] font-bold tracking-[0.2em] text-ink-faint">
           {post.author.toUpperCase()}
@@ -86,7 +86,7 @@ export default async function PostPage({ params }: Params) {
         )}
       </div>
 
-      <div className="mx-auto mt-16 max-w-2xl">
+      <div className="mx-auto mt-12 max-w-2xl">
         <PointedRule />
         <div className="mt-8 text-center">
           <Link

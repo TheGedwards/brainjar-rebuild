@@ -14,11 +14,31 @@ TypeScript + Tailwind v4, Supabase (Postgres + Storage), deployed on Vercel.
    the most important pages on the site after the home page. 33 real clients are
    seeded with the exact slugs the redirects point at. Don't change a slug
    without adding a redirect.
-3. **The design brief is fixed.** Theme "1a — Victorian Apothecary", approved
-   from a mockup. Palette and type are defined as tokens in `app/globals.css`.
-   Do not introduce new colors, new fonts, or new border radii. If something
-   needs a tone that isn't there, it's almost always `--color-ink` at reduced
-   opacity.
+3. **The design brief is fixed.** Theme "1a — Victorian Apothecary". Palette,
+   fonts, and border radii are defined as tokens in `app/globals.css`. Do not
+   introduce new colors, new fonts, or new border radii. If something needs a
+   tone that isn't there, it's almost always `--color-ink` at reduced opacity.
+   The type scale and spacing follow a **locked-in 8pt grid system** (adopted
+   2026-07-12, superseding the original mockup's ad-hoc measurements):
+   - **8pt grid.** Every margin, padding, and gap is a multiple of 8px. 4px is
+     the *only* permitted half-step, and only for tight type pairs (label→value,
+     icon gaps). No 6/10/12/14/20/28/36/44px spacing. In Tailwind terms: even
+     steps only (`p-2 p-4 p-6 p-8 p-10 p-12`…); avoid odd/half steps (`p-3 p-5
+     p-7 p-1.5 p-2.5`). Hairline borders (1–3px rules) are exempt.
+   - **Type scale is grid-aligned.** Sizes and line-heights are the `--text-*`
+     tokens in `globals.css`; every line-height is a multiple of 8. Don't set
+     arbitrary `text-[Npx]` unless N is grid-aligned, and pair body copy with a
+     grid `leading-*` (e.g. `leading-8`), never `leading-relaxed`.
+   - **Body/paragraph copy is 24px minimum** (`--text-lg` = 24/32, or
+     `.prose-apothecary`). Running prose never goes below this. Sizes under 16px
+     (`text-xs`/`text-sm` and the `text-[9–14px]` micro-labels: eyebrows, nav,
+     No. plates, stat/chip labels) are the documented exception — they're
+     single-line UI labels, not paragraphs.
+   - **Density.** Section padding and gaps were tightened ~20% from the original
+     airy mockup. Keep that density; don't reintroduce large `py-20`/`py-24`
+     section padding without reason.
+   `app/admin` is deliberately excluded from this system — it's internal,
+   noindexed tooling and keeps its utilitarian spacing.
 4. **The blog is deliberately basic.** Markdown-lite (paragraphs + `##` headings,
    parsed inline in `app/blog/[slug]/page.tsx`). Do not add a markdown library,
    an MDX pipeline, comments, categories, or an RSS feed unless asked.

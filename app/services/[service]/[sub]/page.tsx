@@ -36,7 +36,7 @@ export default async function SubServicePage({ params }: Params) {
 
   return (
     <>
-      <section className="px-6 py-16 text-center sm:py-20">
+      <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <nav className="eyebrow" aria-label="Breadcrumb">
             <Link href="/services" className="hover:text-tincture">
@@ -47,9 +47,9 @@ export default async function SubServicePage({ params }: Params) {
               {s.name}
             </Link>
           </nav>
-          <h1 className="display mt-5 text-[30px] leading-tight sm:text-[42px]">{item.name}</h1>
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">{item.name}</h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-relaxed text-ink-soft">
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
             {item.blurb}
           </p>
           <Link href="/contact" className="btn btn-fill mt-8">
@@ -58,7 +58,7 @@ export default async function SubServicePage({ params }: Params) {
         </Frame>
       </section>
 
-      <section className="px-6 pb-20">
+      <section className="px-6 pb-16">
         <div className="mx-auto max-w-2xl">
           <div className="prose-apothecary">
             <p>
@@ -73,14 +73,14 @@ export default async function SubServicePage({ params }: Params) {
           </div>
 
           {siblings.length > 0 && (
-            <div className="mt-14 border-t border-rule pt-8">
+            <div className="mt-10 border-t border-rule pt-8">
               <div className="eyebrow mb-4">Often Taken With</div>
               <ul className="flex flex-wrap gap-2">
                 {siblings.map((sib) => (
                   <li key={sib.slug}>
                     <Link
                       href={`/services/${s.slug}/${sib.slug}`}
-                      className="inline-block border border-rule-strong bg-panel px-3 py-1.5 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft hover:border-tincture hover:text-tincture"
+                      className="inline-block border border-rule-strong bg-panel px-2 py-2 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft hover:border-tincture hover:text-tincture"
                     >
                       {sib.name.toUpperCase()}
                     </Link>

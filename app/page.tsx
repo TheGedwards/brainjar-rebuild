@@ -31,20 +31,20 @@ export default async function HomePage() {
   return (
     <>
       {/* ---------- HERO ---------- */}
-      <section className="px-6 py-16 text-center sm:py-20">
+      <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">A Digital Apothecary for Ambitious Brands</div>
-          <h1 className="display mt-5 text-[34px] leading-[1.08] sm:text-[58px]">
+          <h1 className="display mt-4 text-[32px] leading-[1.08] sm:text-[56px]">
             Remedies for the
             <br />
             <span className="text-tincture">Undiscovered</span> Brand
           </h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-relaxed text-ink-soft sm:text-[19px]">
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
             We diagnose what ails your website, then distill SEO, design &amp; content into growth
             your competition can&rsquo;t replicate.
           </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/contact" className="btn btn-fill">
               GET A DIAGNOSIS
             </Link>
@@ -53,19 +53,13 @@ export default async function HomePage() {
             </Link>
           </div>
         </Frame>
-
-        {/* Splash art — the original brand marks, put back where they belong */}
-        <div className="pointer-events-none mx-auto mt-10 flex max-w-4xl items-center justify-between opacity-70">
-          <Image src="/assets/splashleft.jpg" alt="" width={120} height={60} className="h-auto w-20 sm:w-28" />
-          <Image src="/assets/splashright.jpg" alt="" width={120} height={60} className="h-auto w-20 sm:w-28" />
-        </div>
       </section>
 
       {/* ---------- PRESS ---------- */}
-      <section className="border-y border-rule bg-panel px-6 py-10">
+      <section className="border-y border-rule bg-panel px-6 py-8">
         <div className="mx-auto max-w-4xl text-center">
           <div className="eyebrow">As Featured In</div>
-          <div className="mt-5 flex flex-col items-center justify-center gap-3 text-lg italic text-ink-soft sm:flex-row sm:gap-10">
+          <div className="mt-4 flex flex-col items-center justify-center gap-2 text-lg italic text-ink-soft sm:flex-row sm:gap-10">
             <span>The Wall Street Journal</span>
             <span className="hidden text-rule-strong sm:inline">·</span>
             <span>Barron&rsquo;s</span>
@@ -80,8 +74,8 @@ export default async function HomePage() {
 
       {/* ---------- FEATURED CASE STUDY ---------- */}
       {featured && (
-        <section className="border-y border-rule bg-panel px-6 py-20">
-          <div className="mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-2">
+        <section className="border-y border-rule bg-panel px-6 py-16">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
             <div className="relative aspect-4/3 border border-rule-strong bg-card">
               {featured.hero_image_url ? (
                 <Image
@@ -112,7 +106,7 @@ export default async function HomePage() {
                 {featured.clients?.name ?? featured.title}
               </h2>
               {featured.summary && (
-                <p className="mt-5 text-lg italic leading-relaxed text-ink-soft">
+                <p className="mt-4 text-lg italic leading-8 text-ink-soft">
                   {featured.summary}
                 </p>
               )}
@@ -139,32 +133,32 @@ export default async function HomePage() {
       )}
 
       {/* ---------- THE METHOD ---------- */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-16">
         <div className="mx-auto max-w-5xl">
           <SectionTitle>We&rsquo;ll Prescribe a Solution</SectionTitle>
 
           {/* Roman numerals, because this genuinely IS a sequence — you cannot
               formulate before you diagnose. */}
-          <div className="mt-14 grid gap-12 sm:grid-cols-3">
+          <div className="mt-10 grid gap-10 sm:grid-cols-3">
             {METHOD.map((step) => (
               <div key={step.name}>
-                <div className="font-body text-[52px] italic leading-none text-tincture">
+                <div className="font-body text-[48px] italic leading-none text-tincture">
                   {step.numeral}
                 </div>
-                <div className="display mt-2 text-[15px] tracking-[0.2em]">{step.name}</div>
-                <p className="mt-3 text-[15px] italic leading-relaxed text-ink-soft">{step.body}</p>
+                <div className="display mt-2 text-base tracking-[0.2em]">{step.name}</div>
+                <p className="mt-2 text-lg italic leading-8 text-ink-soft">{step.body}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-16">
+          <div className="mt-12">
             <PointedRule />
           </div>
         </div>
       </section>
 
       {/* ---------- CTA ---------- */}
-      <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-16 text-center">
+      <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-12 text-center">
         <Image
           src="/assets/logo.jpg"
           alt=""
@@ -172,8 +166,8 @@ export default async function HomePage() {
           height={64}
           className="animate-float mx-auto rounded-lg border border-rule"
         />
-        <h2 className="display mt-5 text-2xl sm:text-3xl">Ready for Your Prescription?</h2>
-        <p className="mt-3 text-lg italic text-ink-soft">
+        <h2 className="display mt-4 text-2xl sm:text-3xl">Ready for Your Prescription?</h2>
+        <p className="mt-4 text-lg italic text-ink-soft">
           More leads, calls, foot traffic or sales — tell us the symptom, we&rsquo;ll mix the cure.
         </p>
         <Link href="/contact" className="btn btn-fill mt-8">
