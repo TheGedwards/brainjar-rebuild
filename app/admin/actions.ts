@@ -1,8 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { ServiceKey } from "@/lib/supabase";
+import {
+  createServerSupabase,
+  requireRole,
+  CONTENT_ROLES,
+  OWNER_ROLES,
+  type Role,
+} from "@/lib/auth";
 
 const SERVICE_KEYS: ServiceKey[] = ["seo", "web", "content", "paid", "design"];
 
@@ -11,9 +19,92 @@ function str(fd: FormData, k: string) {
   return typeof v === "string" && v.trim() !== "" ? v.trim() : null;
 }
 
+// --- Auth -------------------------------------------------------------------
+
+/** Login form action (useActionState): returns an error, or redirects to /admin. */
+export async function signIn(
+  _prev: { error: string },
+  fd: FormData
+): Promise<{ error: string }> {
+  const email = str(fd, "email");
+  const password = str(fd, "password");
+  if (!email || !password) return { error: "Enter your email and password." };
+
+  const supabase = await createServerSupabase();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data.user) return { error: "Wrong email or password." };
+
+  // A deactivated account can authenticate but must not get in.
+  const { data: profile } = await supabaseAdmin()
+    .from("profiles")
+    .select("is_active")
+    .eq("id", data.user.id)
+    .maybeSingle();
+  if (!profile || !profile.is_active) {
+    await supabase.auth.signOut();
+    return { error: "This account is inactive. Ask a super admin to re-enable it." };
+  }
+
+  redirect("/admin");
+}
+
+export async function signOut() {
+  const supabase = await createServerSupabase();
+  await supabase.auth.signOut();
+  redirect("/admin/login");
+}
+
+// --- Users (super_admin only) ----------------------------------------------
+
+export async function createUser(fd: FormData) {
+  await requireRole(OWNER_ROLES);
+  const email = str(fd, "email");
+  const password = str(fd, "password");
+  const full_name = str(fd, "full_name");
+  const role = (str(fd, "role") ?? "manager") as Role;
+  if (!email || !password) return;
+
+  const db = supabaseAdmin();
+  const { data, error } = await db.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true, // no email server wired up yet — activate immediately
+    user_metadata: { full_name },
+  });
+  if (error || !data.user) return;
+
+  // The signup trigger seeds a profile; upsert the chosen role + name over it.
+  await db
+    .from("profiles")
+    .upsert({ id: data.user.id, email, full_name, role, is_active: true });
+
+  revalidatePath("/admin");
+}
+
+export async function updateUserRole(fd: FormData) {
+  const me = await requireRole(OWNER_ROLES);
+  const id = str(fd, "id");
+  const role = str(fd, "role") as Role | null;
+  if (!id || !role) return;
+  if (id === me.user.id) return; // never let a super admin demote themselves out
+  await supabaseAdmin().from("profiles").update({ role }).eq("id", id);
+  revalidatePath("/admin");
+}
+
+export async function setUserActive(fd: FormData) {
+  const me = await requireRole(OWNER_ROLES);
+  const id = str(fd, "id");
+  const active = fd.get("active") === "true";
+  if (!id) return;
+  if (id === me.user.id) return; // can't lock yourself out
+  await supabaseAdmin().from("profiles").update({ is_active: active }).eq("id", id);
+  revalidatePath("/admin");
+}
+
 // --- Clients ----------------------------------------------------------------
 
 export async function createClient(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const db = supabaseAdmin();
   const name = str(fd, "name");
   const slug = str(fd, "slug") ?? slugify(name ?? "");
@@ -50,6 +141,7 @@ export async function createClient(fd: FormData) {
 // --- Projects ---------------------------------------------------------------
 
 export async function updateProject(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const db = supabaseAdmin();
   const id = str(fd, "id");
   if (!id) return;
@@ -81,6 +173,7 @@ export async function updateProject(fd: FormData) {
 }
 
 export async function addStat(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const db = supabaseAdmin();
   const project_id = str(fd, "project_id");
   const value = str(fd, "value");
@@ -100,6 +193,7 @@ export async function addStat(fd: FormData) {
 }
 
 export async function deleteStat(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const id = str(fd, "id");
   if (!id) return;
   await supabaseAdmin().from("project_stats").delete().eq("id", id);
@@ -108,6 +202,7 @@ export async function deleteStat(fd: FormData) {
 }
 
 export async function setFeatured(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const db = supabaseAdmin();
   const client_id = str(fd, "client_id");
   if (!client_id) return;
@@ -121,6 +216,7 @@ export async function setFeatured(fd: FormData) {
 // --- Posts ------------------------------------------------------------------
 
 export async function savePost(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const db = supabaseAdmin();
   const id = str(fd, "id");
   const title = str(fd, "title");
@@ -148,6 +244,7 @@ export async function savePost(fd: FormData) {
 }
 
 export async function deletePost(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
   const id = str(fd, "id");
   if (!id) return;
   await supabaseAdmin().from("posts").delete().eq("id", id);

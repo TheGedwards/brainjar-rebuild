@@ -52,11 +52,16 @@ lib/services.ts     ONE array (SERVICES) drives: the bottle shelf, /services,
 lib/supabase.ts     `supabase` = anon client, public reads, obeys RLS.
                     `supabaseAdmin()` = service_role, SERVER ONLY, bypasses RLS.
                     Never import supabaseAdmin into a "use client" file.
+lib/auth.ts         CMS auth. `getCurrentUser()` = signed-in user + profile/role.
+                    `requireUser()` guards pages, `requireRole([...])` guards
+                    server actions. Roles: super_admin | admin | manager.
 components/         bottle-shelf.tsx is the signature element. ornaments.tsx
                     holds every piece of period decoration, drawn as SVG.
-app/admin/          HTTP Basic auth via middleware.ts. Server actions in
-                    actions.ts. noindex.
-supabase/           schema.sql then seed.sql, run in the Supabase SQL editor.
+app/admin/          Supabase Auth via middleware.ts (session gate -> /admin/login).
+                    Server actions in actions.ts, each role-gated. noindex.
+                    Users are managed in-app by super_admins.
+supabase/           schema.sql then seed.sql, then cms-auth.sql. Run in the
+                    Supabase SQL editor, in that order.
 ```
 
 ## Data model

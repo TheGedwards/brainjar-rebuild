@@ -2,6 +2,13 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { SERVICE_CHIPS, CATEGORY_LABELS } from "@/lib/services";
 import type { ServiceKey } from "@/lib/supabase";
 import {
+  requireUser,
+  ROLE_LABELS,
+  OWNER_ROLES,
+  type Role,
+  type Profile,
+} from "@/lib/auth";
+import {
   createClient,
   updateProject,
   addStat,
@@ -9,10 +16,16 @@ import {
   setFeatured,
   savePost,
   deletePost,
+  signOut,
+  createUser,
+  updateUserRole,
+  setUserActive,
 } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false, follow: false } };
+
+const ROLES: Role[] = ["super_admin", "admin", "manager"];
 
 const SERVICE_KEYS = Object.keys(SERVICE_CHIPS) as ServiceKey[];
 
@@ -26,26 +39,47 @@ export default async function AdminPage({
   searchParams: Promise<{ project?: string; post?: string }>;
 }) {
   const sp = await searchParams;
+  const { user, profile } = await requireUser();
   const db = supabaseAdmin();
+  const isOwner = OWNER_ROLES.includes(profile.role);
 
-  const [{ data: projects }, { data: posts }, { data: leads }] = await Promise.all([
+  const [{ data: projects }, { data: posts }, { data: leads }, usersRes] = await Promise.all([
     db
       .from("projects")
       .select("*, clients(*), project_stats(*)")
       .order("slug"),
     db.from("posts").select("*").order("updated_at", { ascending: false }),
     db.from("leads").select("*").order("created_at", { ascending: false }).limit(25),
+    isOwner
+      ? db.from("profiles").select("*").order("created_at")
+      : Promise.resolve({ data: null }),
   ]);
+  const users = (usersRes.data ?? null) as Profile[] | null;
 
   const editing = projects?.find((p) => p.id === sp.project);
   const editingPost = posts?.find((p) => p.id === sp.post);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
-      <h1 className="display text-2xl">The Back Room</h1>
-      <p className="mt-2 text-lg italic text-ink-soft">
-        Everything on the public site comes from here. Changes go live in about five minutes.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="display text-2xl">The Back Room</h1>
+          <p className="mt-2 text-lg italic text-ink-soft">
+            Everything on the public site comes from here. Changes go live in about five minutes.
+          </p>
+        </div>
+        <div className="text-right">
+          <div className="font-display text-[10px] font-bold tracking-[0.2em] text-cobalt">
+            {ROLE_LABELS[profile.role].toUpperCase()}
+          </div>
+          <div className="mt-1 text-base text-ink-soft">{profile.email}</div>
+          <form action={signOut} className="mt-1">
+            <button className="font-display text-[10px] tracking-[0.2em] text-ink-faint hover:text-tincture">
+              SIGN OUT
+            </button>
+          </form>
+        </div>
+      </div>
 
       {/* ------------------------------------------------------------------ */}
       <Section title="Portfolio" note={`${projects?.length ?? 0} projects`}>
@@ -339,6 +373,121 @@ export default async function AdminPage({
           </form>
         )}
       </Section>
+
+      {/* ------------------------------------------------------------------ */}
+      {isOwner && (
+        <Section title="Users" note={`${users?.length ?? 0} people`}>
+          <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+            <div className="overflow-x-auto border border-rule bg-card">
+              <table className="w-full text-base">
+                <thead className="border-b border-rule bg-panel">
+                  <tr className="text-left">
+                    {["Email", "Name", "Role", "Status", ""].map((h) => (
+                      <th key={h} className="eyebrow px-4 py-3">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-rule">
+                  {users?.map((u) => {
+                    const self = u.id === user.id;
+                    return (
+                      <tr key={u.id}>
+                        <td className="px-4 py-3">
+                          {u.email}
+                          {self && (
+                            <span className="ml-2 font-display text-[9px] tracking-widest text-cobalt">
+                              YOU
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-ink-soft">{u.full_name ?? "—"}</td>
+                        <td className="px-4 py-3">
+                          {self ? (
+                            <span>{ROLE_LABELS[u.role]}</span>
+                          ) : (
+                            <form action={updateUserRole} className="flex items-center gap-2">
+                              <input type="hidden" name="id" value={u.id} />
+                              <select
+                                name="role"
+                                defaultValue={u.role}
+                                className={`${input} !w-auto !py-1`}
+                              >
+                                {ROLES.map((r) => (
+                                  <option key={r} value={r}>
+                                    {ROLE_LABELS[r]}
+                                  </option>
+                                ))}
+                              </select>
+                              <button className="font-display text-[10px] tracking-widest text-cobalt hover:text-tincture">
+                                SAVE
+                              </button>
+                            </form>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          {u.is_active ? (
+                            <span className="text-ink-soft">Active</span>
+                          ) : (
+                            <span className="text-tincture">Inactive</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {!self && (
+                            <form action={setUserActive}>
+                              <input type="hidden" name="id" value={u.id} />
+                              <input
+                                type="hidden"
+                                name="active"
+                                value={u.is_active ? "false" : "true"}
+                              />
+                              <button className="font-display text-[10px] tracking-widest text-ink-faint hover:text-tincture">
+                                {u.is_active ? "DEACTIVATE" : "REACTIVATE"}
+                              </button>
+                            </form>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <form action={createUser} className="space-y-4 self-start border border-rule bg-card p-6">
+              <h4 className="display text-sm tracking-[0.2em]">Add a User</h4>
+              <div>
+                <label className={lbl}>Full name</label>
+                <input name="full_name" className={input} />
+              </div>
+              <div>
+                <label className={lbl}>Email</label>
+                <input name="email" type="email" required className={input} />
+              </div>
+              <div>
+                <label className={lbl}>Temporary password</label>
+                <input name="password" required minLength={8} className={input} />
+              </div>
+              <div>
+                <label className={lbl}>Role</label>
+                <select name="role" defaultValue="manager" className={input}>
+                  {ROLES.map((r) => (
+                    <option key={r} value={r}>
+                      {ROLE_LABELS[r]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button className="btn btn-fill">CREATE USER</button>
+              <p className="text-base italic text-ink-faint">
+                They can sign in immediately with this password — no email is sent, so share it
+                with them directly.
+              </p>
+            </form>
+          </div>
+        </Section>
+      )}
 
       {/* ------------------------------------------------------------------ */}
       <Section title="Leads" note="Most recent 25">
