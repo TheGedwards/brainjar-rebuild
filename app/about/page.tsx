@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
+import { getPageContent } from "@/lib/supabase";
+import { renderHeading } from "@/lib/render-copy";
+import { PAGE_SEO } from "@/lib/pages";
 
-export const metadata: Metadata = {
-  title: "About Our Process",
-  description:
-    "Brainjar Media has been compounding digital remedies from Gresham, Oregon since 2003 — for Intel, Microsoft, NASCAR, Pendleton Woolen Mills, and the shop down the street.",
-  alternates: { canonical: "/about" },
-};
+export const revalidate = 300;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const c = await getPageContent("/about");
+  return {
+    title: c.seo_title ?? PAGE_SEO.about.title,
+    description: c.seo_description ?? PAGE_SEO.about.description,
+    alternates: { canonical: "/about" },
+  };
+}
 
 const METHOD = [
   {
@@ -27,22 +34,19 @@ const METHOD = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const c = await getPageContent("/about");
   return (
     <>
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
-          <div className="eyebrow">Est. 2003 · Downtown Gresham</div>
+          <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
-            Twenty Years
-            <br />
-            <span className="text-tincture">Behind the Counter</span>
+            {renderHeading(c.content.hero_heading)}
           </h1>
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
-            We&rsquo;ve worked for Intel, Microsoft, NASCAR and Pendleton Woolen Mills. We&rsquo;ve
-            also worked for the pub on Main Street. Both got the same attention, and neither got a
-            template.
+            {c.content.hero_subhead}
           </p>
         </Frame>
       </section>

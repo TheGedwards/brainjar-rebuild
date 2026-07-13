@@ -1,30 +1,39 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { getPosts } from "@/lib/supabase";
+import { getPosts, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge } from "@/components/ornaments";
+import { renderHeading } from "@/lib/render-copy";
+import { PAGE_SEO } from "@/lib/pages";
 
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Notes from the Dispensary — Blog",
-  description:
-    "Plain-English notes on SEO, websites, content and advertising from Brainjar Media in Gresham, Oregon.",
-  alternates: { canonical: "/blog" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const c = await getPageContent("/blog");
+  return {
+    title: c.seo_title ?? PAGE_SEO.blog.title,
+    description: c.seo_description ?? PAGE_SEO.blog.description,
+    alternates: { canonical: "/blog" },
+  };
+}
 
 export default async function BlogPage() {
-  const posts = await getPosts().catch(() => []);
+  const [posts, c] = await Promise.all([
+    getPosts().catch(() => []),
+    getPageContent("/blog"),
+  ]);
 
   return (
     <>
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
-          <div className="eyebrow">Notes from the Dispensary</div>
-          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">The Blog</h1>
+          <div className="eyebrow">{c.content.hero_eyebrow}</div>
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
+            {renderHeading(c.content.hero_heading)}
+          </h1>
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
-            What we&rsquo;ve learned, written down. No snake oil.
+            {c.content.hero_subhead}
           </p>
         </Frame>
       </section>

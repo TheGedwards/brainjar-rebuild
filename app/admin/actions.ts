@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { ServiceKey } from "@/lib/supabase";
 import { sanitizeRichText } from "@/lib/sanitize";
+import { getPageDef } from "@/lib/pages";
 import {
   createServerSupabase,
   requireRole,
@@ -131,6 +132,34 @@ export async function saveGallery(projectId: string, gallery: GalleryItem[]) {
   revalidatePath("/work");
   if (data?.slug) revalidatePath(`/work/${data.slug}`);
   revalidatePath(`/admin/portfolio/${projectId}`);
+}
+
+// --- Page copy + SEO --------------------------------------------------------
+
+export async function savePage(fd: FormData) {
+  await requireRole(ADMIN_ROLES);
+  const path = str(fd, "path");
+  if (!path) return;
+  const def = getPageDef(path);
+  if (!def) return;
+
+  // Only store non-empty overrides; a blank field falls back to the code default.
+  const content: Record<string, string> = {};
+  for (const s of def.slots) {
+    const v = str(fd, `slot_${s.key}`);
+    if (v) content[s.key] = v;
+  }
+
+  await supabaseAdmin().from("page_content").upsert({
+    path,
+    seo_title: str(fd, "seo_title"),
+    seo_description: str(fd, "seo_description"),
+    content,
+    updated_at: new Date().toISOString(),
+  });
+
+  revalidatePath(path);
+  revalidatePath(`/admin/pages/${def.key}`);
 }
 
 // --- Media uploads ----------------------------------------------------------

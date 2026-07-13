@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { BottleShelf } from "@/components/bottle-shelf";
 import { Frame, Lozenge, SectionTitle, PointedRule } from "@/components/ornaments";
-import { getFeaturedProject } from "@/lib/supabase";
+import { getFeaturedProject, getPageContent } from "@/lib/supabase";
+import { renderHeading } from "@/lib/render-copy";
 
 export const revalidate = 300;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const c = await getPageContent("/");
+  // Home falls back to the site-wide default title/description from the layout.
+  return {
+    title: c.seo_title ?? undefined,
+    description: c.seo_description ?? undefined,
+  };
+}
 
 const METHOD = [
   {
@@ -25,7 +36,10 @@ const METHOD = [
 ];
 
 export default async function HomePage() {
-  const featured = await getFeaturedProject().catch(() => null);
+  const [featured, c] = await Promise.all([
+    getFeaturedProject().catch(() => null),
+    getPageContent("/"),
+  ]);
   const stats = featured?.project_stats?.slice(0, 3) ?? [];
 
   return (
@@ -33,16 +47,13 @@ export default async function HomePage() {
       {/* ---------- HERO ---------- */}
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
-          <div className="eyebrow">A Digital Apothecary for Ambitious Brands</div>
+          <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <h1 className="display mt-4 text-[32px] leading-[1.08] sm:text-[56px]">
-            Remedies for the
-            <br />
-            <span className="text-tincture">Undiscovered</span> Brand
+            {renderHeading(c.content.hero_heading)}
           </h1>
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
-            We diagnose what ails your website, then distill SEO, design &amp; content into growth
-            your competition can&rsquo;t replicate.
+            {c.content.hero_subhead}
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/contact" className="btn btn-fill">
@@ -166,10 +177,8 @@ export default async function HomePage() {
           height={64}
           className="animate-float mx-auto rounded-lg border border-rule"
         />
-        <h2 className="display mt-4 text-2xl sm:text-3xl">Ready for Your Prescription?</h2>
-        <p className="mt-4 text-lg italic text-ink-soft">
-          More leads, calls, foot traffic or sales — tell us the symptom, we&rsquo;ll mix the cure.
-        </p>
+        <h2 className="display mt-4 text-2xl sm:text-3xl">{c.content.cta_heading}</h2>
+        <p className="mt-4 text-lg italic text-ink-soft">{c.content.cta_subhead}</p>
         <Link href="/contact" className="btn btn-fill mt-8">
           BOOK A FREE CONSULTATION
         </Link>

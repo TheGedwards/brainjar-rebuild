@@ -1,27 +1,34 @@
 import type { Metadata } from "next";
 import { Frame, Lozenge } from "@/components/ornaments";
+import { getPageContent } from "@/lib/supabase";
+import { renderHeading } from "@/lib/render-copy";
+import { PAGE_SEO } from "@/lib/pages";
 import { ContactForm } from "./contact-form";
 
-export const metadata: Metadata = {
-  title: "Get a Diagnosis — Contact",
-  description:
-    "Tell us the symptom and we'll mix the cure. Brainjar Media, 109 N Main Ave #202, Gresham, OR 97030. (503) 492-6500.",
-  alternates: { canonical: "/contact" },
-};
+export const revalidate = 300;
 
-export default function ContactPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const c = await getPageContent("/contact");
+  return {
+    title: c.seo_title ?? PAGE_SEO.contact.title,
+    description: c.seo_description ?? PAGE_SEO.contact.description,
+    alternates: { canonical: "/contact" },
+  };
+}
+
+export default async function ContactPage() {
+  const c = await getPageContent("/contact");
   return (
     <>
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
-          <div className="eyebrow">Take as Directed</div>
+          <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
-            Get a Diagnosis
+            {renderHeading(c.content.hero_heading)}
           </h1>
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
-            More leads, calls, foot traffic or sales — tell us the symptom, we&rsquo;ll mix the cure.
-            The consultation is free.
+            {c.content.hero_subhead}
           </p>
         </Frame>
       </section>

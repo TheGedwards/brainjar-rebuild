@@ -62,13 +62,18 @@ lib/supabase.ts     `supabase` = anon client, public reads, obeys RLS.
 lib/auth.ts         CMS auth. `getCurrentUser()` = signed-in user + profile/role.
                     `requireUser()` guards pages, `requireRole([...])` guards
                     server actions. Roles: super_admin | admin | manager.
+lib/pages.ts        Registry of editable marketing pages + their copy "slots"
+                    (defaults = current copy). Drives /admin/pages and the SEO
+                    per page. `page_content` table stores DB overrides; missing
+                    keys fall back to the code defaults. Heading slots support
+                    *accent* + newline (see lib/render-copy.tsx).
 components/         bottle-shelf.tsx is the signature element. ornaments.tsx
                     holds every piece of period decoration, drawn as SVG.
 app/admin/          Supabase Auth via middleware.ts (session gate -> /admin/login).
                     Server actions in actions.ts, each role-gated. noindex.
                     Users are managed in-app by super_admins.
-supabase/           schema.sql then seed.sql, then cms-auth.sql. Run in the
-                    Supabase SQL editor, in that order.
+supabase/           schema.sql, seed.sql, cms-auth.sql, blog-media.sql,
+                    pages.sql. Run in the Supabase SQL editor, in that order.
 ```
 
 ## Data model

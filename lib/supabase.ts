@@ -1,4 +1,6 @@
+import { cache } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { pageDefaults } from "@/lib/pages";
 
 /**
  * Fallbacks so that `npm run dev` and `next build` work BEFORE Supabase is
@@ -141,3 +143,36 @@ export async function getPost(slug: string): Promise<Post | null> {
   if (error) throw error;
   return (data as Post) ?? null;
 }
+
+// --- Editable page copy + SEO ----------------------------------------------
+
+export type PageContent = {
+  seo_title: string | null;
+  seo_description: string | null;
+  content: Record<string, string>;
+};
+
+/**
+ * Copy + SEO for a marketing page. DB overrides merge over the in-code defaults
+ * from lib/pages.ts, so a missing row (or field) just renders the default.
+ * Fails soft to defaults if Supabase isn't reachable.
+ */
+export const getPageContent = cache(async (path: string): Promise<PageContent> => {
+  const defaults = pageDefaults(path);
+  const { data } = await supabase
+    .from("page_content")
+    .select("seo_title, seo_description, content")
+    .eq("path", path)
+    .maybeSingle()
+    .then((r) => r, () => ({ data: null }));
+
+  const row = data as
+    | { seo_title: string | null; seo_description: string | null; content: Record<string, string> | null }
+    | null;
+
+  return {
+    seo_title: row?.seo_title ?? null,
+    seo_description: row?.seo_description ?? null,
+    content: { ...defaults, ...(row?.content ?? {}) },
+  };
+});

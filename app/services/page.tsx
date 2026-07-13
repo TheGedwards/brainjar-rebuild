@@ -3,25 +3,34 @@ import Link from "next/link";
 import Image from "next/image";
 import { SERVICES } from "@/lib/services";
 import { Frame, Lozenge, PointedRule } from "@/components/ornaments";
+import { getPageContent } from "@/lib/supabase";
+import { renderHeading } from "@/lib/render-copy";
+import { PAGE_SEO } from "@/lib/pages";
 
-export const metadata: Metadata = {
-  title: "The Formulary — SEO, Web, Content & Paid Ads",
-  description:
-    "Five proven compounds, mixed to order: search engine optimization, web development, content marketing, paid advertising and graphic design. Every prescription comes with measurable results.",
-  alternates: { canonical: "/services" },
-};
+export const revalidate = 300;
 
-export default function ServicesPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const c = await getPageContent("/services");
+  return {
+    title: c.seo_title ?? PAGE_SEO.services.title,
+    description: c.seo_description ?? PAGE_SEO.services.description,
+    alternates: { canonical: "/services" },
+  };
+}
+
+export default async function ServicesPage() {
+  const c = await getPageContent("/services");
   return (
     <>
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
-          <div className="eyebrow">The Formulary</div>
-          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">Our Remedies</h1>
+          <div className="eyebrow">{c.content.hero_eyebrow}</div>
+          <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
+            {renderHeading(c.content.hero_heading)}
+          </h1>
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
-            Proven compounds, mixed to order. Rarely taken alone — we&rsquo;ll write the combination
-            your goals call for.
+            {c.content.hero_subhead}
           </p>
         </Frame>
       </section>
@@ -75,8 +84,8 @@ export default function ServicesPage() {
       </section>
 
       <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-12 text-center">
-        <div className="eyebrow">Everything We Mix Comes With</div>
-        <h2 className="display mt-4 text-2xl sm:text-3xl">Measurable Results.</h2>
+        <div className="eyebrow">{c.content.cta_eyebrow}</div>
+        <h2 className="display mt-4 text-2xl sm:text-3xl">{c.content.cta_heading}</h2>
         <Link href="/contact" className="btn btn-fill mt-8">
           GET A DIAGNOSIS
         </Link>

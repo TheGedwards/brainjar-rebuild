@@ -76,7 +76,7 @@ const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: "dashboard" },
   { href: "/admin/portfolio", label: "Portfolio", icon: "flask" },
   { href: "/admin/blog", label: "Blog", icon: "news" },
-  { href: "/admin/pages", label: "Pages", icon: "file", roles: ["super_admin", "admin"], soon: true },
+  { href: "/admin/pages", label: "Pages", icon: "file", roles: ["super_admin", "admin"] },
   { href: "/admin/analytics", label: "Analytics", icon: "chart", soon: true },
   { href: "/admin/users", label: "Users", icon: "users", roles: ["super_admin"] },
 ];
