@@ -16,34 +16,16 @@ import { supabaseAdmin } from "@/lib/supabase";
  *   requireRole([...])     — action guard: throws unless the role is allowed.
  */
 
+import type { Role, Profile } from "@/lib/roles";
+
+// Role types/labels/groups live in lib/roles.ts (no server imports so client
+// components can use them). Re-exported here so server code can keep importing
+// everything from "@/lib/auth".
+export type { Role, Profile } from "@/lib/roles";
+export { ROLE_LABELS, CONTENT_ROLES, ADMIN_ROLES, OWNER_ROLES } from "@/lib/roles";
+
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
-
-export type Role = "super_admin" | "admin" | "manager";
-
-export type Profile = {
-  id: string;
-  email: string;
-  full_name: string | null;
-  role: Role;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-};
-
-/** Human labels + the ordering used to render/limit role pickers. */
-export const ROLE_LABELS: Record<Role, string> = {
-  super_admin: "Super Admin",
-  admin: "Admin",
-  manager: "Manager",
-};
-
-/** Anyone who may touch content (portfolio + blog). */
-export const CONTENT_ROLES: Role[] = ["super_admin", "admin", "manager"];
-/** Structural edits (nav, SEO) — reserved for admins and up. */
-export const ADMIN_ROLES: Role[] = ["super_admin", "admin"];
-/** Managing other users — super admins only. */
-export const OWNER_ROLES: Role[] = ["super_admin"];
 
 export async function createServerSupabase() {
   const cookieStore = await cookies();

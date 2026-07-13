@@ -8,6 +8,7 @@ import {
   createServerSupabase,
   requireRole,
   CONTENT_ROLES,
+  ADMIN_ROLES,
   OWNER_ROLES,
   type Role,
 } from "@/lib/auth";
@@ -213,6 +214,32 @@ export async function setFeatured(fd: FormData) {
   revalidatePath("/admin");
 }
 
+/** Unpublish a client's project. Keeps the row + /work/[slug] URL alive. */
+export async function archiveClient(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
+  const client_id = str(fd, "client_id");
+  if (!client_id) return;
+  await supabaseAdmin()
+    .from("projects")
+    .update({ is_published: false })
+    .eq("client_id", client_id);
+  revalidatePath("/work");
+  revalidatePath("/admin");
+  redirect("/admin/portfolio");
+}
+
+/** Permanent delete. Cascades to the project + stats (schema: on delete cascade). */
+export async function deleteClient(fd: FormData) {
+  await requireRole(ADMIN_ROLES);
+  const client_id = str(fd, "client_id");
+  if (!client_id) return;
+  await supabaseAdmin().from("clients").delete().eq("id", client_id);
+  revalidatePath("/work");
+  revalidatePath("/");
+  revalidatePath("/admin");
+  redirect("/admin/portfolio");
+}
+
 // --- Posts ------------------------------------------------------------------
 
 export async function savePost(fd: FormData) {
@@ -240,7 +267,8 @@ export async function savePost(fd: FormData) {
 
   revalidatePath("/blog");
   revalidatePath(`/blog/${row.slug}`);
-  revalidatePath("/admin");
+  revalidatePath("/admin/blog");
+  redirect("/admin/blog");
 }
 
 export async function deletePost(fd: FormData) {
@@ -249,7 +277,8 @@ export async function deletePost(fd: FormData) {
   if (!id) return;
   await supabaseAdmin().from("posts").delete().eq("id", id);
   revalidatePath("/blog");
-  revalidatePath("/admin");
+  revalidatePath("/admin/blog");
+  redirect("/admin/blog");
 }
 
 function slugify(s: string) {

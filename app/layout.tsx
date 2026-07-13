@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Spectral } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteChrome } from "@/components/site-chrome";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -47,11 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main" className="flex-1">
+        <SiteChrome header={<SiteHeader />} footer={<SiteFooter />}>
           {children}
-        </main>
-        <SiteFooter />
+        </SiteChrome>
 
         {/* LocalBusiness schema. The old site had none; this is free rich-result
             eligibility and it matters for "digital agency gresham". */}
