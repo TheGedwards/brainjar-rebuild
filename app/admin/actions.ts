@@ -296,7 +296,9 @@ export async function savePost(fd: FormData) {
   revalidatePath("/blog");
   revalidatePath(`/blog/${row.slug}`);
   revalidatePath("/admin/blog");
-  redirect("/admin/blog");
+  // Publishing lands you on the live post; a draft has no public URL, so go
+  // back to the list.
+  redirect(published ? `/blog/${row.slug}` : "/admin/blog");
 }
 
 export async function deletePost(fd: FormData) {
