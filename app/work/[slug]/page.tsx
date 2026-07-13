@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getProject, getProjects } from "@/lib/supabase";
 import { SERVICE_CHIPS } from "@/lib/services";
 import { Lozenge, PointedRule } from "@/components/ornaments";
+import { GallerySlideshow } from "@/components/gallery-slideshow";
 
 export const revalidate = 300;
 
@@ -116,28 +117,7 @@ export default async function ProjectPage({ params }: Params) {
           </p>
         )}
 
-        {(p.gallery?.length ?? 0) > 0 && (
-          <div className="mt-10 space-y-6">
-            {p.gallery.map((img, i) => (
-              <figure key={i}>
-                <div className="relative aspect-16/10 border border-rule">
-                  <Image
-                    src={img.url}
-                    alt={img.alt ?? ""}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 640px"
-                    className="object-cover"
-                  />
-                </div>
-                {img.caption && (
-                  <figcaption className="mt-2 text-center text-sm italic text-ink-faint">
-                    {img.caption}
-                  </figcaption>
-                )}
-              </figure>
-            ))}
-          </div>
-        )}
+        {(p.gallery?.length ?? 0) > 0 && <GallerySlideshow images={p.gallery} />}
 
         {p.clients?.website_url && (
           <div className="mt-12 text-center">

@@ -104,6 +104,35 @@ export async function setUserActive(fd: FormData) {
   revalidatePath("/admin");
 }
 
+// --- Gallery ----------------------------------------------------------------
+
+type GalleryItem = { url: string; alt?: string; caption?: string };
+
+/** Replace a project's gallery (the case-study slideshow). */
+export async function saveGallery(projectId: string, gallery: GalleryItem[]) {
+  await requireRole(CONTENT_ROLES);
+  if (!projectId) return;
+
+  const clean = (gallery ?? [])
+    .filter((g) => typeof g?.url === "string" && g.url)
+    .map((g) => ({
+      url: g.url,
+      alt: (g.alt ?? "").slice(0, 300),
+      caption: (g.caption ?? "").slice(0, 300),
+    }));
+
+  const db = supabaseAdmin();
+  await db
+    .from("projects")
+    .update({ gallery: clean, updated_at: new Date().toISOString() })
+    .eq("id", projectId);
+
+  const { data } = await db.from("projects").select("slug").eq("id", projectId).maybeSingle();
+  revalidatePath("/work");
+  if (data?.slug) revalidatePath(`/work/${data.slug}`);
+  revalidatePath(`/admin/portfolio/${projectId}`);
+}
+
 // --- Media uploads ----------------------------------------------------------
 
 /** Upload an image to the public "media" bucket. Returns its public URL. */

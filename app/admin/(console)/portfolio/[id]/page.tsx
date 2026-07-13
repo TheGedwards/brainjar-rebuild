@@ -5,6 +5,7 @@ import { SERVICE_CHIPS } from "@/lib/services";
 import type { ServiceKey } from "@/lib/supabase";
 import { updateProject, addStat, deleteStat, setFeatured } from "@/app/admin/actions";
 import { field, label } from "@/components/admin/ui";
+import { GalleryEditor } from "@/components/admin/gallery-editor";
 import { DangerZone } from "./danger-zone";
 
 export const dynamic = "force-dynamic";
@@ -174,6 +175,11 @@ export default async function ProjectEditor({ params }: Params) {
           </label>
           <button className="btn btn-outline mb-0.5 !py-2.5">ADD</button>
         </form>
+      </div>
+
+      {/* Gallery / slideshow ------------------------------------------------- */}
+      <div className="mt-6">
+        <GalleryEditor projectId={project.id} initial={project.gallery ?? []} />
       </div>
 
       {/* Featured + Danger --------------------------------------------------- */}
