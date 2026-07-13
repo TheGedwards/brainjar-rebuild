@@ -39,9 +39,16 @@ TypeScript + Tailwind v4, Supabase (Postgres + Storage), deployed on Vercel.
      section padding without reason.
    `app/admin` is deliberately excluded from this system — it's internal,
    noindexed tooling and keeps its utilitarian spacing.
-4. **The blog is deliberately basic.** Markdown-lite (paragraphs + `##` headings,
-   parsed inline in `app/blog/[slug]/page.tsx`). Do not add a markdown library,
-   an MDX pipeline, comments, categories, or an RSS feed unless asked.
+4. **The blog uses a rich text editor.** As of Phase B1, posts are authored in a
+   curated TipTap editor (headings, bold/italic/underline, lists, links,
+   blockquote, inline images; Word paste preserved) and stored as **sanitized
+   HTML** — see `lib/sanitize.ts` (sanitize on save AND on render). The public
+   page renders HTML when the body is HTML, else falls back to the original
+   markdown-lite parser (the one seed post). Editor lives in
+   `components/admin/rich-editor.tsx`. Posts also carry `seo_title` /
+   `seo_description` (fall back to title/excerpt). Still no comments, categories,
+   or RSS unless asked. Images upload to the Supabase `media` bucket via the
+   `uploadImage` server action (`components/admin/image-upload.tsx`).
 
 ## Architecture
 

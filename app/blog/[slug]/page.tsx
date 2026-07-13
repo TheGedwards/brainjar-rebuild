@@ -4,6 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/supabase";
 import { Lozenge, PointedRule } from "@/components/ornaments";
+import { sanitizeRichText, isHtml } from "@/lib/sanitize";
 
 export const revalidate = 300;
 
@@ -18,8 +19,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const post = await getPost((await params).slug).catch(() => null);
   if (!post) return {};
   return {
-    title: post.title,
-    description: post.excerpt ?? undefined,
+    title: post.seo_title ?? post.title,
+    description: post.seo_description ?? post.excerpt ?? undefined,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       type: "article",
@@ -73,18 +74,25 @@ export default async function PostPage({ params }: Params) {
         </div>
       )}
 
-      {/* Markdown-lite: paragraphs, and ## headings. Deliberately not a full
-          markdown pipeline — a basic blog does not need 40kb of parser. Swap in
-          react-markdown here the day you need tables and footnotes. */}
-      <div className="prose-apothecary dropcap mx-auto mt-12 max-w-2xl">
-        {post.body.split("\n\n").map((block, i) =>
-          block.startsWith("## ") ? (
-            <h2 key={i}>{block.slice(3)}</h2>
-          ) : (
-            <p key={i}>{block}</p>
-          )
-        )}
-      </div>
+      {/* New posts are sanitized HTML from the TipTap editor; the original
+          seed post is markdown-lite (paragraphs + ## headings). Render whichever
+          this row is. */}
+      {isHtml(post.body) ? (
+        <div
+          className="prose-apothecary dropcap mx-auto mt-12 max-w-2xl [&_blockquote]:my-6 [&_blockquote]:border-l-2 [&_blockquote]:border-tincture [&_blockquote]:pl-4 [&_blockquote]:italic [&_h3]:mb-3 [&_h3]:mt-8 [&_h3]:font-display [&_h3]:text-lg [&_h3]:font-bold [&_h3]:uppercase [&_h3]:tracking-[0.1em] [&_img]:my-6 [&_img]:w-full [&_img]:border [&_img]:border-rule [&_li]:mb-2 [&_ol]:mb-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-6"
+          dangerouslySetInnerHTML={{ __html: sanitizeRichText(post.body) }}
+        />
+      ) : (
+        <div className="prose-apothecary dropcap mx-auto mt-12 max-w-2xl">
+          {post.body.split("\n\n").map((block, i) =>
+            block.startsWith("## ") ? (
+              <h2 key={i}>{block.slice(3)}</h2>
+            ) : (
+              <p key={i}>{block}</p>
+            )
+          )}
+        </div>
+      )}
 
       <div className="mx-auto mt-12 max-w-2xl">
         <PointedRule />

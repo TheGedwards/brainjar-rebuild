@@ -1,9 +1,11 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { ServiceKey } from "@/lib/supabase";
+import { sanitizeRichText } from "@/lib/sanitize";
 import {
   createServerSupabase,
   requireRole,
@@ -100,6 +102,30 @@ export async function setUserActive(fd: FormData) {
   if (id === me.user.id) return; // can't lock yourself out
   await supabaseAdmin().from("profiles").update({ is_active: active }).eq("id", id);
   revalidatePath("/admin");
+}
+
+// --- Media uploads ----------------------------------------------------------
+
+/** Upload an image to the public "media" bucket. Returns its public URL. */
+export async function uploadImage(fd: FormData): Promise<{ url?: string; error?: string }> {
+  await requireRole(CONTENT_ROLES);
+  const file = fd.get("file");
+  const folder = (str(fd, "folder") ?? "uploads").replace(/[^a-z0-9/_-]/gi, "");
+  if (!(file instanceof File)) return { error: "No file selected." };
+  if (!file.type.startsWith("image/")) return { error: "That isn't an image." };
+  if (file.size > 8 * 1024 * 1024) return { error: "Images must be under 8MB." };
+
+  const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const path = `${folder}/${randomUUID()}.${ext}`;
+  const bytes = Buffer.from(await file.arrayBuffer());
+
+  const db = supabaseAdmin();
+  const { error } = await db.storage
+    .from("media")
+    .upload(path, bytes, { contentType: file.type, upsert: false });
+  if (error) return { error: error.message };
+
+  return { url: db.storage.from("media").getPublicUrl(path).data.publicUrl };
 }
 
 // --- Clients ----------------------------------------------------------------
@@ -254,8 +280,10 @@ export async function savePost(fd: FormData) {
     slug: str(fd, "slug") ?? slugify(title),
     title,
     excerpt: str(fd, "excerpt"),
-    body: str(fd, "body") ?? "",
+    body: sanitizeRichText(str(fd, "body") ?? ""),
     cover_image_url: str(fd, "cover_image_url"),
+    seo_title: str(fd, "seo_title"),
+    seo_description: str(fd, "seo_description"),
     author: str(fd, "author") ?? "Brainjar Media",
     is_published: published,
     published_at: published ? (str(fd, "published_at") ?? new Date().toISOString()) : null,

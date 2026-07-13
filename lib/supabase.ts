@@ -76,6 +76,8 @@ export type Post = {
   excerpt: string | null;
   body: string;
   cover_image_url: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
   author: string;
   tags: string[];
   published_at: string | null;
