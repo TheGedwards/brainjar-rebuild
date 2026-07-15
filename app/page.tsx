@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { BottleShelf } from "@/components/bottle-shelf";
+import { BrandMark } from "@/components/brand-mark";
 import { Frame, Lozenge, SectionTitle, PointedRule } from "@/components/ornaments";
 import { getFeaturedProject, getPageContent } from "@/lib/supabase";
 import { renderHeading } from "@/lib/render-copy";
@@ -170,14 +171,8 @@ export default async function HomePage() {
 
       {/* ---------- CTA ---------- */}
       <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-12 text-center">
-        <Image
-          src="/assets/logo.jpg"
-          alt=""
-          width={64}
-          height={64}
-          className="animate-float mx-auto rounded-lg border border-rule"
-        />
-        <h2 className="display mt-4 text-2xl sm:text-3xl">{c.content.cta_heading}</h2>
+        <BrandMark width={80} className="mx-auto" />
+        <h2 className="display mt-6 text-2xl sm:text-3xl">{c.content.cta_heading}</h2>
         <p className="mt-4 text-lg italic text-ink-soft">{c.content.cta_subhead}</p>
         <Link href="/contact" className="btn btn-fill mt-8">
           BOOK A FREE CONSULTATION

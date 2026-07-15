@@ -1,0 +1,54 @@
+/**
+ * The brand mark: a brain floating inside an apothecary jar. Two layers — the
+ * jar sets the width, the brain sits centered in the jar body (~top 40%) and
+ * gently bobs + tilts.
+ *
+ * The float uses a component-scoped keyframe (bj-brain-float) rather than the
+ * shared `animate-float`, so its feel can be tuned here without touching
+ * globals.css. Tunables live in ANIM below — to revert to a plain bob, drop the
+ * rotate() and restore translateY(-8px)/4s. prefers-reduced-motion still
+ * disables it via the global rule in globals.css.
+ *
+ * Needs two transparent PNGs: /assets/brain.png and /assets/jar.png.
+ */
+
+// --- Animation tunables (easy to revert) ---
+const ANIM = {
+  rise: "5px", // how far it floats up (was 8px — reduced so it stays in the jar)
+  tilt: "2.5deg", // slight rotation at the top of the rise
+  duration: "5.5s", // slower than the original 4s
+};
+
+const KEYFRAMES = `@keyframes bj-brain-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-${ANIM.rise}) rotate(${ANIM.tilt}); }
+}`;
+
+export function BrandMark({
+  width = 75,
+  className = "",
+}: {
+  width?: number;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`relative inline-block ${className}`}
+      style={{ width }}
+      aria-hidden="true"
+    >
+      <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/jar.png" alt="" className="block w-full" />
+      <span className="absolute left-1/2 top-[40%] w-[60%] -translate-x-1/2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets/brain.png"
+          alt=""
+          className="block w-full"
+          style={{ animation: `bj-brain-float ${ANIM.duration} ease-in-out infinite` }}
+        />
+      </span>
+    </span>
+  );
+}

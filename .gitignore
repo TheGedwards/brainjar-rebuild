@@ -4,5 +4,10 @@ out
 .env
 .env.local
 .DS_Store
+
+# Local secrets / notes — never commit
+Supabase DB Password.txt
+*password*.txt
+*secret*.txt
 *.tsbuildinfo
 next-env.d.ts

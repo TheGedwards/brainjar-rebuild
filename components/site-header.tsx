@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Swirl } from "./ornaments";
+import { BrandMark } from "./brand-mark";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -42,16 +42,13 @@ export function SiteHeader() {
       </div>
 
       <div className="pt-6 text-center">
-        <Link href="/" className="inline-flex items-center justify-center gap-4">
+        <Link
+          href="/"
+          aria-label="Brainjar Media — home"
+          className="inline-flex items-center justify-center gap-4"
+        >
           <Swirl className="hidden text-tincture sm:block" />
-          <Image
-            src="/assets/logo.jpg"
-            alt="Brainjar Media"
-            width={54}
-            height={54}
-            priority
-            className="rounded-lg border border-rule"
-          />
+          <BrandMark width={75} />
           <Swirl flip className="hidden text-tincture sm:block" />
         </Link>
 
