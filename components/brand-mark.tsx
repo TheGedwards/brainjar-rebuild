@@ -3,23 +3,22 @@
  * jar sets the width, the brain sits centered in the jar body (~top 40%) and
  * gently bobs + tilts.
  *
- * The float uses a component-scoped keyframe (bj-brain-float) rather than the
- * shared `animate-float`, so its feel can be tuned here without touching
- * globals.css. Tunables live in ANIM below — to revert to a plain bob, drop the
- * rotate() and restore translateY(-8px)/4s. prefers-reduced-motion still
- * disables it via the global rule in globals.css.
+ * The keyframe (BRAIN_KEYFRAMES) is rendered ONCE by the root layout in a valid
+ * <style> position — NOT here inside the <span>, because a <style> nested in a
+ * <span> is invalid HTML and breaks React hydration app-wide. Tunables live in
+ * ANIM; the global reduced-motion rule in globals.css still disables it.
  *
  * Needs two transparent PNGs: /assets/brain.png and /assets/jar.png.
  */
 
 // --- Animation tunables (easy to revert) ---
-const ANIM = {
+export const ANIM = {
   rise: "5px", // how far it floats up (was 8px — reduced so it stays in the jar)
   tilt: "2.5deg", // slight rotation at the top of the rise
   duration: "5.5s", // slower than the original 4s
 };
 
-const KEYFRAMES = `@keyframes bj-brain-float {
+export const BRAIN_KEYFRAMES = `@keyframes bj-brain-float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50%      { transform: translateY(-${ANIM.rise}) rotate(${ANIM.tilt}); }
 }`;
@@ -37,7 +36,6 @@ export function BrandMark({
       style={{ width }}
       aria-hidden="true"
     >
-      <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/assets/jar.png" alt="" className="block w-full" />
       <span className="absolute left-1/2 top-[40%] w-[60%] -translate-x-1/2">

@@ -3,6 +3,7 @@ import { Montserrat, Spectral } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteChrome } from "@/components/site-chrome";
+import { BRAIN_KEYFRAMES } from "@/components/brand-mark";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${montserrat.variable} ${spectral.variable}`}>
       <body className="flex min-h-screen flex-col">
+        <style dangerouslySetInnerHTML={{ __html: BRAIN_KEYFRAMES }} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-tincture focus:px-4 focus:py-2 focus:font-display focus:text-xs focus:text-paper"
