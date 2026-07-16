@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
 import { getPageContent } from "@/lib/supabase";
 import { renderHeading } from "@/lib/render-copy";
@@ -41,6 +42,14 @@ export default async function AboutPage() {
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">{c.content.hero_eyebrow}</div>
+          <Image
+            src="/assets/bottles-on-shelf.png"
+            alt="A shelf of apothecary bottles labeled for Brainjar's digital-marketing remedies"
+            width={638}
+            height={219}
+            priority
+            className="mx-auto mt-6 h-auto w-full max-w-xl"
+          />
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
             {renderHeading(c.content.hero_heading)}
           </h1>

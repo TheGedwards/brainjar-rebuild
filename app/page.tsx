@@ -49,6 +49,14 @@ export default async function HomePage() {
       <section className="px-6 py-12 text-center sm:py-16">
         <Frame>
           <div className="eyebrow">{c.content.hero_eyebrow}</div>
+          <Image
+            src="/assets/bottles-on-shelf.png"
+            alt="A shelf of apothecary bottles labeled for Brainjar's digital-marketing remedies"
+            width={638}
+            height={219}
+            priority
+            className="mx-auto mt-6 h-auto w-full max-w-xl"
+          />
           <h1 className="display mt-4 text-[32px] leading-[1.08] sm:text-[56px]">
             {renderHeading(c.content.hero_heading)}
           </h1>
