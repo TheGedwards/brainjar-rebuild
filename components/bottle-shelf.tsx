@@ -3,30 +3,74 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { SERVICES } from "@/lib/services";
 import { Lozenge } from "./ornaments";
 
 /**
- * THINGS WE DO WELL — the shelf.
+ * OUR EXPERT SERVICES — the shelf (the home page's signature).
  *
- * This is the page's signature. The bottles are the real label art, on a real
- * wooden-rule shelf; the active one steps forward and its label card fills in
- * below. It works three ways, in this order of preference:
+ * Deliberately DECOUPLED from lib/services.ts: this is a marketing showcase of
+ * five headline offerings (incl. Social Media + AI, which aren't top-level
+ * /services routes), so it keeps its own list here. Touching lib/services.ts
+ * would change the load-bearing /services routes + 301 redirects, which we don't
+ * want. Bottle art is /assets/bottle-*.png (280x600, shown ~50%).
  *
- *   1. Hover  — instant, no click needed, feels like reaching for a bottle.
- *   2. Click / Enter — commits the selection (needed on touch).
- *   3. Arrow keys — the whole shelf is one roving-tabindex radiogroup, so a
- *      keyboard user moves along it exactly like a mouse user does.
- *
- * Nothing here is decoration: the bottle IS the nav item.
+ * Two interaction states:
+ *   - Before a pick: hovering a bottle GROWS it (preview) — transform-origin
+ *     bottom, so it looms up off the shelf rather than hopping.
+ *   - After a pick (click / Enter / arrow-keys): the chosen bottle stays grown;
+ *     hovering the OTHERS only lifts their fade (opacity), so they still read as
+ *     interactive without growing. Its label card fills in below.
  */
+type Bottle = { no: string; name: string; bottle: string; blurb: string; href: string };
+
+const SHELF: Bottle[] = [
+  {
+    no: "01",
+    name: "Paid Ads",
+    bottle: "/assets/bottle-paidads.png",
+    blurb: "A measured boost when you need it — every dollar tracked from click to customer.",
+    href: "/services/paid-advertising",
+  },
+  {
+    no: "02",
+    name: "Social Media",
+    bottle: "/assets/bottle-socialmedia.png",
+    blurb: "Show up where your audience already scrolls — with a reason to follow and a reason to stay.",
+    href: "/services/content-marketing/social-media",
+  },
+  {
+    no: "03",
+    name: "AI",
+    bottle: "/assets/bottle-ai.png",
+    blurb: "Practical AI woven into your marketing — faster content, sharper targeting, less busywork.",
+    href: "/contact",
+  },
+  {
+    no: "04",
+    name: "SEO",
+    bottle: "/assets/bottle-seo.png",
+    blurb: "Be found first. We reverse-engineer what your industry's leaders rank for — then out-formulate them.",
+    href: "/services/seo",
+  },
+  {
+    no: "05",
+    name: "Content Marketing",
+    bottle: "/assets/bottle-contentmarketing.png",
+    blurb: "Honest stories, told well, everywhere your customers already are. No snake oil.",
+    href: "/services/content-marketing",
+  },
+];
+
 export function BottleShelf() {
   const [active, setActive] = useState(0);
   const [committed, setCommitted] = useState(false);
-  const s = SERVICES[active];
+  const [hovered, setHovered] = useState<number | null>(null);
+  // The card previews whatever you're pointing at; otherwise it shows the
+  // selection (or the last-hovered before a pick).
+  const s = SHELF[hovered ?? active];
 
   const move = (dir: 1 | -1) => {
-    setActive((i) => (i + dir + SERVICES.length) % SERVICES.length);
+    setActive((i) => (i + dir + SHELF.length) % SHELF.length);
     setCommitted(true);
   };
 
@@ -36,15 +80,15 @@ export function BottleShelf() {
         <div className="text-center">
           <div className="eyebrow">From the Shelf</div>
           <h2 id="shelf-heading" className="display mt-2 text-2xl text-ink sm:text-3xl">
-            Things We Do Well
+            Our Expert Services
           </h2>
           <Lozenge className="mt-4" />
-          <p className="mt-4 text-base italic text-ink-faint">
-            choose a bottle from the shelf
+          <p className="mt-4 text-lg italic text-ink-faint">
+            click on any bottle on the shelf to learn more
           </p>
         </div>
 
-        {/* --- The shelf ---------------------------------------------------- */}
+        {/* --- The shelf --------------------------------------------------- */}
         <div
           role="radiogroup"
           aria-label="Our services"
@@ -52,35 +96,38 @@ export function BottleShelf() {
             if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); move(1); }
             if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); move(-1); }
           }}
-          className="mt-10 flex items-end justify-center gap-2 sm:gap-6"
+          onMouseLeave={() => setHovered(null)}
+          className="mx-auto mt-10 flex max-w-2xl items-end justify-center gap-1 sm:gap-2"
+          style={{ perspective: "1200px", perspectiveOrigin: "50% 120%" }}
         >
-          {SERVICES.map((service, i) => {
+          {SHELF.map((item, i) => {
             const isActive = i === active;
             return (
               <button
-                key={service.slug}
+                key={item.name}
                 role="radio"
                 aria-checked={isActive}
                 tabIndex={isActive ? 0 : -1}
-                aria-label={service.name}
-                onMouseEnter={() => !committed && setActive(i)}
+                aria-label={item.name}
+                onMouseEnter={() => { setHovered(i); if (!committed) setActive(i); }}
                 onFocus={() => setActive(i)}
                 onClick={() => { setActive(i); setCommitted(true); }}
-                className="group relative flex flex-col items-center transition-transform duration-300 ease-out"
-                style={{
-                  transform: isActive ? "translateY(-14px)" : "translateY(0)",
-                }}
+                className="group relative flex flex-col items-center"
+                style={{ zIndex: isActive ? 10 : 1 }}
               >
                 <Image
-                  src={service.bottle}
+                  src={item.bottle}
                   alt=""
-                  width={110}
-                  height={190}
-                  className="h-24 w-auto transition-all duration-300 sm:h-40"
+                  width={280}
+                  height={600}
+                  className={`h-auto w-14 origin-bottom transition-all duration-300 ease-out sm:w-[120px] ${
+                    isActive
+                      ? "opacity-100"
+                      : "opacity-60 grayscale-[0.35] group-hover:opacity-80 group-hover:grayscale-[0.15]"
+                  }`}
                   style={{
-                    filter: isActive
-                      ? "drop-shadow(0 14px 22px rgba(59,52,42,0.28))"
-                      : "grayscale(0.35) opacity(0.62)",
+                    transform: isActive ? "scale(1.28)" : "scale(1)",
+                    filter: isActive ? "drop-shadow(0 20px 26px rgba(59,52,42,0.32))" : undefined,
                   }}
                 />
                 {/* No. plate under each bottle */}
@@ -88,7 +135,7 @@ export function BottleShelf() {
                   className="mt-2 font-display text-[9px] font-bold tracking-[0.2em] transition-colors"
                   style={{ color: isActive ? "var(--color-tincture)" : "var(--color-ink-faint)" }}
                 >
-                  No. {service.no}
+                  No. {item.no}
                 </span>
               </button>
             );
@@ -105,32 +152,14 @@ export function BottleShelf() {
             <div className="font-display text-[10px] font-bold tracking-[0.3em] text-cobalt">
               FORMULA No. {s.no}
             </div>
-            <div className="display mt-2 text-xl text-tincture sm:text-2xl">{s.label}</div>
-            <div className="mt-2 font-display text-xs font-semibold tracking-[0.2em] text-ink-faint">
-              {s.name.toUpperCase()}
-            </div>
+            <div className="display mt-2 text-xl text-tincture sm:text-2xl">{s.name}</div>
 
             <Lozenge className="my-6" />
 
-            <p className="mx-auto max-w-md text-lg italic leading-8 text-ink-soft">
-              {s.desc}
-            </p>
+            <p className="mx-auto max-w-md text-lg italic leading-8 text-ink-soft">{s.blurb}</p>
 
-            {s.subs.length > 0 && (
-              <div className="mt-6 flex flex-wrap justify-center gap-2">
-                {s.subs.map((sub) => (
-                  <span
-                    key={sub.slug}
-                    className="border border-rule-strong bg-panel px-2 py-2 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft"
-                  >
-                    {sub.name.toUpperCase()}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <Link href={`/services/${s.slug}`} className="btn btn-fill mt-8">
-              EXPLORE {s.label}
+            <Link href={s.href} className="btn btn-fill mt-8">
+              EXPLORE {s.name.toUpperCase()}
             </Link>
           </div>
         </div>
