@@ -10,11 +10,15 @@ import type { ServiceKey } from "./supabase";
  *
  * Adding a service = adding an object here. Nothing else to touch.
  *
- * NOTE ON GRAPHIC DESIGN: the mockup shelves four bottles; the live site sells
- * five. Graphic Design is included below (No. 05) because it has a live indexed
- * page at /graphic-design/ that we're 301ing, and you sent the bottle art. If
- * you'd rather retire it, delete this one object — the shelf, the formulary and
- * the redirect target all fall back gracefully to four.
+ * GRAPHIC DESIGN was retired 2026-07-18. Retiring a service is NOT just
+ * deleting the object: `/graphic-design` is a live indexed URL with a 301 in
+ * next.config.ts that pointed at `/services/graphic-design`. Deleting the
+ * service would have left that redirect landing on a 404, so the redirect was
+ * repointed to `/services`. If you ever retire another service, repoint every
+ * redirect aimed at it first.
+ *
+ * BOTTLE ART: seo / content / paid use the new bottle-*.png set. Web Development
+ * is still on the old bottlewebdev.png — swap it when the new art arrives.
  */
 export type SubService = {
   slug: string;
@@ -47,7 +51,7 @@ export const SERVICES: Service[] = [
     name: "Search Engine Optimization",
     desc: "Our recipe for rankings is as guarded as Grandma's apple pie — and twice as effective.",
     lede: "Be found first. We reverse-engineer what your industry's leaders rank for — then out-formulate them.",
-    bottle: "/assets/bottleseo.png",
+    bottle: "/assets/bottle-seo.png",
     subs: [
       {
         slug: "keyword-research",
@@ -74,6 +78,7 @@ export const SERVICES: Service[] = [
     name: "Web Development",
     desc: "Most sites are trampolines — visitors bounce. We build jungle gyms they climb all over.",
     lede: "Sites that visitors climb all over instead of bouncing off. Built fast, built to convert.",
+    // TODO: still the old art — swap to /assets/bottle-webdev.png when it lands.
     bottle: "/assets/bottlewebdev.png",
     subs: [
       {
@@ -101,7 +106,7 @@ export const SERVICES: Service[] = [
     name: "Content Marketing",
     desc: "Honesty is the best policy — and the best marketing. We bottle your story and pour it everywhere.",
     lede: "Honest stories, told well, everywhere your customers already are. No snake oil.",
-    bottle: "/assets/bottlecontentmktg.png",
+    bottle: "/assets/bottle-contentmarketing.png",
     subs: [
       {
         slug: "social-media",
@@ -128,7 +133,7 @@ export const SERVICES: Service[] = [
     name: "Paid Advertising",
     desc: "Like a double shot of espresso for your pipeline — measured, potent, repeatable.",
     lede: "A measured boost when you need it — every dollar tracked from click to customer.",
-    bottle: "/assets/bottlepaidads.png",
+    bottle: "/assets/bottle-paidads.png",
     subs: [
       {
         slug: "google-ppc",
@@ -146,17 +151,6 @@ export const SERVICES: Service[] = [
         blurb: "Put money behind the posts that are already working.",
       },
     ],
-  },
-  {
-    key: "design",
-    no: "05",
-    slug: "graphic-design",
-    label: "MARK & SEAL",
-    name: "Graphic Design",
-    desc: "A logo is a signature. We make yours worth signing.",
-    lede: "Identity, packaging and print — the part of the brand people can hold.",
-    bottle: "/assets/bottlegraphicdesign.png",
-    subs: [],
   },
 ];
 

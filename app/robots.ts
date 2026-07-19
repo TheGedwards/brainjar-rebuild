@@ -1,10 +1,14 @@
 import type { MetadataRoute } from "next";
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.brainjarmedia.com";
+import { SITE_URL, IS_PRODUCTION_SITE } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
+  // Staging / localhost: blanket disallow so the site is never indexed twice.
+  if (!IS_PRODUCTION_SITE) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
+
   return {
     rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/api/"] },
-    sitemap: `${SITE}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

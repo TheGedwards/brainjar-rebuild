@@ -191,9 +191,9 @@ supabase/seed.sql                run second
 
 ## Two open decisions
 
-1. **Graphic Design** is included as Formula No. 05 — it has a live indexed page
-   and you sent the bottle art, but the mockup only shelves four. To retire it,
-   delete that one object from `lib/services.ts`.
+1. **Graphic Design** was retired (2026-07-18). The old `/graphic-design` URL
+   now 301s to `/services` rather than the deleted page — if you ever retire
+   another service, repoint its redirects too or the old URL starts 404ing.
 2. **Stat chips are empty**, as you asked. The design is fully built for them;
    the moment you add real numbers in `/admin` they light up on the cards, the
    case studies and the home page.

@@ -21,7 +21,7 @@ const spectral = Spectral({
   display: "swap",
 });
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.brainjarmedia.com";
+import { SITE_URL as SITE, IS_PRODUCTION_SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   description:
     "A digital apothecary for ambitious brands. SEO, web development, content marketing and paid advertising from Gresham, Oregon. Two decades of measurable results.",
   alternates: { canonical: "/" },
+  // Staging/localhost emit <meta name="robots" content="noindex,nofollow">.
+  // robots.txt alone won't stop indexing of a URL linked from elsewhere.
+  robots: IS_PRODUCTION_SITE ? undefined : { index: false, follow: false },
   openGraph: {
     type: "website",
     siteName: "Brainjar Media",

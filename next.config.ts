@@ -30,7 +30,9 @@ const servicePages = [
   { source: "/web-development", destination: "/services/web-development" },
   { source: "/content-marketing", destination: "/services/content-marketing" },
   { source: "/paid-advertisements", destination: "/services/paid-advertising" },
-  { source: "/graphic-design", destination: "/services/graphic-design" },
+  // Graphic Design was retired 2026-07-18. This old indexed URL now lands on
+  // the Formulary instead of a dead service page — do NOT delete this rule.
+  { source: "/graphic-design", destination: "/services" },
 ];
 
 /**

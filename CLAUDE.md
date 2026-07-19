@@ -101,6 +101,22 @@ Plus `posts` and `leads`.
   before Supabase is configured. Queries fail into `.catch(() => [])` and pages
   render their empty states.
 
+## Indexability — read before launch
+
+`lib/site.ts` derives `IS_PRODUCTION_SITE` from **`NEXT_PUBLIC_SITE_URL`**
+(true only when it contains `brainjarmedia.com`). That one env var drives both
+`app/robots.ts` and the `robots` meta tag in `app/layout.tsx`:
+
+- Not production (staging `*.vercel.app`, localhost) → `robots.txt` is
+  `Disallow: /` **and** every page emits `noindex, nofollow`. This is deliberate:
+  an indexed staging copy competes with the real site in search.
+- Production → normal `allow: /`, sitemap advertised, no noindex.
+
+🚨 **At launch you MUST set `NEXT_PUBLIC_SITE_URL=https://www.brainjarmedia.com`
+in Vercel.** If it still points at a `*.vercel.app` URL, the live site ships
+`noindex` and will be deindexed. Verify after go-live by loading `/robots.txt`
+and checking the page source for a `robots` meta tag.
+
 ## Contact info — canonical
 
 The single source of truth for NAP (name/address/phone). If it appears on the
@@ -124,9 +140,12 @@ overrides, which live in the DB and won't show up in a code grep.
   first and emailed second (best-effort via Resend), so nothing is lost if email
   isn't configured.
 - No real portfolio screenshots yet.
-- Graphic Design is included as Formula No. 05 because it has a live indexed page
-  at `/graphic-design/`. The mockup only shelved four bottles. To retire it,
-  delete one object from `lib/services.ts` — nothing else needs to change.
+- Graphic Design was **retired** 2026-07-18. Its old indexed `/graphic-design`
+  URL now 301s to `/services` (next.config.ts) instead of the deleted service
+  page. Retiring a service is never "just delete the object" — always repoint
+  any redirect aimed at it, or you turn a live URL into a 404.
+- Web Development still uses the old `bottlewebdev.png`; the other three use the
+  new `bottle-*.png` art. Swap it when the new web-dev bottle arrives.
 
 ## Commands
 
