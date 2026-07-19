@@ -66,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               description:
                 "Digital marketing agency specializing in SEO, web development, content marketing and paid advertising.",
               url: SITE,
-              telephone: "+1-503-492-6500",
+              telephone: "+1-503-929-7436",
               foundingDate: "2003",
               address: {
                 "@type": "PostalAddress",

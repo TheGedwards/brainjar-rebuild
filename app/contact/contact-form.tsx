@@ -37,7 +37,7 @@ export function ContactForm() {
       // Say what went wrong and what to do instead. Never just "Oops!"
       setError(
         body.error ??
-          "That didn't send. Call (503) 492-6500 and we'll take it down over the phone."
+          "That didn't send. Call (503) 929-7436 and we'll take it down over the phone."
       );
     }
   }
@@ -49,8 +49,8 @@ export function ContactForm() {
           <div className="display text-xl text-tincture">PRESCRIPTION RECEIVED</div>
           <p className="mt-4 text-lg italic text-ink-soft">
             We&rsquo;ll be in touch within one business day. If it&rsquo;s urgent, call{" "}
-            <a href="tel:+15034926500" className="text-tincture underline underline-offset-4">
-              (503) 492-6500
+            <a href="tel:+15039297436" className="text-tincture underline underline-offset-4">
+              (503) 929-7436
             </a>
             .
           </p>

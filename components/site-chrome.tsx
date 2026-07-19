@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { MobileNav } from "./mobile-nav";
 
 /**
  * The public marketing header/footer wrap the whole app via the root layout —
@@ -27,6 +28,9 @@ export function SiteChrome({
         {children}
       </main>
       {!isAdmin && footer}
+      {/* Bottom pill nav (mobile) + a spacer so it never covers the footer. */}
+      {!isAdmin && <div aria-hidden className="h-20 md:hidden" />}
+      {!isAdmin && <MobileNav />}
     </>
   );
 }

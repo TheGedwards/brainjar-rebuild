@@ -104,7 +104,7 @@ export const PAGE_SEO: Record<string, { title: string; description: string }> = 
   contact: {
     title: "Get a Diagnosis — Contact",
     description:
-      "Tell us the symptom and we’ll mix the cure. Brainjar Media, 109 N Main Ave #202, Gresham, OR 97030. (503) 492-6500.",
+      "Tell us the symptom and we’ll mix the cure. Brainjar Media, 109 N Main Ave #202, Gresham, OR 97030. (503) 929-7436.",
   },
   work: {
     title: "The Medicine Cabinet — Portfolio",

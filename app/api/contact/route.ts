@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   if (error) {
     console.error("lead insert failed", error);
     return NextResponse.json(
-      { error: "We couldn't save that. Call (503) 492-6500 and we'll take it down." },
+      { error: "We couldn't save that. Call (503) 929-7436 and we'll take it down." },
       { status: 500 }
     );
   }

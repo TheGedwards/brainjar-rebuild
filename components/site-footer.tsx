@@ -20,8 +20,8 @@ export function SiteFooter() {
             <address className="space-y-1 text-base not-italic text-ink-soft">
               <div>109 N Main Ave #202</div>
               <div>Gresham, OR 97030</div>
-              <a href="tel:+15034926500" className="mt-2 block text-tincture hover:underline">
-                (503) 492-6500
+              <a href="tel:+15039297436" className="mt-2 block text-tincture hover:underline">
+                (503) 929-7436
               </a>
             </address>
           </div>

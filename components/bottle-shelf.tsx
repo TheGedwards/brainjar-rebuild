@@ -40,9 +40,10 @@ const SHELF: Bottle[] = [
   },
   {
     no: "03",
-    name: "AI",
+    name: "AI Optimization",
     bottle: "/assets/bottle-ai.png",
-    blurb: "Practical AI woven into your marketing — faster content, sharper targeting, less busywork.",
+    blurb:
+      "Your customers are skipping Google and asking AI instead. We make sure AI recommends your business.",
     href: "/contact",
   },
   {

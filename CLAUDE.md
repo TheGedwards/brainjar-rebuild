@@ -101,6 +101,23 @@ Plus `posts` and `leads`.
   before Supabase is configured. Queries fail into `.catch(() => [])` and pages
   render their empty states.
 
+## Contact info — canonical
+
+The single source of truth for NAP (name/address/phone). If it appears on the
+site, it must match this exactly — it's local-SEO signal, not just copy.
+
+- **Phone: (503) 929-7436** — `tel:+15039297436`, schema `+1-503-929-7436`.
+- Address: 109 N Main Ave #202, Gresham, OR 97030.
+
+⚠️ **(503) 492-6500 is DEAD** — disconnected, never reintroduce it. It used to
+appear in the footer, contact page, contact-form error/success states, the
+`/api/contact` failure message, the `ProfessionalService` JSON-LD in
+`app/layout.tsx`, and the contact SEO description in `lib/pages.ts`. All were
+replaced 2026-07-18. If the phone changes again, grep for the digits in all
+three formats: display `(503) 929-7436`, link `tel:+15039297436`, schema
+`+1-503-929-7436` — and check `page_content` in Supabase for any saved SEO/copy
+overrides, which live in the DB and won't show up in a code grep.
+
 ## Open items
 
 - Contact form destination email not yet chosen. Leads are written to Supabase

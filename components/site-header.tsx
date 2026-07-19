@@ -17,7 +17,6 @@ const NAV = [
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -36,9 +35,6 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // Close the mobile menu on navigation or when the sticky state flips.
-  useEffect(() => setOpen(false), [pathname, scrolled]);
 
   const navLink = (item: (typeof NAV)[number], extra = "") => (
     <Link
@@ -104,19 +100,15 @@ export function SiteHeader() {
           )}
         </nav>
 
-        {/* Mobile bar (in-flow) */}
-        <div className="double-rule mt-4 flex items-center justify-between px-4 py-4 md:hidden">
-          <a href="tel:+15039297436" className="font-display text-[11px] tracking-[0.15em] text-tincture">
+        {/* Mobile bar (in-flow) — phone only. Navigation lives in the bottom
+            pill (components/mobile-nav.tsx), so there's no hamburger. */}
+        <div className="double-rule mt-4 flex items-center justify-center px-4 py-4 md:hidden">
+          <a
+            href="tel:+15039297436"
+            className="font-display text-[11px] tracking-[0.15em] text-tincture"
+          >
             (503) 929-7436
           </a>
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-ink"
-          >
-            {open && !scrolled ? "Close" : "Menu"}
-          </button>
         </div>
       </div>
 
@@ -136,43 +128,10 @@ export function SiteHeader() {
             <nav aria-label="Primary" className="hidden items-center gap-6 md:flex">
               {NAV.map((item) => navLink(item))}
             </nav>
-
-            <button
-              onClick={() => setOpen((v) => !v)}
-              aria-expanded={open}
-              aria-controls="mobile-nav"
-              className="font-display text-[11px] font-bold uppercase tracking-[0.2em] text-ink md:hidden"
-            >
-              {open ? "Close" : "Menu"}
-            </button>
           </div>
         </div>
       )}
 
-      {/* Mobile dropdown. In-flow under the mobile bar at the top; fixed under
-          the condensed bar once scrolled. Only one renders at a time. */}
-      {open && (
-        <nav
-          id="mobile-nav"
-          aria-label="Primary"
-          className={`z-40 flex flex-col border-b border-rule bg-card md:hidden ${
-            scrolled ? "fixed inset-x-0 top-[53px]" : ""
-          }`}
-        >
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className={`border-b border-rule px-6 py-4 text-left font-display text-xs font-semibold uppercase tracking-[0.2em] last:border-0 ${
-                isActive(item.href) ? "text-tincture" : "text-ink"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      )}
     </header>
   );
 }

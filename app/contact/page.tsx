@@ -48,8 +48,8 @@ export default async function ContactPage() {
             </div>
             <div>
               <div className="eyebrow mb-2">By Telephone</div>
-              <a href="tel:+15034926500" className="text-lg text-tincture hover:underline">
-                (503) 492-6500
+              <a href="tel:+15039297436" className="text-lg text-tincture hover:underline">
+                (503) 929-7436
               </a>
             </div>
             <div>
