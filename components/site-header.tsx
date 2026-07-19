@@ -115,14 +115,20 @@ export function SiteHeader() {
       {/* Condensed, branded sticky bar — appears once the header scrolls off. */}
       {scrolled && (
         <div className="fixed inset-x-0 top-0 z-50 border-b-[3px] border-double border-rule-strong bg-paper">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-2">
+          {/* Centered brand lockup on mobile ("BRAINJAR [jar] MEDIA"); on md+
+              it sits left and the nav takes the right. */}
+          <div className="mx-auto flex max-w-6xl items-center justify-center gap-4 px-6 py-2 md:justify-between">
             <Link
               href="/"
               aria-label="Brainjar Media — home"
-              className="flex items-center gap-2.5"
+              className="flex items-center gap-2"
             >
-              <BrandMark width={40} />
-              <span className="display text-sm tracking-[0.24em] text-ink">BRAINJAR MEDIA</span>
+              {/* The -mr cancels each word's trailing letter-space so the gaps
+                  either side of the jar are visually equal. Keep it matched to
+                  that word's tracking value. */}
+              <span className="display -mr-[0.2em] text-sm tracking-[0.2em] text-ink">BRAINJAR</span>
+              <BrandMark width={36} />
+              <span className="display -mr-[0.28em] text-sm tracking-[0.28em] text-ink">MEDIA</span>
             </Link>
 
             <nav aria-label="Primary" className="hidden items-center gap-6 md:flex">
