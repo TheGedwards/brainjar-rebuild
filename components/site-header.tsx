@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Swirl } from "./ornaments";
 import { BrandMark } from "./brand-mark";
+import { ServicesMenu } from "./services-menu";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -36,22 +37,33 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const navLinkClass = (item: (typeof NAV)[number], extra = "") =>
+    `font-display text-xs font-semibold uppercase tracking-[0.2em] transition-colors ${extra} ${
+      isActive(item.href)
+        ? "text-tincture"
+        : item.accent
+          ? "text-cobalt hover:text-tincture"
+          : "text-ink hover:text-tincture"
+    }`;
+
   const navLink = (item: (typeof NAV)[number], extra = "") => (
     <Link
       key={item.href}
       href={item.href}
       aria-current={isActive(item.href) ? "page" : undefined}
-      className={`font-display text-xs font-semibold uppercase tracking-[0.2em] transition-colors ${extra} ${
-        isActive(item.href)
-          ? "text-tincture"
-          : item.accent
-            ? "text-cobalt hover:text-tincture"
-            : "text-ink hover:text-tincture"
-      }`}
+      className={navLinkClass(item, extra)}
     >
       {item.label}
     </Link>
   );
+
+  /** One nav item — Services gets the dropdown, everything else a plain link. */
+  const navItem = (item: (typeof NAV)[number], extra = "") =>
+    item.href === "/services" ? (
+      <ServicesMenu key={item.href} linkClass={navLinkClass(item, extra)} />
+    ) : (
+      navLink(item, extra)
+    );
 
   return (
     <header>
@@ -96,7 +108,7 @@ export function SiteHeader() {
           className="double-rule mt-4 hidden justify-center gap-8 py-4 md:flex"
         >
           {NAV.map((item) =>
-            navLink(item, isActive(item.href) ? "border-b-2 border-tincture pb-[3px]" : "")
+            navItem(item, isActive(item.href) ? "border-b-2 border-tincture pb-[3px]" : "")
           )}
         </nav>
 
@@ -132,7 +144,7 @@ export function SiteHeader() {
             </Link>
 
             <nav aria-label="Primary" className="hidden items-center gap-6 md:flex">
-              {NAV.map((item) => navLink(item))}
+              {NAV.map((item) => navItem(item))}
             </nav>
           </div>
         </div>

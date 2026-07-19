@@ -69,6 +69,9 @@ lib/pages.ts        Registry of editable marketing pages + their copy "slots"
                     *accent* + newline (see lib/render-copy.tsx).
 components/         bottle-shelf.tsx is the signature element. ornaments.tsx
                     holds every piece of period decoration, drawn as SVG.
+                    services-menu.tsx is the nav's Services dropdown — it reads
+                    SERVICES, so it needs no edit when a service is added or
+                    retired. Desktop only; mobile navigates via mobile-nav.tsx.
 app/admin/          Supabase Auth via middleware.ts (session gate -> /admin/login).
                     Server actions in actions.ts, each role-gated. noindex.
                     Users are managed in-app by super_admins.
@@ -144,8 +147,8 @@ overrides, which live in the DB and won't show up in a code grep.
   URL now 301s to `/services` (next.config.ts) instead of the deleted service
   page. Retiring a service is never "just delete the object" — always repoint
   any redirect aimed at it, or you turn a live URL into a 404.
-- Web Development still uses the old `bottlewebdev.png`; the other three use the
-  new `bottle-*.png` art. Swap it when the new web-dev bottle arrives.
+- All four services use the new `bottle-*.png` art (web dev is
+  `bottle-websitedev.png`).
 
 ## Commands
 

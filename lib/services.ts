@@ -3,6 +3,7 @@ import type { ServiceKey } from "./supabase";
 /**
  * The formulary. This single array drives:
  *   - the interactive bottle shelf on the home page
+ *   - the Services dropdown in the main nav (components/services-menu.tsx)
  *   - /services (the Formulary)
  *   - /services/[service] and /services/[service]/[sub] (17 pages, one template)
  *   - the portfolio filter chips
@@ -17,8 +18,7 @@ import type { ServiceKey } from "./supabase";
  * repointed to `/services`. If you ever retire another service, repoint every
  * redirect aimed at it first.
  *
- * BOTTLE ART: seo / content / paid use the new bottle-*.png set. Web Development
- * is still on the old bottlewebdev.png — swap it when the new art arrives.
+ * BOTTLE ART: all four services use the new bottle-*.png set.
  */
 export type SubService = {
   slug: string;
@@ -78,8 +78,7 @@ export const SERVICES: Service[] = [
     name: "Web Development",
     desc: "Most sites are trampolines — visitors bounce. We build jungle gyms they climb all over.",
     lede: "Sites that visitors climb all over instead of bouncing off. Built fast, built to convert.",
-    // TODO: still the old art — swap to /assets/bottle-webdev.png when it lands.
-    bottle: "/assets/bottlewebdev.png",
+    bottle: "/assets/bottle-websitedev.png",
     subs: [
       {
         slug: "website-design",
