@@ -186,6 +186,54 @@ export async function uploadImage(fd: FormData): Promise<{ url?: string; error?:
   return { url: db.storage.from("media").getPublicUrl(path).data.publicUrl };
 }
 
+// --- Media library ----------------------------------------------------------
+
+export type MediaItem = {
+  name: string;
+  path: string;
+  url: string;
+  folder: string;
+  size: number;
+  updatedAt: string | null;
+};
+
+const isImageName = (n: string) => /\.(png|jpe?g|gif|webp|avif|svg)$/i.test(n);
+
+/** Everything in the `media` bucket (root + one level of folders). Managers+. */
+export async function listMedia(): Promise<MediaItem[]> {
+  await requireRole(CONTENT_ROLES);
+  const db = supabaseAdmin();
+  const pub = (p: string) => db.storage.from("media").getPublicUrl(p).data.publicUrl;
+  const opts = { limit: 1000, sortBy: { column: "updated_at", order: "desc" as const } };
+  const out: MediaItem[] = [];
+
+  const { data: root } = await db.storage.from("media").list("", opts);
+  const folders: string[] = [];
+  for (const it of root ?? []) {
+    // Supabase returns folder "prefixes" as entries with a null id.
+    if (it.id === null) folders.push(it.name);
+    else if (isImageName(it.name))
+      out.push({ name: it.name, path: it.name, url: pub(it.name), folder: "", size: it.metadata?.size ?? 0, updatedAt: it.updated_at ?? null });
+  }
+  for (const f of folders) {
+    const { data: files } = await db.storage.from("media").list(f, opts);
+    for (const it of files ?? []) {
+      if (it.id !== null && isImageName(it.name))
+        out.push({ name: it.name, path: `${f}/${it.name}`, url: pub(`${f}/${it.name}`), folder: f, size: it.metadata?.size ?? 0, updatedAt: it.updated_at ?? null });
+    }
+  }
+  return out;
+}
+
+/** Permanently remove an image from the bucket. Managers+. */
+export async function deleteMedia(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
+  const path = str(fd, "path");
+  if (!path) return;
+  await supabaseAdmin().storage.from("media").remove([path]);
+  revalidatePath("/admin/media");
+}
+
 // --- Clients ----------------------------------------------------------------
 
 export async function createClient(fd: FormData) {

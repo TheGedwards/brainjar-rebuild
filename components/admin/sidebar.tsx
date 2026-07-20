@@ -44,6 +44,13 @@ const ICONS: Record<string, React.ReactNode> = {
       <path d="M3 20a6 6 0 0 1 12 0M16 6a3 3 0 0 1 0 6M21 20a6 6 0 0 0-4-5.6" />
     </>
   ),
+  image: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="1" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path d="M21 15l-5-5L5 21" />
+    </>
+  ),
 };
 
 function Icon({ name }: { name: string }) {
@@ -76,6 +83,7 @@ const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: "dashboard" },
   { href: "/admin/portfolio", label: "Portfolio", icon: "flask" },
   { href: "/admin/blog", label: "Blog", icon: "news" },
+  { href: "/admin/media", label: "Media", icon: "image" },
   { href: "/admin/pages", label: "Pages", icon: "file", roles: ["super_admin", "admin"] },
   { href: "/admin/analytics", label: "Analytics", icon: "chart", soon: true },
   { href: "/admin/users", label: "Users", icon: "users", roles: ["super_admin"] },
