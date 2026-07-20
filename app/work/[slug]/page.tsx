@@ -6,6 +6,7 @@ import { getProject, getProjects } from "@/lib/supabase";
 import { SERVICE_CHIPS } from "@/lib/services";
 import { Lozenge, PointedRule } from "@/components/ornaments";
 import { GallerySlideshow } from "@/components/gallery-slideshow";
+import { EditTarget } from "@/components/admin-bar";
 
 export const revalidate = 300;
 
@@ -75,6 +76,7 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <article className="px-6 py-12">
+      <EditTarget href={`/admin/portfolio/${p.id}`} label="Edit this case study" />
       <nav className="mx-auto mb-8 max-w-5xl eyebrow text-center" aria-label="Breadcrumb">
         <Link href="/work" className="hover:text-tincture">
           The Medicine Cabinet

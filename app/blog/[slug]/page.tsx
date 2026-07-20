@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/supabase";
 import { Lozenge, PointedRule } from "@/components/ornaments";
 import { PostBody } from "@/components/post-body";
+import { EditTarget } from "@/components/admin-bar";
 
 export const revalidate = 300;
 
@@ -36,6 +37,7 @@ export default async function PostPage({ params }: Params) {
 
   return (
     <article className="px-6 py-12">
+      <EditTarget href={`/admin/blog/${post.id}`} label="Edit this post" />
       <header className="mx-auto max-w-2xl text-center">
         <Link href="/blog" className="eyebrow hover:text-tincture">
           Notes from the Dispensary

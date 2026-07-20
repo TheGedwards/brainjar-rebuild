@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Project, ServiceKey } from "@/lib/supabase";
 import { SERVICE_CHIPS } from "@/lib/services";
+import { AdminOnly } from "@/components/admin-bar";
 
 const FILTERS: { key: ServiceKey | "all"; label: string }[] = [
   { key: "all", label: "ALL" },
@@ -56,8 +57,16 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
         {shown.map((p) => {
           const headline = p.project_stats?.find((s) => s.is_headline) ?? p.project_stats?.[0];
           return (
+            <div key={p.id} className="group/card relative">
+            <AdminOnly>
+              <Link
+                href={`/admin/portfolio/${p.id}`}
+                className="absolute right-3 top-3 z-10 flex items-center rounded-full bg-ink/85 px-3 py-1 font-display text-[10px] font-bold tracking-[0.15em] text-paper opacity-0 transition-opacity hover:bg-ink group-hover/card:opacity-100"
+              >
+                EDIT
+              </Link>
+            </AdminOnly>
             <Link
-              key={p.id}
               href={`/work/${p.slug}`}
               className="group flex flex-col border border-rule bg-card transition-all duration-200 hover:-translate-y-1.5 hover:border-rule-strong hover:shadow-[0_14px_26px_rgba(59,52,42,0.14)]"
             >
@@ -107,6 +116,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
                 )}
               </div>
             </Link>
+            </div>
           );
         })}
       </div>

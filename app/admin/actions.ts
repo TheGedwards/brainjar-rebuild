@@ -9,6 +9,7 @@ import { sanitizeRichText } from "@/lib/sanitize";
 import { getPageDef } from "@/lib/pages";
 import {
   createServerSupabase,
+  getCurrentUser,
   requireRole,
   CONTENT_ROLES,
   ADMIN_ROLES,
@@ -56,6 +57,12 @@ export async function signOut() {
   const supabase = await createServerSupabase();
   await supabase.auth.signOut();
   redirect("/admin/login");
+}
+
+/** Lightweight role lookup for the public admin bar. Null if signed out. */
+export async function getMyRole(): Promise<Role | null> {
+  const current = await getCurrentUser();
+  return current?.profile.role ?? null;
 }
 
 // --- Users (super_admin only) ----------------------------------------------

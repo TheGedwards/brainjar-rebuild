@@ -3,6 +3,7 @@ import { Montserrat, Spectral } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteChrome } from "@/components/site-chrome";
+import { AdminBarProvider } from "@/components/admin-bar";
 import { BRAIN_KEYFRAMES } from "@/components/brand-mark";
 import "./globals.css";
 
@@ -53,9 +54,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <SiteChrome header={<SiteHeader />} footer={<SiteFooter />}>
-          {children}
-        </SiteChrome>
+        <AdminBarProvider>
+          <SiteChrome header={<SiteHeader />} footer={<SiteFooter />}>
+            {children}
+          </SiteChrome>
+        </AdminBarProvider>
 
         {/* LocalBusiness schema. The old site had none; this is free rich-result
             eligibility and it matters for "digital agency gresham". */}

@@ -126,7 +126,10 @@ export function SiteHeader() {
 
       {/* Condensed, branded sticky bar — appears once the header scrolls off. */}
       {scrolled && (
-        <div className="fixed inset-x-0 top-0 z-50 border-b-[3px] border-double border-rule-strong bg-paper">
+        <div
+          className="fixed inset-x-0 z-50 border-b-[3px] border-double border-rule-strong bg-paper"
+          style={{ top: "var(--bjm-adminbar, 0px)" }}
+        >
           {/* Centered brand lockup on mobile ("BRAINJAR [jar] MEDIA"); on md+
               it sits left and the nav takes the right. */}
           <div className="mx-auto flex max-w-6xl items-center justify-center gap-4 px-6 py-2 md:justify-between">

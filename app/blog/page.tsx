@@ -5,6 +5,7 @@ import { getPosts, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge } from "@/components/ornaments";
 import { renderHeading } from "@/lib/render-copy";
 import { PAGE_SEO } from "@/lib/pages";
+import { AdminOnly } from "@/components/admin-bar";
 
 export const revalidate = 300;
 
@@ -41,7 +42,15 @@ export default async function BlogPage() {
       <section className="px-6 pb-16">
         <div className="mx-auto max-w-3xl divide-y divide-rule border-y border-rule">
           {posts.map((post) => (
-            <article key={post.id} className="group py-8">
+            <article key={post.id} className="group relative py-8">
+              <AdminOnly>
+                <Link
+                  href={`/admin/blog/${post.id}`}
+                  className="absolute right-0 top-8 z-10 flex items-center rounded-full bg-ink/85 px-3 py-1 font-display text-[10px] font-bold tracking-[0.15em] text-paper opacity-0 transition-opacity hover:bg-ink group-hover:opacity-100"
+                >
+                  EDIT
+                </Link>
+              </AdminOnly>
               <Link href={`/blog/${post.slug}`} className="grid gap-6 sm:grid-cols-[1fr_180px]">
                 <div>
                   <time
