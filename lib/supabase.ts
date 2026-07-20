@@ -59,6 +59,8 @@ export type Project = {
   slug: string;
   title: string;
   tagline: string | null;
+  /** Optional mock-Latin epithet shown under the name on the specimen plate. */
+  binomial: string | null;
   services: ServiceKey[];
   summary: string | null;
   challenge: string | null;
@@ -85,9 +87,11 @@ export type Post = {
   published_at: string | null;
 };
 
+// `*` (rather than an explicit column list) so a newly-added column like
+// `binomial` is picked up automatically and, crucially, a deploy that lands
+// before the specimen.sql migration doesn't hard-error on a missing column.
 const PROJECT_SELECT = `
-  id, slug, title, tagline, services, summary, challenge, approach, outcome,
-  hero_image_url, gallery, year,
+  *,
   clients ( id, slug, name, category, industry, city, website_url, logo_url, is_featured, sort_order ),
   project_stats ( id, value, label, is_headline, sort_order )
 `;

@@ -76,7 +76,9 @@ app/admin/          Supabase Auth via middleware.ts (session gate -> /admin/logi
                     Server actions in actions.ts, each role-gated. noindex.
                     Users are managed in-app by super_admins.
 supabase/           schema.sql, seed.sql, cms-auth.sql, blog-media.sql,
-                    pages.sql. Run in the Supabase SQL editor, in that order.
+                    pages.sql, specimen.sql. Run in the Supabase SQL editor, in
+                    that order. specimen.sql adds projects.binomial (the
+                    optional mock-Latin epithet on the /work specimen plate).
 ```
 
 ## Data model

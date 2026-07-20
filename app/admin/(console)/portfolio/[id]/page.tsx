@@ -73,6 +73,13 @@ export default async function ProjectEditor({ params }: Params) {
         </div>
 
         <div>
+          <label className={label}>
+            Specimen epithet (optional mock-Latin line under the name, e.g. “Officina reparandi”)
+          </label>
+          <input name="binomial" defaultValue={project.binomial ?? ""} className={field} />
+        </div>
+
+        <div>
           <label className={label}>Services</label>
           <div className="flex flex-wrap gap-4">
             {SERVICE_KEYS.map((k) => (
@@ -129,10 +136,11 @@ export default async function ProjectEditor({ params }: Params) {
 
       {/* Stats --------------------------------------------------------------- */}
       <div className="mt-6 border border-rule bg-card p-6">
-        <h3 className="font-display text-sm font-bold uppercase tracking-[0.2em]">Stat Chips</h3>
+        <h3 className="font-display text-sm font-bold uppercase tracking-[0.2em]">Measurements</h3>
         <p className="mt-1 text-base italic text-ink-soft">
-          Leave empty and the chip row simply doesn&rsquo;t render. Mark one headline to show it on
-          the portfolio card.
+          The first two appear as the side-by-side metrics inside the specimen plate on the case
+          study. Leave empty and the block simply doesn&rsquo;t render. Mark one headline to show it
+          on the portfolio card too.
         </p>
 
         {stats.length > 0 && (

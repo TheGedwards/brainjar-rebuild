@@ -238,6 +238,7 @@ export async function updateProject(fd: FormData) {
     .update({
       title: str(fd, "title") ?? "Untitled",
       tagline: str(fd, "tagline"),
+      binomial: str(fd, "binomial"),
       summary: str(fd, "summary"),
       challenge: str(fd, "challenge"),
       approach: str(fd, "approach"),
