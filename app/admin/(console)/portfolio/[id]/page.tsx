@@ -6,7 +6,7 @@ import type { ServiceKey } from "@/lib/supabase";
 import { updateProject, addStat, updateStat, deleteStat, setFeatured } from "@/app/admin/actions";
 import { field, label } from "@/components/admin/ui";
 import { GalleryEditor } from "@/components/admin/gallery-editor";
-import { ImageUpload } from "@/components/admin/image-upload";
+import { HeroImageField } from "@/components/admin/hero-image-field";
 import { DangerZone } from "./danger-zone";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +37,7 @@ export default async function ProjectEditor({ params, searchParams }: Params) {
   }[];
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-5xl">
       <Link
         href="/admin/portfolio"
         className="font-display text-[10px] tracking-[0.2em] text-ink-faint hover:text-tincture"
@@ -127,11 +127,10 @@ export default async function ProjectEditor({ params, searchParams }: Params) {
 
         <div>
           <label className={label}>Hero image (the Fig. 1 plate)</label>
-          <ImageUpload name="hero_image_url" initialUrl={project.hero_image_url ?? ""} folder="portfolio" />
-          <p className="mt-2 text-base italic text-ink-soft">
-            Best at <strong>1600×1000</strong> (a 16:10 landscape), min 1280×800, under 8MB. No
-            image? The plate shows the client&rsquo;s initials instead.
+          <p className="mb-3 text-base italic text-ink-soft">
+            Best at <strong>1600×1000</strong> (a 16:10 landscape), min 1280×800, under 8MB.
           </p>
+          <HeroImageField name="hero_image_url" initialUrl={project.hero_image_url ?? ""} />
         </div>
 
         {(["summary", "challenge", "approach", "outcome"] as const).map((f) => (
