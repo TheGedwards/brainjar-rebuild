@@ -70,7 +70,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
               href={`/work/${p.slug}`}
               className="group flex flex-col border border-rule bg-card transition-all duration-200 hover:-translate-y-1.5 hover:border-rule-strong hover:shadow-[0_14px_26px_rgba(59,52,42,0.14)]"
             >
-              <div className="relative flex h-48 items-center justify-center overflow-hidden bg-panel">
+              <div className="relative flex aspect-16/10 items-center justify-center overflow-hidden bg-panel">
                 {p.hero_image_url ? (
                   <Image
                     src={p.hero_image_url}
