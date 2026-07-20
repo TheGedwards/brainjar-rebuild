@@ -167,6 +167,7 @@ export async function savePage(fd: FormData) {
 
   revalidatePath(path);
   revalidatePath(`/admin/pages/${def.key}`);
+  redirect(`/admin/pages/${def.key}?saved=1`);
 }
 
 // --- Media uploads ----------------------------------------------------------

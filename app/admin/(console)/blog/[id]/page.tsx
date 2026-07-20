@@ -30,7 +30,25 @@ export default async function PostEditor({ params }: Params) {
       </Link>
       <h1 className="mt-2 display text-2xl">{isNew ? "New Post" : "Edit Post"}</h1>
 
-      <form action={savePost} className="mt-6 space-y-5 border border-rule bg-card p-6">
+      {/* Sticky action bar — save + view live, reachable from the top. Saving a
+          published post redirects to the live post; a draft goes to the list. */}
+      <div className="sticky top-0 z-10 mt-4 flex items-center justify-between gap-3 border-y border-rule bg-paper/95 py-3 backdrop-blur">
+        <span className="font-display text-[10px] tracking-[0.2em] text-ink-faint">
+          {isNew ? "NEW POST" : `EDITING /blog/${post!.slug}`}
+        </span>
+        <div className="flex items-center gap-3">
+          {!isNew && post?.slug && (
+            <a href={`/blog/${post.slug}`} target="_blank" className="btn btn-outline !py-2.5">
+              VIEW PAGE ↗
+            </a>
+          )}
+          <button form="post-form" className="btn btn-fill !py-2.5">
+            SAVE
+          </button>
+        </div>
+      </div>
+
+      <form id="post-form" action={savePost} className="mt-6 space-y-5 border border-rule bg-card p-6">
         {post && <input type="hidden" name="id" value={post.id} />}
 
         <div className="grid gap-4 sm:grid-cols-2">
