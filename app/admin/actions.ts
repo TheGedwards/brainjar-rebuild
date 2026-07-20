@@ -256,6 +256,7 @@ export async function updateProject(fd: FormData) {
   if (slug) revalidatePath(`/work/${slug}`);
   revalidatePath("/");
   revalidatePath("/admin");
+  redirect(`/admin/portfolio/${id}?saved=1`);
 }
 
 export async function addStat(fd: FormData) {
@@ -273,6 +274,21 @@ export async function addStat(fd: FormData) {
     is_headline: fd.get("is_headline") === "on",
   });
 
+  revalidatePath("/work");
+  revalidatePath("/");
+  revalidatePath("/admin");
+}
+
+export async function updateStat(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
+  const id = str(fd, "id");
+  const value = str(fd, "value");
+  const label = str(fd, "label");
+  if (!id || !value || !label) return;
+  await supabaseAdmin()
+    .from("project_stats")
+    .update({ value, label: label.toUpperCase(), is_headline: fd.get("is_headline") === "on" })
+    .eq("id", id);
   revalidatePath("/work");
   revalidatePath("/");
   revalidatePath("/admin");

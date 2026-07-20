@@ -57,9 +57,9 @@ export function DangerZone({
           action={deleteClient}
           onSubmit={(e) => {
             const typed = window.prompt(
-              `This permanently deletes "${name}" and its /work/${slug} page.\n\nType the slug "${slug}" to confirm:`
+              `This permanently deletes "${name}" and its /work/${slug} page.\n\nType DELETE to confirm:`
             );
-            if (typed !== slug) {
+            if ((typed ?? "").trim().toUpperCase() !== "DELETE") {
               e.preventDefault();
             }
           }}

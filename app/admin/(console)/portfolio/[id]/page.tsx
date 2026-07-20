@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SERVICE_CHIPS } from "@/lib/services";
 import type { ServiceKey } from "@/lib/supabase";
-import { updateProject, addStat, deleteStat, setFeatured } from "@/app/admin/actions";
+import { updateProject, addStat, updateStat, deleteStat, setFeatured } from "@/app/admin/actions";
 import { field, label } from "@/components/admin/ui";
 import { GalleryEditor } from "@/components/admin/gallery-editor";
 import { DangerZone } from "./danger-zone";
@@ -12,10 +12,14 @@ export const dynamic = "force-dynamic";
 
 const SERVICE_KEYS = Object.keys(SERVICE_CHIPS) as ServiceKey[];
 
-type Params = { params: Promise<{ id: string }> };
+type Params = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
+};
 
-export default async function ProjectEditor({ params }: Params) {
+export default async function ProjectEditor({ params, searchParams }: Params) {
   const { id } = await params;
+  const { saved } = await searchParams;
   const db = supabaseAdmin();
   const { data: project } = await db
     .from("projects")
@@ -40,19 +44,43 @@ export default async function ProjectEditor({ params }: Params) {
         ← PORTFOLIO
       </Link>
 
-      <div className="mt-2 flex items-baseline justify-between">
-        <h1 className="display text-2xl">{project.clients?.name ?? project.title}</h1>
-        <a
-          href={`/work/${project.slug}`}
-          target="_blank"
-          className="font-display text-[10px] tracking-[0.2em] text-cobalt hover:text-tincture"
-        >
-          VIEW /work/{project.slug} ↗
-        </a>
+      <h1 className="mt-2 display text-2xl">{project.clients?.name ?? project.title}</h1>
+
+      {/* Sticky action bar — save + view live, reachable from the top. The Save
+          button lives outside the form and targets it via form="project-form". */}
+      <div className="sticky top-0 z-10 mt-4 flex items-center justify-between gap-3 border-y border-rule bg-paper/95 py-3 backdrop-blur">
+        <span className="font-display text-[10px] tracking-[0.2em] text-ink-faint">
+          EDITING /work/{project.slug}
+        </span>
+        <div className="flex items-center gap-3">
+          <a href={`/work/${project.slug}`} target="_blank" className="btn btn-outline !py-2.5">
+            VIEW PAGE ↗
+          </a>
+          <button form="project-form" className="btn btn-fill !py-2.5">
+            SAVE
+          </button>
+        </div>
       </div>
 
+      {saved && (
+        <div className="mt-4 flex items-center justify-between gap-3 border border-cobalt/40 bg-cobalt-lt/20 px-4 py-3">
+          <span className="text-base text-ink">Saved.</span>
+          <a
+            href={`/work/${project.slug}`}
+            target="_blank"
+            className="font-display text-[11px] font-bold tracking-[0.2em] text-cobalt hover:text-tincture"
+          >
+            VIEW THE LIVE PAGE ↗
+          </a>
+        </div>
+      )}
+
       {/* Project fields ------------------------------------------------------ */}
-      <form action={updateProject} className="mt-6 space-y-4 border border-rule bg-card p-6">
+      <form
+        id="project-form"
+        action={updateProject}
+        className="mt-6 space-y-4 border border-rule bg-card p-6"
+      >
         <input type="hidden" name="id" value={project.id} />
         <input type="hidden" name="slug" value={project.slug} />
 
@@ -146,17 +174,31 @@ export default async function ProjectEditor({ params }: Params) {
         {stats.length > 0 && (
           <ul className="mt-4 space-y-2">
             {stats.map((s) => (
-              <li key={s.id} className="flex items-center gap-3 border border-rule bg-panel px-3 py-2">
-                <span className="display text-base text-tincture">{s.value}</span>
-                <span className="font-display text-[10px] tracking-widest text-ink-faint">
-                  {s.label}
-                </span>
-                {s.is_headline && (
-                  <span className="font-display text-[9px] tracking-widest text-cobalt">
-                    ★ HEADLINE
-                  </span>
-                )}
-                <form action={deleteStat} className="ml-auto">
+              <li key={s.id} className="border border-rule bg-panel px-3 py-3">
+                {/* Edit in place */}
+                <form action={updateStat} className="flex flex-wrap items-end gap-3">
+                  <input type="hidden" name="id" value={s.id} />
+                  <div className="w-28">
+                    <label className={label}>Value</label>
+                    <input name="value" defaultValue={s.value} className={field} />
+                  </div>
+                  <div className="min-w-48 flex-1">
+                    <label className={label}>Label</label>
+                    <input name="label" defaultValue={s.label} className={field} />
+                  </div>
+                  <label className="flex items-center gap-2 pb-2.5 text-base">
+                    <input
+                      type="checkbox"
+                      name="is_headline"
+                      defaultChecked={s.is_headline}
+                      className="accent-[var(--color-tincture)]"
+                    />
+                    Headline
+                  </label>
+                  <button className="btn btn-outline mb-0.5 !py-2.5">UPDATE</button>
+                </form>
+                {/* Remove (separate form so it doesn't submit the edits) */}
+                <form action={deleteStat} className="mt-2">
                   <input type="hidden" name="id" value={s.id} />
                   <button className="font-display text-[10px] tracking-widest text-ink-faint hover:text-tincture">
                     REMOVE
