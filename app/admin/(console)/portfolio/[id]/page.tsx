@@ -6,6 +6,7 @@ import type { ServiceKey } from "@/lib/supabase";
 import { updateProject, addStat, updateStat, deleteStat, setFeatured } from "@/app/admin/actions";
 import { field, label } from "@/components/admin/ui";
 import { GalleryEditor } from "@/components/admin/gallery-editor";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { DangerZone } from "./danger-zone";
 
 export const dynamic = "force-dynamic";
@@ -125,8 +126,12 @@ export default async function ProjectEditor({ params, searchParams }: Params) {
         </div>
 
         <div>
-          <label className={label}>Hero image URL (Supabase Storage → media bucket)</label>
-          <input name="hero_image_url" defaultValue={project.hero_image_url ?? ""} className={field} />
+          <label className={label}>Hero image (the Fig. 1 plate)</label>
+          <ImageUpload name="hero_image_url" initialUrl={project.hero_image_url ?? ""} folder="portfolio" />
+          <p className="mt-2 text-base italic text-ink-soft">
+            Best at <strong>1600×1000</strong> (a 16:10 landscape), min 1280×800, under 8MB. No
+            image? The plate shows the client&rsquo;s initials instead.
+          </p>
         </div>
 
         {(["summary", "challenge", "approach", "outcome"] as const).map((f) => (
