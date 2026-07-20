@@ -73,7 +73,7 @@ export default async function BlogPage() {
                 </div>
 
                 {post.cover_image_url && (
-                  <div className="relative aspect-4/3 border border-rule">
+                  <div className="relative aspect-16/10 border border-rule">
                     <Image
                       src={post.cover_image_url}
                       alt=""

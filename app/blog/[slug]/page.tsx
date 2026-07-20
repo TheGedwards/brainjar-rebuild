@@ -63,7 +63,7 @@ export default async function PostPage({ params }: Params) {
 
       {post.cover_image_url && (
         <div className="mx-auto mt-10 max-w-3xl border border-rule-strong p-2">
-          <div className="relative aspect-16/9">
+          <div className="relative aspect-16/10">
             <Image
               src={post.cover_image_url}
               alt=""
