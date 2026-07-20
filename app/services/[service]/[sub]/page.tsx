@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SERVICES, getSubService } from "@/lib/services";
 import { Frame, Lozenge } from "@/components/ornaments";
+import { ServiceCTA } from "@/components/service-cta";
 
 type Params = { params: Promise<{ service: string; sub: string }> };
 
@@ -61,20 +62,13 @@ export default async function SubServicePage({ params }: Params) {
       <section className="px-6 pb-16">
         <div className="mx-auto max-w-2xl">
           <div className="prose-apothecary">
-            <p>
-              {item.name} is one part of {s.name.toLowerCase()} — Formula No. {s.no} in our
-              formulary. It is rarely taken alone, and it is never taken without a diagnosis first.
-            </p>
-            <p>
-              Replace this paragraph with the real page copy from the old site, or let us write it.
-              This page exists so that the {item.name.toLowerCase()} URL you already rank for keeps
-              its own home instead of being folded into a parent page.
-            </p>
+            <p>{item.intro}</p>
+            <p>{item.payoff}</p>
           </div>
 
           {siblings.length > 0 && (
             <div className="mt-10 border-t border-rule pt-8">
-              <div className="eyebrow mb-4">Often Taken With</div>
+              <div className="eyebrow mb-4">Included with your {s.name} prescription</div>
               <ul className="flex flex-wrap gap-2">
                 {siblings.map((sib) => (
                   <li key={sib.slug}>
@@ -91,6 +85,8 @@ export default async function SubServicePage({ params }: Params) {
           )}
         </div>
       </section>
+
+      <ServiceCTA />
     </>
   );
 }
