@@ -49,15 +49,24 @@ export function ServicesMenu({ linkClass }: { linkClass: string }) {
         aria-haspopup="menu"
         aria-expanded={open}
         onFocus={() => setOpen(true)}
-        className={`${linkClass} inline-flex items-center gap-1`}
+        /* `block` so the trigger anchors its text to the top of the line box
+           exactly like the sibling nav links (which blockify as direct flex
+           children). Without it the anchor stays inline and drops ~5px. The
+           wrapper div is content-width, so block doesn't widen the underline. */
+        className={`${linkClass} block`}
       >
         Services
+        {/* Inline SVG (not inline-flex) so the trigger keeps the same block
+            line-box as its sibling links and stays baseline-aligned with them.
+            ml-1 (4px) is the permitted grid half-step for an icon gap. */}
         <svg
           width="9"
           height="6"
           viewBox="0 0 9 6"
           aria-hidden="true"
-          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`ml-1 inline-block align-middle transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
         >
           <path d="M1 1L4.5 4.5L8 1" fill="none" stroke="currentColor" strokeWidth="1.4" />
         </svg>
