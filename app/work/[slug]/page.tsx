@@ -67,13 +67,11 @@ export default async function ProjectPage({ params }: Params) {
     .sort((a, b) => a.sort_order - b.sort_order)
     .slice(0, 2);
 
-  const sections = [
-    { label: "The Symptom", body: p.challenge },
-    { label: "The Formula", body: p.approach },
-    { label: "The Result", body: p.outcome },
-  ].filter((s) => s.body);
+  const hasNotes = !!(p.summary || p.challenge || p.approach || p.outcome);
 
-  const hasNotes = sections.length > 0 || !!p.summary;
+  // Split a body field on blank lines into paragraphs.
+  const paras = (body: string) =>
+    body.split("\n\n").map((t, i) => <p key={i}>{t}</p>);
 
   return (
     <article className="px-6 py-12">
@@ -178,20 +176,16 @@ export default async function ProjectPage({ params }: Params) {
                 )}
               </figure>
 
-              {/* ---- Field notes ---- */}
+              {/* ---- Diagnosis: summary + the symptom ---- */}
               <div>
                 {p.summary && <p className="prose-apothecary">{p.summary}</p>}
 
-                {sections.map((s, i) => (
-                  <section key={s.label} className={i === 0 && !p.summary ? "" : "mt-8"}>
-                    <h2 className="display text-sm tracking-[0.2em] text-ink">{s.label}</h2>
-                    <div className="prose-apothecary mt-3">
-                      {s.body!.split("\n\n").map((para, j) => (
-                        <p key={j}>{para}</p>
-                      ))}
-                    </div>
+                {p.challenge && (
+                  <section className={p.summary ? "mt-8" : ""}>
+                    <h2 className="display text-sm tracking-[0.2em] text-ink">The Symptom</h2>
+                    <div className="prose-apothecary mt-3">{paras(p.challenge)}</div>
                   </section>
-                ))}
+                )}
 
                 {!hasNotes && (
                   <p className="text-lg italic text-ink-faint">
@@ -204,6 +198,37 @@ export default async function ProjectPage({ params }: Params) {
                 )}
               </div>
             </div>
+
+            {/* ---- Our Solution: The Formula + The Result, side by side ---- */}
+            {(p.approach || p.outcome) && (
+              <div className="mt-10 border-t border-rule pt-8">
+                <h2 className="display mb-8 text-center text-sm tracking-[0.25em] text-tincture">
+                  Our Solution
+                </h2>
+                {p.approach && p.outcome ? (
+                  <div className="grid gap-8 md:grid-cols-[1fr_auto_1fr] md:items-stretch md:gap-0">
+                    <section className="md:pr-10">
+                      <h3 className="display text-sm tracking-[0.2em] text-ink">The Formula</h3>
+                      <div className="prose-apothecary mt-3">{paras(p.approach)}</div>
+                    </section>
+                    <div className="relative hidden w-px bg-rule-strong md:block" aria-hidden>
+                      <span className="absolute left-1/2 top-1/2 h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-tincture" />
+                    </div>
+                    <section className="md:pl-10">
+                      <h3 className="display text-sm tracking-[0.2em] text-ink">The Result</h3>
+                      <div className="prose-apothecary mt-3">{paras(p.outcome)}</div>
+                    </section>
+                  </div>
+                ) : (
+                  <section className="mx-auto max-w-2xl">
+                    <h3 className="display text-sm tracking-[0.2em] text-ink">
+                      {p.approach ? "The Formula" : "The Result"}
+                    </h3>
+                    <div className="prose-apothecary mt-3">{paras(p.approach ?? p.outcome!)}</div>
+                  </section>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Footer band — habitat, seal, catalogue mark */}
