@@ -27,7 +27,10 @@ const SOCIAL: Social[] = [
 
 export function ServiceCTA() {
   return (
-    <section className="bg-cobalt px-6 py-16 text-center text-paper">
+    // -mb-20 cancels the site footer's mt-20 so this band sits flush against
+    // the footer with no paper gap. Coupled to SiteFooter's top margin — keep
+    // in sync if that changes.
+    <section className="-mb-20 bg-cobalt px-6 py-16 text-center text-paper">
       <div className="mx-auto flex max-w-3xl flex-col items-center">
         {/* Flourish + placeholder for the bottle/jar artwork to come. */}
         <div className="flex w-full items-center justify-center gap-4">
@@ -53,8 +56,11 @@ export function ServiceCTA() {
           &mdash; no obligation, and no jargon to decode.
         </p>
 
-        <Link href="/contact" className="btn btn-fill mt-8">
-          GET A DIAGNOSIS
+        <Link
+          href="/contact"
+          className="btn mt-8 bg-paper text-ink hover:bg-ink hover:text-paper"
+        >
+          GET A FREE DIAGNOSIS
         </Link>
 
         {/* Canonical NAP — must match CLAUDE.md exactly. */}

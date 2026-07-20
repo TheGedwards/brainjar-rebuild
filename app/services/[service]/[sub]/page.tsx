@@ -67,14 +67,14 @@ export default async function SubServicePage({ params }: Params) {
           </div>
 
           {siblings.length > 0 && (
-            <div className="mt-10 border-t border-rule pt-8">
-              <div className="eyebrow mb-4">Included with your {s.name} prescription</div>
-              <ul className="flex flex-wrap gap-2">
+            <div className="mt-10 border-t border-rule pt-8 text-center">
+              <div className="eyebrow mb-6">Included with your {s.name} prescription</div>
+              <ul className="flex flex-wrap justify-center gap-4">
                 {siblings.map((sib) => (
                   <li key={sib.slug}>
                     <Link
                       href={`/services/${s.slug}/${sib.slug}`}
-                      className="inline-block border border-rule-strong bg-panel px-2 py-2 font-display text-[10px] font-bold tracking-[0.15em] text-ink-soft hover:border-tincture hover:text-tincture"
+                      className="inline-block border border-rule-strong bg-panel px-8 py-4 font-display text-sm font-bold tracking-[0.15em] text-ink-soft transition-colors hover:border-tincture hover:text-tincture"
                     >
                       {sib.name.toUpperCase()}
                     </Link>

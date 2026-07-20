@@ -62,7 +62,15 @@ export default async function ServicePage({ params }: Params) {
                   <h3 className="display mt-2 text-sm tracking-[0.18em] group-hover:text-tincture">
                     {sub.name}
                   </h3>
-                  <p className="mt-2 text-lg italic leading-8 text-ink-soft">{sub.blurb}</p>
+                  <p className="mt-2 text-lg italic leading-8 text-ink-soft">
+                    {sub.blurb}{" "}
+                    <span className="font-semibold not-italic text-tincture underline decoration-1 underline-offset-4 group-hover:text-tincture-dk">
+                      Learn more
+                    </span>
+                    <span aria-hidden="true" className="not-italic text-tincture group-hover:text-tincture-dk">
+                      {" "}&rarr;
+                    </span>
+                  </p>
                 </Link>
               ))}
             </div>
