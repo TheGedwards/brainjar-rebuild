@@ -66,7 +66,7 @@ export default async function HomePage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/contact" className="btn btn-fill">
-              GET A DIAGNOSIS
+              GET A FREE DIAGNOSIS
             </Link>
             <Link href="/services" className="btn btn-outline">
               VIEW THE FORMULARY

@@ -100,7 +100,7 @@ export default async function AboutPage() {
       <section className="px-6 py-12 text-center">
         <h2 className="display text-2xl">What Should We Mix for You?</h2>
         <Link href="/contact" className="btn btn-fill mt-8">
-          GET A DIAGNOSIS
+          GET A FREE DIAGNOSIS
         </Link>
       </section>
     </>

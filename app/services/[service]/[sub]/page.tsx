@@ -54,7 +54,7 @@ export default async function SubServicePage({ params }: Params) {
             {item.blurb}
           </p>
           <Link href="/contact" className="btn btn-fill mt-8">
-            GET A DIAGNOSIS
+            GET A FREE DIAGNOSIS
           </Link>
         </Frame>
       </section>

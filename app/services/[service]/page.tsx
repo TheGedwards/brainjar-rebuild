@@ -40,7 +40,7 @@ export default async function ServicePage({ params }: Params) {
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">{s.lede}</p>
           <Link href="/contact" className="btn btn-fill mt-8">
-            GET A DIAGNOSIS
+            GET A FREE DIAGNOSIS
           </Link>
         </Frame>
       </section>

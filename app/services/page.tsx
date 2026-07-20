@@ -87,7 +87,7 @@ export default async function ServicesPage() {
         <div className="eyebrow">{c.content.cta_eyebrow}</div>
         <h2 className="display mt-4 text-2xl sm:text-3xl">{c.content.cta_heading}</h2>
         <Link href="/contact" className="btn btn-fill mt-8">
-          GET A DIAGNOSIS
+          GET A FREE DIAGNOSIS
         </Link>
       </section>
     </>
