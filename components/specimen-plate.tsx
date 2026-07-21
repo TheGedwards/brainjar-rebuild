@@ -50,9 +50,10 @@ export function SpecimenPlate({
         </div>
       )}
 
-      <figcaption className="mt-3 text-center font-display text-[10px] uppercase tracking-[0.22em] text-ink-faint">
-        {figNo}
-        {host ? ` — ${host}` : ""}
+      {/* Caption falls back to the client name when there's no website host.
+          Serif italic, lowercase, in the darker ink-soft — like a plate caption. */}
+      <figcaption className="mt-3 text-center font-body text-sm italic lowercase text-ink-soft">
+        {figNo} — {host || name}
       </figcaption>
 
       {children}
