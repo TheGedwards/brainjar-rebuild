@@ -6,6 +6,7 @@ import { SERVICE_CHIPS } from "@/lib/services";
 import { Lozenge, PointedRule } from "@/components/ornaments";
 import { GallerySlideshow } from "@/components/gallery-slideshow";
 import { SpecimenPlate } from "@/components/specimen-plate";
+import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
 
 export const revalidate = 300;
@@ -251,6 +252,8 @@ export default async function ProjectPage({ params }: Params) {
           </Link>
         </div>
       </div>
+
+      <ServiceCTA />
     </article>
   );
 }

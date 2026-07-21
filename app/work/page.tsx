@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getProjects, getPageContent } from "@/lib/supabase";
+import { ServiceCTA } from "@/components/service-cta";
 import { WorkGrid } from "@/components/work-grid";
 import { Frame, Lozenge } from "@/components/ornaments";
 import { renderHeading } from "@/lib/render-copy";
@@ -62,12 +62,7 @@ export default async function WorkPage() {
         </div>
       </section>
 
-      <section className="px-6 py-12 text-center">
-        <h2 className="display text-2xl sm:text-3xl">Your Results Belong on This Shelf</h2>
-        <Link href="/contact" className="btn btn-fill mt-8">
-          START YOUR PROJECT
-        </Link>
-      </section>
+      <ServiceCTA />
     </>
   );
 }

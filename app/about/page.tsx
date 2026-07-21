@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
+import { ServiceCTA } from "@/components/service-cta";
 import { getPageContent } from "@/lib/supabase";
 import { renderHeading } from "@/lib/render-copy";
 import { PAGE_SEO } from "@/lib/pages";
@@ -97,12 +97,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="px-6 py-12 text-center">
-        <h2 className="display text-2xl">What Should We Mix for You?</h2>
-        <Link href="/contact" className="btn btn-fill mt-8">
-          GET A FREE DIAGNOSIS
-        </Link>
-      </section>
+      <ServiceCTA />
     </>
   );
 }

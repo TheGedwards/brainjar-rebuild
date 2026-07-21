@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SERVICES } from "@/lib/services";
 import { Frame, Lozenge, PointedRule } from "@/components/ornaments";
+import { ServiceCTA } from "@/components/service-cta";
 import { getPageContent } from "@/lib/supabase";
 import { renderHeading } from "@/lib/render-copy";
 import { PAGE_SEO } from "@/lib/pages";
@@ -83,13 +84,7 @@ export default async function ServicesPage() {
         </div>
       </section>
 
-      <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-12 text-center">
-        <div className="eyebrow">{c.content.cta_eyebrow}</div>
-        <h2 className="display mt-4 text-2xl sm:text-3xl">{c.content.cta_heading}</h2>
-        <Link href="/contact" className="btn btn-fill mt-8">
-          GET A FREE DIAGNOSIS
-        </Link>
-      </section>
+      <ServiceCTA />
     </>
   );
 }

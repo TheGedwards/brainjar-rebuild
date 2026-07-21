@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { SERVICES, getService } from "@/lib/services";
 import { getProjects, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
+import { ServiceCTA } from "@/components/service-cta";
 
 type Params = { params: Promise<{ service: string }> };
 
@@ -101,12 +102,7 @@ export default async function ServicePage({ params }: Params) {
         </section>
       )}
 
-      <section className="border-t-[3px] border-double border-rule-strong bg-panel px-6 py-12 text-center">
-        <h2 className="display text-2xl sm:text-3xl">What Should We Mix for You?</h2>
-        <Link href="/contact" className="btn btn-fill mt-8">
-          BOOK A FREE CONSULTATION
-        </Link>
-      </section>
+      <ServiceCTA />
     </>
   );
 }

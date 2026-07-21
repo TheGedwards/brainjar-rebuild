@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPosts, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge } from "@/components/ornaments";
+import { ServiceCTA } from "@/components/service-cta";
 import { renderHeading } from "@/lib/render-copy";
 import { PAGE_SEO } from "@/lib/pages";
 import { AdminOnly } from "@/components/admin-bar";
@@ -98,6 +99,8 @@ export default async function BlogPage() {
           </p>
         )}
       </section>
+
+      <ServiceCTA />
     </>
   );
 }
