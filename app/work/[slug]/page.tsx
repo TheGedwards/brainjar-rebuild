@@ -66,6 +66,7 @@ export default async function ProjectPage({ params }: Params) {
     body.split("\n\n").map((t, i) => <p key={i}>{t}</p>);
 
   return (
+    <>
     <article className="px-6 py-12">
       <EditTarget href={`/admin/portfolio/${p.id}`} label="Edit this case study" />
       <nav className="mx-auto mb-8 max-w-5xl eyebrow text-center" aria-label="Breadcrumb">
@@ -241,19 +242,22 @@ export default async function ProjectPage({ params }: Params) {
         </div>
       )}
 
-      <div className="mx-auto mt-12 max-w-3xl">
-        <PointedRule />
-        <div className="mt-8 text-center">
-          <Link
-            href="/work"
-            className="font-display text-[11px] tracking-[0.2em] text-ink-faint hover:text-tincture"
-          >
-            ← BACK TO THE MEDICINE CABINET
-          </Link>
-        </div>
+      {/* Back link — right below the card, a visible escape hatch. */}
+      <div className="mx-auto mt-10 max-w-5xl text-center">
+        <Link
+          href="/work"
+          className="font-display text-sm font-bold tracking-[0.2em] text-ink hover:text-tincture"
+        >
+          ← BACK TO THE MEDICINE CABINET
+        </Link>
       </div>
 
-      <ServiceCTA />
+      <div className="mx-auto mt-8 max-w-3xl">
+        <PointedRule />
+      </div>
     </article>
+
+    <ServiceCTA />
+    </>
   );
 }
