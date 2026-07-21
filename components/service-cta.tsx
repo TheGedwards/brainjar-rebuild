@@ -40,10 +40,10 @@ export function ServiceCTA() {
           <Swirl flip className="hidden text-cobalt-lt sm:block" />
         </div>
 
-        <h2 className="display mt-8 text-4xl">Ready to fill the prescription?</h2>
+        <h2 className="display mt-8 text-4xl">Ready to get noticed?</h2>
 
         <p className="prose-apothecary mt-4 max-w-xl text-paper/90">
-          Book a free diagnosis and we&rsquo;ll tell you exactly what your digital presence needs
+          Book a free consult, and we&rsquo;ll diagnose exactly what your digital presence needs
           &mdash; no obligation, and no jargon to decode.
         </p>
 
@@ -54,21 +54,13 @@ export function ServiceCTA() {
           GET A FREE DIAGNOSIS
         </Link>
 
-        {/* Canonical NAP — must match CLAUDE.md exactly. */}
-        <address className="mt-8 not-italic">
-          <div className="font-display text-xs uppercase tracking-[0.2em] text-cobalt-lt">
-            Contact Us
-          </div>
-          <div className="mt-2 text-base leading-8 text-paper/90">
-            109 N Main Ave #202, Gresham, OR 97030
-          </div>
-          <a
-            href="tel:+15039297436"
-            className="text-base font-semibold leading-8 text-paper hover:underline"
-          >
+        {/* Secondary CTA — call instead. Canonical number per CLAUDE.md. */}
+        <p className="mt-6 font-display text-sm tracking-[0.15em] text-cobalt-lt">
+          &raquo; OR CALL US AT{" "}
+          <a href="tel:+15039297436" className="font-semibold text-paper hover:underline">
             (503) 929-7436
           </a>
-        </address>
+        </p>
 
         {/* Social placeholders — real hrefs land later. */}
         <ul className="mt-8 flex items-center justify-center gap-4">
