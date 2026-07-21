@@ -130,13 +130,14 @@ export function SiteHeader() {
           className="fixed inset-x-0 z-50 border-b-[3px] border-double border-rule-strong bg-paper"
           style={{ top: "var(--bjm-adminbar, 0px)" }}
         >
-          {/* Centered brand lockup on mobile ("BRAINJAR [jar] MEDIA"); on md+
-              it sits left and the nav takes the right. */}
-          <div className="mx-auto flex max-w-6xl items-center justify-center gap-4 px-6 py-2 md:justify-between">
+          {/* Mobile: centered brand lockup ("BRAINJAR [jar] MEDIA"), nav hidden.
+              Desktop: the logo is taken out of flow (absolute left) so the nav,
+              the only in-flow child, centers in the full width. */}
+          <div className="relative mx-auto flex max-w-6xl items-center justify-center gap-4 px-6 py-2">
             <Link
               href="/"
               aria-label="Brainjar Media — home"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 md:absolute md:left-6 md:top-1/2 md:-translate-y-1/2"
             >
               {/* The -mr cancels each word's trailing letter-space so the gaps
                   either side of the jar are visually equal. Keep it matched to
