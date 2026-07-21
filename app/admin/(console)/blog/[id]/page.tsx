@@ -62,9 +62,20 @@ export default async function PostEditor({ params }: Params) {
           </div>
         </div>
 
-        <div>
-          <label className={label}>Excerpt (the one-line summary on the blog list)</label>
-          <input name="excerpt" defaultValue={post?.excerpt ?? ""} className={field} />
+        <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
+          <div>
+            <label className={label}>Excerpt (the one-line summary on the blog list)</label>
+            <input name="excerpt" defaultValue={post?.excerpt ?? ""} className={field} />
+          </div>
+          <div>
+            <label className={label}>Category (groups like posts)</label>
+            <input
+              name="category"
+              defaultValue={post?.category ?? ""}
+              placeholder="e.g. SEO, Case Study"
+              className={field}
+            />
+          </div>
         </div>
 
         <div>

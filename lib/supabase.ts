@@ -84,6 +84,7 @@ export type Post = {
   seo_description: string | null;
   author: string;
   tags: string[];
+  category: string | null;
   published_at: string | null;
 };
 

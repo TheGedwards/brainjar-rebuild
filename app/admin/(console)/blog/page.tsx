@@ -1,66 +1,61 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
-import { PostRowActions } from "@/components/admin/post-row-actions";
+import { deletePost } from "@/app/admin/actions";
+import { AdminTable, type Column, type Row } from "@/components/admin/admin-table";
+import { StatusBadge, fmtDate } from "@/components/admin/list-bits";
 
 export const dynamic = "force-dynamic";
 
+const COLUMNS: Column[] = [
+  { key: "title", label: "Title" },
+  { key: "status", label: "Status" },
+  { key: "category", label: "Category" },
+  { key: "updated", label: "Last Updated" },
+];
+
 export default async function BlogListPage() {
-  const db = supabaseAdmin();
-  const { data: posts } = await db
+  // select("*") so a DB without blog-category.sql still works (category undefined).
+  const { data: posts } = await supabaseAdmin()
     .from("posts")
-    .select("id, title, slug, is_published, updated_at")
+    .select("*")
     .order("updated_at", { ascending: false });
 
+  const rows: Row[] = (posts ?? []).map((p: any) => ({
+    id: p.id,
+    editHref: `/admin/blog/${p.id}`,
+    previewHref: `/blog/${p.slug}`,
+    deleteValue: p.id,
+    deleteConfirm: `Delete "${p.title}" permanently? This can't be undone.`,
+    cells: {
+      title: { sort: (p.title ?? "").toLowerCase(), node: p.title },
+      status: { sort: p.is_published ? 1 : 0, node: <StatusBadge published={p.is_published} /> },
+      category: {
+        sort: (p.category ?? "").toLowerCase(),
+        node: <span className="text-ink-soft">{p.category || "—"}</span>,
+      },
+      updated: { sort: p.updated_at ?? "", node: <span className="text-ink-soft">{fmtDate(p.updated_at)}</span> },
+    },
+  }));
+
   return (
-    <div className="max-w-3xl">
-      <div className="flex items-baseline justify-between">
+    <div>
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-rule bg-paper/95 py-4 backdrop-blur">
         <h1 className="display text-2xl">Blog</h1>
-        <Link href="/admin/blog/new" className="btn btn-fill">
+        <Link href="/admin/blog/new" className="btn btn-fill !py-2.5">
           + NEW POST
         </Link>
       </div>
 
-      <div className="mt-6 border border-rule bg-card">
-        {posts?.length ? (
-          <ul className="divide-y divide-rule">
-            {posts.map((p) => (
-              <li key={p.id} className="flex items-center justify-between gap-4 px-4 py-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/admin/blog/${p.id}`}
-                      className="truncate text-base hover:text-tincture"
-                    >
-                      {p.title}
-                    </Link>
-                    <span
-                      className={`flex-shrink-0 border px-1.5 py-0.5 font-display text-[9px] font-bold tracking-[0.15em] ${
-                        p.is_published
-                          ? "border-cobalt-lt text-cobalt"
-                          : "border-rule-strong text-ink-faint"
-                      }`}
-                    >
-                      {p.is_published ? "PUBLISHED" : "DRAFT"}
-                    </span>
-                  </div>
-                  <div className="mt-0.5 font-display text-[10px] tracking-widest text-ink-faint">
-                    UPDATED{" "}
-                    {new Date(p.updated_at).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </div>
-                </div>
-                <PostRowActions id={p.id} slug={p.slug} isPublished={p.is_published} />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="px-4 py-6 text-base italic text-ink-faint">
-            No posts yet. Write your first one.
-          </p>
-        )}
+      <div className="mt-6">
+        <AdminTable
+          columns={COLUMNS}
+          rows={rows}
+          initialSort="updated"
+          initialDir="desc"
+          deleteAction={deletePost}
+          deleteField="id"
+          emptyText="No posts yet. Write your first one."
+        />
       </div>
     </div>
   );

@@ -266,17 +266,25 @@ export async function createClient(fd: FormData) {
 
   // Every client gets a project immediately — otherwise /work/{slug} 404s and
   // you've created a broken link on your own portfolio page.
+  let projectId: string | null = null;
   if (client) {
-    await db.from("projects").insert({
-      client_id: client.id,
-      slug: client.slug,
-      title: client.name,
-      is_published: true,
-    });
+    const { data: project } = await db
+      .from("projects")
+      .insert({
+        client_id: client.id,
+        slug: client.slug,
+        title: client.name,
+        is_published: true,
+      })
+      .select("id")
+      .single();
+    projectId = project?.id ?? null;
   }
 
   revalidatePath("/work");
   revalidatePath("/admin");
+  // Land straight in the new client's editor, like "+ New Post" does for blog.
+  redirect(projectId ? `/admin/portfolio/${projectId}` : "/admin/portfolio");
 }
 
 // --- Projects ---------------------------------------------------------------
@@ -415,14 +423,21 @@ export async function savePost(fd: FormData) {
     cover_image_url: str(fd, "cover_image_url"),
     seo_title: str(fd, "seo_title"),
     seo_description: str(fd, "seo_description"),
+    category: str(fd, "category"),
     author: str(fd, "author") ?? "Brainjar Media",
     is_published: published,
     published_at: published ? (str(fd, "published_at") ?? new Date().toISOString()) : null,
     updated_at: new Date().toISOString(),
   };
 
-  if (id) await db.from("posts").update(row).eq("id", id);
-  else await db.from("posts").insert(row);
+  const write = (r: typeof row | Omit<typeof row, "category">) =>
+    id ? db.from("posts").update(r).eq("id", id) : db.from("posts").insert(r);
+  let res = await write(row);
+  // Tolerate a DB that hasn't run blog-category.sql yet: retry without it.
+  if (res.error && /category/i.test(res.error.message)) {
+    const { category: _omit, ...rest } = row;
+    res = await write(rest);
+  }
 
   revalidatePath("/blog");
   revalidatePath(`/blog/${row.slug}`);

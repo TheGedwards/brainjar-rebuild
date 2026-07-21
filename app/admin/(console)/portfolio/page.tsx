@@ -1,116 +1,70 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import { CATEGORY_LABELS } from "@/lib/services";
-import { createClient } from "@/app/admin/actions";
-import { field, label } from "@/components/admin/ui";
+import { deleteClient } from "@/app/admin/actions";
+import { AdminTable, type Column, type Row } from "@/components/admin/admin-table";
+import { StatusBadge, fmtDate } from "@/components/admin/list-bits";
 
 export const dynamic = "force-dynamic";
 
+const COLUMNS: Column[] = [
+  { key: "name", label: "Client" },
+  { key: "status", label: "Status" },
+  { key: "category", label: "Category" },
+  { key: "updated", label: "Last Updated" },
+];
+
 export default async function PortfolioPage() {
-  const db = supabaseAdmin();
-  const { data: projects } = await db
+  const { data: projects } = await supabaseAdmin()
     .from("projects")
-    .select("*, clients(*)")
-    .order("slug");
+    .select("id, slug, title, client_id, is_published, updated_at, clients(name, category, is_featured)")
+    .order("updated_at", { ascending: false });
+
+  const rows: Row[] = (projects ?? []).map((p: any) => {
+    const name = p.clients?.name ?? p.title;
+    const cat = CATEGORY_LABELS[p.clients?.category as keyof typeof CATEGORY_LABELS] ?? "—";
+    return {
+      id: p.id,
+      editHref: `/admin/portfolio/${p.id}`,
+      previewHref: `/work/${p.slug}`,
+      deleteValue: p.client_id ?? undefined,
+      deleteConfirm: `Permanently delete "${name}" and its /work/${p.slug} page? The old /portfolio-${p.slug} link will then 404. This can't be undone.`,
+      cells: {
+        name: {
+          sort: name.toLowerCase(),
+          node: (
+            <>
+              {p.clients?.is_featured && <span className="mr-1 text-tincture" title="Featured">★</span>}
+              {name}
+            </>
+          ),
+        },
+        status: { sort: p.is_published ? 1 : 0, node: <StatusBadge published={p.is_published} /> },
+        category: { sort: cat, node: <span className="text-ink-soft">{cat}</span> },
+        updated: { sort: p.updated_at ?? "", node: <span className="text-ink-soft">{fmtDate(p.updated_at)}</span> },
+      },
+    };
+  });
 
   return (
     <div>
-      <div className="flex items-baseline justify-between">
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-rule bg-paper/95 py-4 backdrop-blur">
         <h1 className="display text-2xl">Portfolio</h1>
-        <span className="font-display text-[10px] tracking-[0.2em] text-ink-faint">
-          {projects?.length ?? 0} PROJECTS
-        </span>
+        <Link href="/admin/portfolio/new" className="btn btn-fill !py-2.5">
+          + NEW CLIENT
+        </Link>
       </div>
 
-      <div className="mt-6 overflow-x-auto border border-rule bg-card">
-        <table className="w-full text-base">
-          <thead className="border-b border-rule bg-panel">
-            <tr className="text-left">
-              {["Client", "Category", "Services", "Status", "Featured", ""].map((h) => (
-                <th key={h} className="eyebrow px-4 py-3">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-rule">
-            {projects?.map((p) => (
-              <tr key={p.id} className="hover:bg-panel/50">
-                <td className="px-4 py-3">{p.clients?.name ?? p.title}</td>
-                <td className="px-4 py-3 text-ink-soft">
-                  {CATEGORY_LABELS[p.clients?.category as keyof typeof CATEGORY_LABELS] ?? "—"}
-                </td>
-                <td className="px-4 py-3 text-ink-soft">
-                  {p.services?.length ? p.services.length : "—"}
-                </td>
-                <td className="px-4 py-3">
-                  {p.is_published ? (
-                    <span className="text-cobalt">Published</span>
-                  ) : (
-                    <span className="text-ink-faint">Draft</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">{p.clients?.is_featured ? "★" : ""}</td>
-                <td className="px-4 py-3 text-right">
-                  <Link
-                    href={`/admin/portfolio/${p.id}`}
-                    className="font-display text-[10px] tracking-[0.2em] text-cobalt hover:text-tincture"
-                  >
-                    EDIT →
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Add a client -------------------------------------------------------- */}
-      <div id="add" className="mt-10">
-        <h2 className="font-display text-lg font-bold uppercase tracking-[0.08em]">
-          Add a Client
-        </h2>
-        <form
-          action={createClient}
-          className="mt-4 grid gap-4 border border-rule bg-card p-6 sm:grid-cols-3"
-        >
-          <div>
-            <label className={label}>Name</label>
-            <input name="name" required className={field} />
-          </div>
-          <div>
-            <label className={label}>Slug (blank = auto)</label>
-            <input name="slug" placeholder="acme-hardware" className={field} />
-          </div>
-          <div>
-            <label className={label}>Category</label>
-            <select name="category" className={field} defaultValue="local-business">
-              {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={label}>Industry</label>
-            <input name="industry" className={field} />
-          </div>
-          <div>
-            <label className={label}>City</label>
-            <input name="city" className={field} />
-          </div>
-          <div>
-            <label className={label}>Website</label>
-            <input name="website_url" placeholder="https://" className={field} />
-          </div>
-          <div className="sm:col-span-3">
-            <button className="btn btn-fill">ADD CLIENT</button>
-            <span className="ml-4 text-base italic text-ink-faint">
-              A matching /work page is created at the same time.
-            </span>
-          </div>
-        </form>
+      <div className="mt-6">
+        <AdminTable
+          columns={COLUMNS}
+          rows={rows}
+          initialSort="updated"
+          initialDir="desc"
+          deleteAction={deleteClient}
+          deleteField="client_id"
+          emptyText="No clients yet. Add your first one."
+        />
       </div>
     </div>
   );
