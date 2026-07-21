@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SERVICES, getSubService } from "@/lib/services";
+import { getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge } from "@/components/ornaments";
 import { ServiceCTA } from "@/components/service-cta";
 
@@ -33,6 +34,10 @@ export default async function SubServicePage({ params }: Params) {
   if (!found) notFound();
   const { service: s, sub: item } = found;
 
+  // CMS overrides (blurb / intro / payoff) layered over the lib/services default.
+  const c = await getPageContent(`/services/${s.slug}/${item.slug}`);
+  const paras = (t: string) => t.split("\n\n").map((x, i) => <p key={i}>{x}</p>);
+
   const siblings = s.subs.filter((x) => x.slug !== item.slug);
 
   return (
@@ -51,7 +56,7 @@ export default async function SubServicePage({ params }: Params) {
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">{item.name}</h1>
           <Lozenge className="my-6" />
           <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">
-            {item.blurb}
+            {c.content.blurb}
           </p>
           <Link href="/contact" className="btn btn-fill mt-8">
             GET A FREE DIAGNOSIS
@@ -62,8 +67,8 @@ export default async function SubServicePage({ params }: Params) {
       <section className="px-6 pb-16">
         <div className="mx-auto max-w-2xl">
           <div className="prose-apothecary">
-            <p>{item.intro}</p>
-            <p>{item.payoff}</p>
+            {paras(c.content.intro)}
+            {paras(c.content.payoff)}
           </div>
 
           {siblings.length > 0 && (

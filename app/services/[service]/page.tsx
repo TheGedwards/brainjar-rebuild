@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { SERVICES, getService } from "@/lib/services";
-import { getProjects } from "@/lib/supabase";
+import { getProjects, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
 
 type Params = { params: Promise<{ service: string }> };
@@ -30,6 +30,9 @@ export default async function ServicePage({ params }: Params) {
   const projects = await getProjects().catch(() => []);
   const related = projects.filter((p) => p.services?.includes(s.key)).slice(0, 3);
 
+  // CMS override for the hero lede, layered over the lib/services default.
+  const c = await getPageContent(`/services/${s.slug}`);
+
   return (
     <>
       <section className="px-6 py-12 text-center sm:py-16">
@@ -38,7 +41,7 @@ export default async function ServicePage({ params }: Params) {
           <div className="eyebrow mt-6">Formula No. {s.no} · {s.label}</div>
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">{s.name}</h1>
           <Lozenge className="my-6" />
-          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">{s.lede}</p>
+          <p className="mx-auto max-w-xl text-lg italic leading-8 text-ink-soft">{c.content.lede}</p>
           <Link href="/contact" className="btn btn-fill mt-8">
             GET A FREE DIAGNOSIS
           </Link>

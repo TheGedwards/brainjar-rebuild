@@ -96,19 +96,21 @@ export default async function PageEditor({ params, searchParams }: Params) {
           ))}
         </div>
 
-        {/* SEO --------------------------------------------------------------- */}
-        <div className="border border-rule bg-card p-6">
-          <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-[0.2em]">
-            Search Engine
-          </h2>
-          <SeoFields
-            initialTitle={current.seo_title ?? ""}
-            initialDescription={current.seo_description ?? ""}
-            fallbackTitle={seoDefaults.title}
-            fallbackDescription={seoDefaults.description}
-            displayUrl={displayUrl}
-          />
-        </div>
+        {/* SEO — marketing pages only; service/sub SEO stays derived for now. */}
+        {def.type === "marketing" && (
+          <div className="border border-rule bg-card p-6">
+            <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-[0.2em]">
+              Search Engine
+            </h2>
+            <SeoFields
+              initialTitle={current.seo_title ?? ""}
+              initialDescription={current.seo_description ?? ""}
+              fallbackTitle={seoDefaults.title}
+              fallbackDescription={seoDefaults.description}
+              displayUrl={displayUrl}
+            />
+          </div>
+        )}
 
         <button className="btn btn-fill">SAVE PAGE</button>
       </form>

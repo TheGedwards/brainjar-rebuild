@@ -11,13 +11,27 @@
  *              (see renderHeading in lib/render-copy.tsx)
  */
 
+import type { ServiceKey } from "./supabase";
+import { SERVICES } from "./services";
+
 export type SlotType = "text" | "textarea" | "heading";
 export type Slot = { key: string; label: string; type: SlotType; default: string; hint?: string };
-export type PageDef = { key: string; path: string; name: string; slots: Slot[] };
+export type PageType = "marketing" | "service" | "subservice";
+export type PageDef = {
+  key: string;
+  path: string;
+  name: string;
+  type: PageType;
+  slots: Slot[];
+  /** service + sub-service pages: which service they belong to (grouping). */
+  serviceKey?: ServiceKey;
+  /** sub-service pages: parent service display name. */
+  parentName?: string;
+};
 
 const HEADING_HINT = "Wrap a word in *asterisks* for the accent color; a new line becomes a line break.";
 
-export const PAGES: PageDef[] = [
+const MARKETING_PAGES: Omit<PageDef, "type">[] = [
   {
     key: "home",
     path: "/",
@@ -82,6 +96,42 @@ export const PAGES: PageDef[] = [
       { key: "hero_subhead", label: "Hero subhead", type: "textarea", default: "What we’ve learned, written down. No snake oil." },
     ],
   },
+];
+
+// Service + sub-service pages, generated from lib/services.ts. Their copy lives
+// in code (SERVICES) as the default; edits are stored as page_content overrides
+// keyed by path, exactly like the marketing pages.
+const SERVICE_PAGES: PageDef[] = SERVICES.flatMap((s) => {
+  const service: PageDef = {
+    key: `service-${s.slug}`,
+    path: `/services/${s.slug}`,
+    name: s.name,
+    type: "service",
+    serviceKey: s.key,
+    slots: [
+      { key: "lede", label: "Hero lede — the paragraph under the title", type: "textarea", default: s.lede },
+    ],
+  };
+  const subs: PageDef[] = s.subs.map((sub) => ({
+    key: `sub-${s.slug}-${sub.slug}`,
+    path: `/services/${s.slug}/${sub.slug}`,
+    name: sub.name,
+    type: "subservice",
+    serviceKey: s.key,
+    parentName: s.name,
+    slots: [
+      { key: "blurb", label: "Hero line — the italic line under the title", type: "text", default: sub.blurb },
+      { key: "intro", label: "Paragraph 1 — why it’s part of the prescription", type: "textarea", default: sub.intro },
+      { key: "payoff", label: "Paragraph 2 — the results + soft nudge", type: "textarea", default: sub.payoff },
+    ],
+  }));
+  return [service, ...subs];
+});
+
+/** Every editable page: the 6 marketing pages, then service + sub-service pages. */
+export const PAGES: PageDef[] = [
+  ...MARKETING_PAGES.map((p) => ({ ...p, type: "marketing" as const })),
+  ...SERVICE_PAGES,
 ];
 
 /** Default SEO title/description per page (fallback + editor placeholder). */
