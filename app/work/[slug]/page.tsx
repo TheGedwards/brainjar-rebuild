@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProject, getProjects } from "@/lib/supabase";
 import { SERVICE_CHIPS } from "@/lib/services";
 import { Lozenge, PointedRule } from "@/components/ornaments";
 import { GallerySlideshow } from "@/components/gallery-slideshow";
+import { SpecimenPlate } from "@/components/specimen-plate";
 import { EditTarget } from "@/components/admin-bar";
 
 export const revalidate = 300;
@@ -19,16 +19,6 @@ const CLASS_LABEL: Record<string, string> = {
   "local-business": "Local Business",
   "public-event": "Public Event",
 };
-
-/** First letters of up to two words — the no-image fallback plate. */
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 export async function generateStaticParams() {
   const projects = await getProjects().catch(() => []);
@@ -128,33 +118,7 @@ export default async function ProjectPage({ params }: Params) {
 
             <div className="grid gap-10 md:grid-cols-[1.05fr_.95fr] md:items-start">
               {/* ---- The plate: screenshot + measurements ---- */}
-              <figure className="relative border border-rule-strong bg-card p-2.5">
-                <span aria-hidden className="pointer-events-none absolute left-1 top-1 h-3 w-3 border-l-2 border-t-2 border-ink/50" />
-                <span aria-hidden className="pointer-events-none absolute right-1 top-1 h-3 w-3 border-r-2 border-t-2 border-ink/50" />
-                <span aria-hidden className="pointer-events-none absolute bottom-1 left-1 h-3 w-3 border-b-2 border-l-2 border-ink/50" />
-                <span aria-hidden className="pointer-events-none absolute bottom-1 right-1 h-3 w-3 border-b-2 border-r-2 border-ink/50" />
-
-                {p.hero_image_url ? (
-                  <div className="relative aspect-16/10 border border-rule">
-                    <Image
-                      src={p.hero_image_url}
-                      alt={name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 520px"
-                      priority
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex aspect-16/10 items-center justify-center border border-rule bg-panel">
-                    <span className="display text-5xl text-rule-strong">{initials(name)}</span>
-                  </div>
-                )}
-
-                <figcaption className="mt-3 text-center font-display text-[10px] uppercase tracking-[0.22em] text-ink-faint">
-                  Fig. 1{host ? ` — ${host}` : ""}
-                </figcaption>
-
+              <SpecimenPlate src={p.hero_image_url} name={name} host={host} priority>
                 {metrics.length > 0 && (
                   <div className="mt-3 flex items-stretch justify-center border-t border-rule pt-4">
                     {metrics.map((m, i) => (
@@ -176,7 +140,7 @@ export default async function ProjectPage({ params }: Params) {
                     ))}
                   </div>
                 )}
-              </figure>
+              </SpecimenPlate>
 
               {/* ---- Diagnosis: summary + the symptom ---- */}
               <div>

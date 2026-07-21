@@ -4,6 +4,7 @@ import Image from "next/image";
 import { BottleShelf } from "@/components/bottle-shelf";
 import { BrandMark } from "@/components/brand-mark";
 import { Frame, Lozenge, SectionTitle, PointedRule } from "@/components/ornaments";
+import { SpecimenPlate } from "@/components/specimen-plate";
 import { getFeaturedProject, getPageContent } from "@/lib/supabase";
 import { renderHeading } from "@/lib/render-copy";
 
@@ -42,6 +43,8 @@ export default async function HomePage() {
     getPageContent("/"),
   ]);
   const stats = featured?.project_stats?.slice(0, 3) ?? [];
+  const featuredHost =
+    featured?.clients?.website_url?.replace(/^https?:\/\//, "").replace(/\/$/, "") ?? null;
 
   return (
     <>
@@ -96,29 +99,12 @@ export default async function HomePage() {
       {featured && (
         <section className="border-y border-rule bg-panel px-6 py-16">
           <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
-            <div className="relative aspect-4/3 border border-rule-strong bg-card">
-              {featured.hero_image_url ? (
-                <Image
-                  src={featured.hero_image_url}
-                  alt={featured.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                />
-              ) : (
-                <div
-                  className="flex size-full items-center justify-center"
-                  style={{
-                    background:
-                      "repeating-linear-gradient(45deg,#F1E8D8,#F1E8D8 12px,#EDE2CE 12px,#EDE2CE 24px)",
-                  }}
-                >
-                  <span className="font-display text-[11px] tracking-[0.2em] text-ink-faint">
-                    CASE STUDY IMAGE
-                  </span>
-                </div>
-              )}
-            </div>
+            <SpecimenPlate
+              src={featured.hero_image_url}
+              name={featured.clients?.name ?? featured.title}
+              host={featuredHost}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
 
             <div>
               <div className="eyebrow">Featured Case Study</div>
