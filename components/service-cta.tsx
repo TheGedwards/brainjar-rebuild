@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Swirl } from "./ornaments";
+import { BrandMark } from "./brand-mark";
 
 /**
  * Full-bleed call-to-action band that closes the service pages. Cobalt ground
@@ -32,20 +33,10 @@ export function ServiceCTA() {
     // in sync if that changes.
     <section className="-mb-20 bg-cobalt px-6 py-16 text-center text-paper">
       <div className="mx-auto flex max-w-3xl flex-col items-center">
-        {/* Flourish + placeholder for the bottle/jar artwork to come. */}
+        {/* Flourish + the animated brain-in-jar mark, in the blue art set. */}
         <div className="flex w-full items-center justify-center gap-4">
           <Swirl className="hidden text-cobalt-lt sm:block" />
-          <div
-            className="flex h-24 w-40 shrink-0 items-center justify-center border border-dashed border-cobalt-lt/60 px-4"
-            role="img"
-            aria-label="Placeholder for Brainjar apothecary artwork"
-          >
-            <span className="font-display text-[10px] font-semibold uppercase tracking-[0.2em] text-cobalt-lt">
-              Artwork
-              <br />
-              placeholder
-            </span>
-          </div>
+          <BrandMark width={110} jarSrc="/assets/jar-blue.png" brainSrc="/assets/BRAIN-BLUE.png" />
           <Swirl flip className="hidden text-cobalt-lt sm:block" />
         </div>
 

@@ -26,9 +26,15 @@ export const BRAIN_KEYFRAMES = `@keyframes bj-brain-float {
 export function BrandMark({
   width = 75,
   className = "",
+  jarSrc = "/assets/jar.png",
+  brainSrc = "/assets/brain.png",
 }: {
   width?: number;
   className?: string;
+  /** Swap the art (e.g. the blue set for the cobalt CTA). Same 500×500 jar /
+   *  322×262 brain proportions, so the positioning holds. */
+  jarSrc?: string;
+  brainSrc?: string;
 }) {
   return (
     <span
@@ -37,11 +43,11 @@ export function BrandMark({
       aria-hidden="true"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/assets/jar.png" alt="" className="block w-full" />
+      <img src={jarSrc} alt="" className="block w-full" />
       <span className="absolute left-1/2 top-[40%] w-[60%] -translate-x-1/2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/assets/brain.png"
+          src={brainSrc}
           alt=""
           className="block w-full"
           style={{ animation: `bj-brain-float ${ANIM.duration} ease-in-out infinite` }}
