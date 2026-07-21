@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/supabase";
 import { Lozenge, PointedRule } from "@/components/ornaments";
 import { PostBody } from "@/components/post-body";
+import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
 
 export const revalidate = 300;
@@ -89,6 +90,8 @@ export default async function PostPage({ params }: Params) {
           </Link>
         </div>
       </div>
+
+      <ServiceCTA />
     </article>
   );
 }

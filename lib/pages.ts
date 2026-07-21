@@ -40,8 +40,6 @@ const MARKETING_PAGES: Omit<PageDef, "type">[] = [
       { key: "hero_eyebrow", label: "Hero eyebrow", type: "text", default: "A Digital Apothecary for Ambitious Brands" },
       { key: "hero_heading", label: "Hero heading", type: "heading", default: "Remedies for the\n*Undiscovered* Brand", hint: HEADING_HINT },
       { key: "hero_subhead", label: "Hero subhead", type: "textarea", default: "We diagnose what ails your website, then distill SEO, design & content into growth your competition can’t replicate." },
-      { key: "cta_heading", label: "Closing CTA heading", type: "text", default: "Ready for Your Prescription?" },
-      { key: "cta_subhead", label: "Closing CTA subhead", type: "textarea", default: "More leads, calls, foot traffic or sales — tell us the symptom, we’ll mix the cure." },
     ],
   },
   {
@@ -62,8 +60,6 @@ const MARKETING_PAGES: Omit<PageDef, "type">[] = [
       { key: "hero_eyebrow", label: "Hero eyebrow", type: "text", default: "The Formulary" },
       { key: "hero_heading", label: "Hero heading", type: "heading", default: "Our Remedies", hint: HEADING_HINT },
       { key: "hero_subhead", label: "Hero subhead", type: "textarea", default: "Proven compounds, mixed to order. Rarely taken alone — we’ll write the combination your goals call for." },
-      { key: "cta_eyebrow", label: "Closing CTA eyebrow", type: "text", default: "Everything We Mix Comes With" },
-      { key: "cta_heading", label: "Closing CTA heading", type: "text", default: "Measurable Results." },
     ],
   },
   {
