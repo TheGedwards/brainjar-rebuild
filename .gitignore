@@ -9,5 +9,8 @@ out
 Supabase DB Password.txt
 *password*.txt
 *secret*.txt
+
+# Design working files — keep the exported PNGs, not the sources
+*.psd
 *.tsbuildinfo
 next-env.d.ts

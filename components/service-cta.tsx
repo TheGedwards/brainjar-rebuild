@@ -36,7 +36,7 @@ export function ServiceCTA() {
         {/* Flourish + the animated brain-in-jar mark, in the blue art set. */}
         <div className="flex w-full items-center justify-center gap-4">
           <Swirl className="hidden text-cobalt-lt sm:block" />
-          <BrandMark width={110} jarSrc="/assets/jar-blue.png" brainSrc="/assets/BRAIN-BLUE.png" />
+          <BrandMark width={110} jarSrc="/assets/jar-blue-02.png" brainSrc="/assets/BRAIN-BLUE.png" />
           <Swirl flip className="hidden text-cobalt-lt sm:block" />
         </div>
 
