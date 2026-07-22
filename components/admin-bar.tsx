@@ -125,6 +125,17 @@ function AdminBar({
         </Link>
       )}
 
+      {/* Global quick-add — author a new post from anywhere on the site. */}
+      {role && (
+        <Link
+          href="/admin/blog/new"
+          className="flex items-center gap-1.5 rounded-full border border-paper/30 px-3 py-1 font-display text-[10px] font-bold tracking-[0.15em] text-paper transition-colors hover:border-paper hover:bg-paper hover:text-ink"
+        >
+          <PlusIcon />
+          NEW POST
+        </Link>
+      )}
+
       <div className="ml-auto flex items-center gap-4">
         <Link
           href="/admin"
@@ -163,6 +174,14 @@ function PencilIcon() {
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" />
     </svg>
   );
 }
