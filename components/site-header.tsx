@@ -120,13 +120,13 @@ export function SiteHeader() {
             overflow-hidden so the off-screen start doesn't add a scrollbar. It's
             separate from the nav (and pointer-events-none) so the Services
             dropdown is never clipped and clicks pass through. Desktop only. */}
-        <div className="pointer-events-none absolute inset-0 hidden overflow-hidden md:block">
+        <div className="pointer-events-none absolute inset-0 hidden items-center overflow-hidden md:flex">
           <Link
             href="/"
             aria-label="Brainjar Media — home"
             aria-hidden={!scrolled}
-            className={`pointer-events-auto absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-2 transition-all duration-500 ${
-              scrolled ? "translate-x-0 opacity-100" : "-translate-x-[150%] opacity-0"
+            className={`bj-logo pointer-events-auto ml-4 flex items-center gap-2 ${
+              scrolled ? "is-in" : ""
             }`}
           >
             <span className="display -mr-[0.2em] text-sm tracking-[0.2em] text-ink">BRAINJAR</span>
