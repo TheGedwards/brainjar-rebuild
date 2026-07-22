@@ -197,11 +197,15 @@
   transition: transform 0.35s ease, opacity 0.35s ease;
 }
 .bj-logo.is-in {
-  animation: bj-logo-in 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: bj-logo-in 0.8s both;
 }
+/* Per-segment easing lives in the keyframes so the long travel glides at an
+   even, visible pace (rather than an ease-out that finishes in ~90ms while the
+   logo is still transparent). Opacity ramps across the whole travel so it
+   fades in as it moves. It overshoots ~9px with a horizontal squish on arrival,
+   then settles. */
 @keyframes bj-logo-in {
-  0%   { transform: translateX(-150%) scaleX(1);   opacity: 0; }
-  45%  {                                            opacity: 0; }
-  72%  { transform: translateX(10px) scaleX(0.9);  opacity: 1; }
-  100% { transform: translateX(0) scaleX(1);       opacity: 1; }
+  0%   { transform: translateX(-150%) scaleX(1);  opacity: 0; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+  68%  { transform: translateX(9px) scaleX(0.9);  opacity: 1; animation-timing-function: ease-out; }
+  100% { transform: translateX(0) scaleX(1);      opacity: 1; }
 }
