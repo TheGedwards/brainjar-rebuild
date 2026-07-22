@@ -207,9 +207,8 @@
    leftward from the A (transform-origin: right). Per-segment easing lives in the
    keyframes. Opacity fades in across the travel. */
 @keyframes bj-logo-in {
-  0%   { transform: translateX(-150%) scaleX(1);    opacity: 0; animation-timing-function: cubic-bezier(0.1, 0.75, 0.25, 1); }
-  45%  { transform: translateX(0) scaleX(1);        opacity: 1; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
-  56%  { transform: translateX(0) scaleX(0.82);     opacity: 1; }
-  74%  { transform: translateX(0) scaleX(0.82);     opacity: 1; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  0%   { transform: translateX(-150%) scaleX(1);    opacity: 0; animation-timing-function: cubic-bezier(0.42, 0, 1, 1); }
+  45%  { transform: translateX(0) scaleX(1);        opacity: 1; animation-timing-function: cubic-bezier(0, 0, 0.58, 1); }
+  56%  { transform: translateX(0) scaleX(0.82);     opacity: 1; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
   100% { transform: translateX(0) scaleX(1);        opacity: 1; }
 }
