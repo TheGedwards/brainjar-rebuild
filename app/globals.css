@@ -193,6 +193,7 @@
    is free to own the whole animation. `.is-in` is toggled by site-header. */
 .bj-logo {
   transform: translateX(-150%);
+  transform-origin: left center;
   opacity: 0;
   transition: transform 0.35s ease, opacity 0.35s ease;
 }
@@ -201,11 +202,12 @@
 }
 /* Per-segment easing lives in the keyframes so the long travel glides at an
    even, visible pace (rather than an ease-out that finishes in ~90ms while the
-   logo is still transparent). Opacity ramps across the whole travel so it
-   fades in as it moves. It overshoots ~9px with a horizontal squish on arrival,
-   then settles. */
+   logo is still transparent). Opacity ramps across the whole travel so it fades
+   in as it moves. It overshoots ~14px with a horizontal squish from the left
+   edge on arrival, then the settle segment uses a fast ease so the un-squish
+   snaps back rather than easing slowly. */
 @keyframes bj-logo-in {
-  0%   { transform: translateX(-150%) scaleX(1);  opacity: 0; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-  68%  { transform: translateX(9px) scaleX(0.9);  opacity: 1; animation-timing-function: ease-out; }
-  100% { transform: translateX(0) scaleX(1);      opacity: 1; }
+  0%   { transform: translateX(-150%) scaleX(1);   opacity: 0; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+  70%  { transform: translateX(14px) scaleX(0.88); opacity: 1; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  100% { transform: translateX(0) scaleX(1);       opacity: 1; }
 }
