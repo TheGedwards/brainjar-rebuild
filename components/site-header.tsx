@@ -66,11 +66,12 @@ export function SiteHeader() {
     );
 
   return (
-    <header>
-      {/* Standing area — utility strip + the big centered logo. Scrolls away;
-          when it's gone, the sticky bar below is pinned and the compact logo
-          fades in. */}
-      <div ref={headerRef}>
+    <>
+      {/* Standing area — utility strip + the big centered logo. This is the
+          <header> and it scrolls away; the persistent nav bar is a SIBLING
+          below (not nested) so its sticky containing block is the full-height
+          page — otherwise it would only stick within this short header. */}
+      <header ref={headerRef}>
         {/* 3-column grid so EST. 2003 is truly centered. Hidden on phones. */}
         <div className="hidden grid-cols-3 items-center border-b border-rule px-12 py-2 sm:grid">
           <span className="justify-self-start font-display text-[11px] tracking-[0.2em] text-ink-faint">
@@ -105,31 +106,37 @@ export function SiteHeader() {
             purveyors of fine digital remedies
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Persistent nav bar — sticky, always present. The nav stays centered
-          (never moves); a compact logo fades + slides in from the left, pinned
-          16px in, once the big logo above has scrolled away. */}
+      {/* Persistent nav bar — sticky at page level (sibling of <header>) so it
+          stays through the whole scroll. The nav stays centered and never
+          moves; a compact logo slides in from off-screen left and lands 16px
+          from the browser edge. */}
       <div
         className="double-rule sticky z-50 bg-paper"
         style={{ top: "var(--bjm-adminbar, 0px)" }}
       >
-        <div className="relative mx-auto flex max-w-6xl items-center justify-center px-4 py-4">
-          {/* Compact lockup — absolute so it never shifts the centered nav. */}
+        {/* Logo layer — full width, so "16px from the left" is the browser edge;
+            overflow-hidden so the off-screen start doesn't add a scrollbar. It's
+            separate from the nav (and pointer-events-none) so the Services
+            dropdown is never clipped and clicks pass through. Desktop only. */}
+        <div className="pointer-events-none absolute inset-0 hidden overflow-hidden md:block">
           <Link
             href="/"
             aria-label="Brainjar Media — home"
             aria-hidden={!scrolled}
-            className={`absolute left-4 top-1/2 hidden -translate-y-1/2 items-center gap-2 transition-all duration-300 md:flex ${
-              scrolled ? "translate-x-0 opacity-100" : "pointer-events-none -translate-x-3 opacity-0"
+            className={`pointer-events-auto absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-2 transition-all duration-500 ${
+              scrolled ? "translate-x-0 opacity-100" : "-translate-x-[150%] opacity-0"
             }`}
           >
             <span className="display -mr-[0.2em] text-sm tracking-[0.2em] text-ink">BRAINJAR</span>
             <BrandMark width={30} />
             <span className="display -mr-[0.28em] text-sm tracking-[0.28em] text-ink">MEDIA</span>
           </Link>
+        </div>
 
-          {/* Desktop nav — always centered. */}
+        {/* Nav — centered, in its own container so its dropdown isn't clipped. */}
+        <div className="mx-auto flex max-w-6xl items-center justify-center px-4 py-4">
           <nav aria-label="Primary" className="hidden items-center gap-8 md:flex">
             {NAV.map((item) =>
               navItem(item, isActive(item.href) ? "border-b-2 border-tincture pb-[3px]" : "")
@@ -145,6 +152,6 @@ export function SiteHeader() {
           </a>
         </div>
       </div>
-    </header>
+    </>
   );
 }
