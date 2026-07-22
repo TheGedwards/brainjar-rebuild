@@ -193,21 +193,23 @@
    is free to own the whole animation. `.is-in` is toggled by site-header. */
 .bj-logo {
   transform: translateX(-150%);
-  transform-origin: left center;
+  transform-origin: right center;
   opacity: 0;
   transition: transform 0.35s ease, opacity 0.35s ease;
 }
 .bj-logo.is-in {
   animation: bj-logo-in 0.8s both;
 }
-/* Per-segment easing lives in the keyframes so the long travel glides at an
-   even, visible pace (rather than an ease-out that finishes in ~90ms while the
-   logo is still transparent). Opacity ramps across the whole travel so it fades
-   in as it moves. It overshoots ~14px with a horizontal squish from the left
-   edge on arrival, then the settle segment uses a fast ease so the un-squish
-   snaps back rather than easing slowly. */
+/* A squash-and-stretch entrance. The lockup comes in fast and eases out, planting
+   its trailing (right) edge — the A in MEDIA — at the final spot by 45%; position
+   is locked from there so the rest is pure width. It squishes toward that anchor,
+   holds the squished state for a beat, then snaps back to full width, expanding
+   leftward from the A (transform-origin: right). Per-segment easing lives in the
+   keyframes. Opacity fades in across the travel. */
 @keyframes bj-logo-in {
-  0%   { transform: translateX(-150%) scaleX(1);   opacity: 0; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-  70%  { transform: translateX(14px) scaleX(0.88); opacity: 1; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
-  100% { transform: translateX(0) scaleX(1);       opacity: 1; }
+  0%   { transform: translateX(-150%) scaleX(1);    opacity: 0; animation-timing-function: cubic-bezier(0.1, 0.75, 0.25, 1); }
+  45%  { transform: translateX(0) scaleX(1);        opacity: 1; animation-timing-function: cubic-bezier(0.33, 0, 0.67, 1); }
+  56%  { transform: translateX(0) scaleX(0.82);     opacity: 1; }
+  74%  { transform: translateX(0) scaleX(0.82);     opacity: 1; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  100% { transform: translateX(0) scaleX(1);        opacity: 1; }
 }
