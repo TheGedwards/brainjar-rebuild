@@ -243,5 +243,79 @@ needed.
 | L2 | leads list + detail + actions + statuses + activity | ~1–1.5 days |
 | L3 | follow-ups, digest cron, confirmations | ~½ day |
 
-Cost note: Cal.com free tier and a free Zoom account cover a single-calendar setup;
-Resend's free tier covers this volume. No new recurring spend expected for L1–L3.
+Cost note: Cal.com free tier covers a single-calendar setup; Zoom is **paid**
+(Guy's decision — avoids the 40-min Basic cap mid-call); Resend's free tier covers
+this volume.
+
+---
+
+## 11. Locked decisions (2026-07-21)
+
+All §8 questions answered and confirmed. Key points and where each is configured:
+
+- **Email:** destination `CONTACT_TO_EMAIL=hello@brainjarmedia.com`; sender
+  `notifications@brainjarmedia.com`; Reply-To = the lead's submitted email.
+- **Availability (in Cal.com):** Tue–Wed, 10:00–12:00 & 14:00–16:00
+  (America/Los_Angeles); 30-min consult; 15-min buffer; max 3/day; 24h min notice;
+  21-day rolling window. Intentionally tight (~6/week) to match Guy's real schedule.
+- **Booking questions (in Cal.com):** required — name, email, company/website,
+  "What would you like help with?"; optional — "biggest current obstacle?",
+  "investment range?" (select: Under $1k / $1k–3k / $3k–7.5k / $7.5k+ / Not sure /
+  Prefer not to answer).
+- **Attribution:** first-party cookie → read on `/book` → Cal.com embed `metadata`
+  → webhook stores on lead; cookie-match fallback if passthrough is unreliable.
+  **Verify early in L1 — the one external dependency, not guaranteed until tested.**
+- **Roles:** managers = view/edit/assign/status/notes; admins + super_admins add
+  delete + export. (No "editor" role exists; nothing to gate there.)
+- **Confirmations:** Cal.com owns all attendee mail (branded); our app only sends
+  the internal notification + creates the lead. No duplicate confirmation from us.
+- **CTA:** "Book a Free Consult" — plain, clear. All CTA buttons point to `/book`;
+  keep a secondary "Contact" for the not-ready-to-schedule. Right-aligned tincture
+  button, also in the sticky header; preserve the tuned centered nav + logo animation.
+
+**Where settings live:** availability, buffers, limits, booking questions and the
+investment-range options are all configured in the **Cal.com dashboard** — no deploy
+needed to change them (this satisfies the "keep it adjustable" requirement better than
+code). Our code stays agnostic and stores whatever Cal.com sends. Pipeline statuses
+and `/book` page copy are the parts *we* own (`lib/leads.ts`, pages registry).
+
+### Environment variables (set in Vercel)
+
+| Var | Value | Notes |
+|---|---|---|
+| `CONTACT_TO_EMAIL` | `hello@brainjarmedia.com` | Set now — makes the existing contact form email immediately. |
+| `RESEND_API_KEY` | (already set) | Confirm it's present. |
+| `CAL_WEBHOOK_SECRET` | (from Cal.com) | Signing secret for the webhook. |
+| `NEXT_PUBLIC_CAL_LINK` | e.g. `brainjar/free-consult` | Cal.com username/event slug for the embed. |
+
+### Resend DNS records (add at the domain registrar / DNS host)
+
+Resend generates the **exact** SPF, DKIM and return-path records when you add
+`brainjarmedia.com` in its dashboard — copy those verbatim (the DKIM key is unique
+and region-specific). Shape:
+- **TXT (DKIM)** at `resend._domainkey` — long `p=…` value from Resend.
+- **TXT (SPF)** + **MX** on the `send` return-path subdomain — values from Resend.
+- **DMARC** (ours to define) — TXT at `_dmarc`:
+  `v=DMARC1; p=none; rua=mailto:hello@brainjarmedia.com; fo=1` (start at `p=none`
+  to monitor; tighten to `quarantine`/`reject` later).
+- ⚠️ **SPF must be a single record.** If the root already has `v=spf1…` from another
+  provider, merge includes — never publish two SPF records.
+
+### Cal.com setup checklist (Guy)
+
+1. Create account; under **Apps**, connect **Google Calendar** (availability +
+   event creation) and **Zoom** (paid).
+2. **Availability schedule** "Consults": Tue & Wed, 10:00–12:00 and 14:00–16:00,
+   timezone America/Los_Angeles.
+3. **Event type** "Free Consult": 30 min, location **Zoom**. Limits → after-event
+   buffer 15 min; min notice 24h; limit booking frequency 3/day; limit future
+   bookings 21 rolling days.
+4. **Booking questions:** add the four required + two optional above; investment
+   range as a **select**.
+5. **Branding:** brand color `#C4694B`; event title/description + the confirmation/
+   reminder email copy in Brainjar voice.
+6. **Webhook:** Settings → Developer → Webhooks → add
+   `https://www.brainjarmedia.com/api/cal/webhook` (and the staging URL for testing);
+   subscribe to Booking Created / Rescheduled / Cancelled; set a signing secret →
+   put it in Vercel as `CAL_WEBHOOK_SECRET`.
+7. Copy the public event link → set `NEXT_PUBLIC_CAL_LINK` in Vercel.
