@@ -11,9 +11,9 @@ const NAV = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
-  { href: "/work", label: "Portfolio" },
+  { href: "/work", label: "Our Work" },
   { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact Us", accent: true },
+  { href: "/contact", label: "Contact", accent: true },
 ];
 
 export function SiteHeader() {
@@ -119,7 +119,9 @@ export function SiteHeader() {
         {/* Logo layer — full width, so "16px from the left" is the browser edge;
             overflow-hidden so the off-screen start doesn't add a scrollbar. It's
             separate from the nav (and pointer-events-none) so the Services
-            dropdown is never clipped and clicks pass through. Desktop only. */}
+            dropdown is never clipped and clicks pass through. From md up the JAR
+            slides in; the BRAINJAR/MEDIA wordmark only joins it at xl (≥1280),
+            where there's room beside the centered nav without overlapping. */}
         <div className="pointer-events-none absolute inset-0 hidden items-center overflow-hidden md:flex">
           <Link
             href="/"
@@ -129,9 +131,13 @@ export function SiteHeader() {
               scrolled ? "is-in" : ""
             }`}
           >
-            <span className="display -mr-[0.2em] text-sm tracking-[0.2em] text-ink">BRAINJAR</span>
+            <span className="display -mr-[0.2em] hidden text-sm tracking-[0.2em] text-ink xl:inline">
+              BRAINJAR
+            </span>
             <BrandMark width={30} />
-            <span className="display -mr-[0.28em] text-sm tracking-[0.28em] text-ink">MEDIA</span>
+            <span className="display -mr-[0.28em] hidden text-sm tracking-[0.28em] text-ink xl:inline">
+              MEDIA
+            </span>
           </Link>
         </div>
 

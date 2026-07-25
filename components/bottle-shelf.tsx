@@ -98,7 +98,7 @@ export function BottleShelf() {
             if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); move(-1); }
           }}
           onMouseLeave={() => setHovered(null)}
-          className="mx-auto mt-10 flex max-w-2xl items-end justify-center gap-1 sm:gap-2"
+          className="mx-auto mt-10 flex max-w-2xl items-end justify-center gap-1 sm:gap-10"
           style={{ perspective: "1200px", perspectiveOrigin: "50% 120%" }}
         >
           {SHELF.map((item, i) => {
@@ -121,7 +121,7 @@ export function BottleShelf() {
                   alt=""
                   width={280}
                   height={600}
-                  className={`h-auto w-14 origin-bottom transition-all duration-300 ease-out sm:w-[120px] ${
+                  className={`h-auto w-14 origin-bottom transition-all duration-300 ease-out sm:w-[72px] ${
                     isActive
                       ? "opacity-100"
                       : "opacity-60 grayscale-[0.35] group-hover:opacity-80 group-hover:grayscale-[0.15]"
