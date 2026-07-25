@@ -32,20 +32,28 @@ export async function POST(req: Request) {
     );
   }
 
-  // Email is best-effort.
+  // Email is best-effort — the lead is already saved. Two messages go out: an
+  // internal notification to the team, and an auto-reply to the person who
+  // submitted. Sent from notifications@; the team can reply straight to the lead.
   const key = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
-  if (key && to) {
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
+  const notifyTo = process.env.CONTACT_TO_EMAIL; // e.g. hello@brainjarmedia.com
+  const FROM = "Brainjar Media <notifications@brainjarmedia.com>";
+
+  if (key) {
+    const send = (payload: Record<string, unknown>) =>
+      fetch("https://api.resend.com/emails", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${key}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Brainjar Media <website@brainjarmedia.com>",
-          to: [to],
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from: FROM, ...payload }),
+      });
+
+    try {
+      let sent = false;
+
+      // 1) Internal notification — reply goes straight to the lead.
+      if (notifyTo) {
+        const res = await send({
+          to: [notifyTo],
           reply_to: email,
           subject: `New diagnosis request — ${name}${company ? ` (${company})` : ""}`,
           text: [
@@ -57,12 +65,32 @@ export async function POST(req: Request) {
             ``,
             message || "(no message)",
           ].join("\n"),
-        }),
+        });
+        sent = res.ok;
+        if (!res.ok) console.error("resend notify failed", await res.text());
+      }
+
+      // 2) Auto-reply to the submitter. Replies route to the team inbox.
+      const ack = await send({
+        to: [email],
+        reply_to: notifyTo || "hello@brainjarmedia.com",
+        subject: "We received your message — Brainjar Media",
+        text: [
+          `Hi ${name},`,
+          ``,
+          `Thanks for reaching out to Brainjar Media. We've received your message`,
+          `and someone will get back to you within one business day.`,
+          ``,
+          `If it's urgent, call us at (503) 929-7436.`,
+          ``,
+          `— Brainjar Media`,
+          `109 N Main Ave #202, Gresham, OR 97030`,
+        ].join("\n"),
       });
-      if (res.ok) {
+      if (!ack.ok) console.error("resend autoreply failed", await ack.text());
+
+      if (sent || ack.ok) {
         await db.from("leads").update({ emailed_at: new Date().toISOString() }).eq("id", data.id);
-      } else {
-        console.error("resend failed", await res.text());
       }
     } catch (e) {
       console.error("resend threw", e);

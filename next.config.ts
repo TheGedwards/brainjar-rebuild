@@ -77,6 +77,70 @@ const portfolioWildcard = {
   destination: "/work/:slug",
 };
 
+/**
+ * Legacy WordPress pages found in the old wp-sitemap (crawled 2026-07-24) that
+ * weren't covered above. Each lands on the closest live equivalent so no old
+ * indexed URL 404s. A few targets are best-guesses (marked) — adjust if wrong.
+ */
+const legacyPages = [
+  // About cluster
+  { source: "/history", destination: "/about" },
+  { source: "/philosophy", destination: "/about" },
+  { source: "/how-we-do-it", destination: "/about" },
+  // Old service variants (Graphic Design retired 2026-07-18 -> /services)
+  { source: "/web-design", destination: "/services/web-development" },
+  { source: "/social-media", destination: "/services/content-marketing/social-media" },
+  { source: "/seosmm", destination: "/services" },
+  { source: "/graphic-design-3", destination: "/services" },
+  { source: "/graphic-design-logos-brand-identity", destination: "/services" },
+  { source: "/graphic-design-business-cards", destination: "/services" },
+  // Proof / portfolio landing pages
+  { source: "/client-list", destination: "/work" },
+  { source: "/testimonials", destination: "/work" },
+  { source: "/case-studies", destination: "/work" },
+  { source: "/client-template", destination: "/work" },
+  { source: "/portfolio-2", destination: "/work" }, // MUST precede /portfolio-:slug
+  { source: "/bickmore", destination: "/work" }, // old client page (best-guess)
+  // Content offers / misc (best-guess targets)
+  { source: "/free-competitive-analysis", destination: "/services/seo/competitive-analysis" },
+  { source: "/smm4leaders", destination: "/services/content-marketing/social-media" },
+  { source: "/seven-rules", destination: "/blog" },
+  // Theme-demo / test / dead pages -> home
+  { source: "/page-templates", destination: "/" },
+  { source: "/page-templates/:path*", destination: "/" },
+  { source: "/page-template", destination: "/" },
+  { source: "/home_test", destination: "/" },
+  { source: "/artists-needed", destination: "/" },
+  { source: "/holiday-greens", destination: "/" },
+];
+
+/**
+ * Legacy per-service case-study URLs (the scheme before /portfolio-{slug}).
+ * Where the client maps cleanly to a current specimen slug, point there;
+ * otherwise land on the portfolio index. All are exact paths, so they don't
+ * collide with the /web-development-* sub-service rules above.
+ */
+const legacyCaseStudies = [
+  { source: "/seo-all-about-automotive", destination: "/work/all-about-automotive" },
+  { source: "/web-development-sand-in-the-city", destination: "/work/sand-in-the-city" },
+  { source: "/web-development-skyland-pub", destination: "/work/skyland-pub" },
+  { source: "/graphics-the-best-little-genius-montessori", destination: "/work/little-genius-montessori" },
+  { source: "/seo-petropics", destination: "/work" },
+  { source: "/e-commerce-da-leather", destination: "/work" },
+  { source: "/web-development-gresham-animal-hospital", destination: "/work" },
+  { source: "/web-development-best-burger-bbq", destination: "/work" },
+  { source: "/web-development-human-solutions", destination: "/work" },
+  { source: "/graphics-a-way-with-numbers", destination: "/work" },
+  { source: "/graphics-off-the-charts-games", destination: "/work" },
+  { source: "/graphics-radiah-tech", destination: "/work" },
+  { source: "/graphics-cliff-barackman", destination: "/work" },
+  { source: "/graphics-willamette-eggs", destination: "/work" },
+  { source: "/e-commerce-club-sunglass", destination: "/work" },
+  { source: "/social-media-iron-mountain-ridge", destination: "/work" },
+  { source: "/social-media-iron-mountain-ridge-2", destination: "/work" },
+  { source: "/seo-gramor-development", destination: "/work" },
+];
+
 // --- WordPress cruft --------------------------------------------------------
 // Old WP endpoints that get crawled forever. Send them somewhere sane instead
 // of letting them 404 or, worse, sit there as an attack surface.
@@ -106,6 +170,8 @@ const nextConfig: NextConfig = {
       ...corePages,
       ...servicePages,
       ...subServicePages,
+      ...legacyPages,
+      ...legacyCaseStudies,
       ...portfolioRenames,
       portfolioWildcard,
       ...wordpressCruft,
