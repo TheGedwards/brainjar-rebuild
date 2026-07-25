@@ -29,6 +29,28 @@ function isRateLimited(ip: string): boolean {
   return recent.length > RATE_MAX;
 }
 
+/**
+ * Cloudflare Turnstile verification. Only enforced when TURNSTILE_SECRET_KEY is
+ * set, so the form degrades gracefully before the key is configured (and in
+ * local dev). Fails closed: a verify error rejects rather than letting bots
+ * through. The token is single-use.
+ */
+async function turnstileOk(token: string, ip: string): Promise<boolean> {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return true; // not configured -> skip
+  try {
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ secret, response: token || "", remoteip: ip }),
+    });
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Malformed request." }, { status: 400 });
@@ -42,6 +64,13 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "Too many submissions. Please wait a few minutes, or call (503) 929-7436." },
       { status: 429 }
+    );
+  }
+
+  if (!(await turnstileOk(body.turnstileToken, ip))) {
+    return NextResponse.json(
+      { error: "Verification failed. Please try again, or call (503) 929-7436." },
+      { status: 403 }
     );
   }
 
