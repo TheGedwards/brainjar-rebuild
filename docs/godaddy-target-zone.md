@@ -28,8 +28,8 @@ receive reports — still `p=none` monitoring mode.)*
 
 | Type | Host | Value | TTL | Was |
 |---|---|---|---|---|
-| A | `@` | `⧗ 76.76.21.21` (confirm from Vercel) | 10 min | `165.140.69.213` (old host) |
-| CNAME | `www` | `⧗ cname.vercel-dns.com` (confirm from Vercel) | 10 min | `→ brainjarmedia.com` |
+| A | `@` | `216.150.1.1` (Vercel — confirmed) | 10 min | `165.140.69.213` (old host) |
+| CNAME | `www` | `5bc3be518e9e6334.vercel-dns-016.com` (Vercel — confirmed; **omit trailing dot** in GoDaddy) | 10 min | `→ brainjarmedia.com` |
 | TXT | `@` | `v=spf1 include:_spf.google.com ~all` | 1 hr | old cloudwebhosting SPF |
 
 *SPF rewrite: the old record authorized the old host (`ip4:165.140.69.202`,
