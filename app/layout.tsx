@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteChrome } from "@/components/site-chrome";
 import { AdminBarProvider } from "@/components/admin-bar";
 import { BRAIN_KEYFRAMES } from "@/components/brand-mark";
+import Script from "next/script";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -56,10 +57,24 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // GA4 loads only on the real production domain and only once the Measurement
+  // ID env var is set — never on staging/localhost, so GA isn't polluted.
+  const GA_ID = process.env.NEXT_PUBLIC_GA4_ID;
   return (
     <html lang="en" className={`${montserrat.variable} ${spectral.variable}`}>
       <body className="flex min-h-screen flex-col">
         <style dangerouslySetInnerHTML={{ __html: BRAIN_KEYFRAMES }} />
+        {IS_PRODUCTION_SITE && GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+            </Script>
+          </>
+        )}
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-tincture focus:px-4 focus:py-2 focus:font-display focus:text-xs focus:text-paper"
