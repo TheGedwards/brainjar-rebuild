@@ -36,15 +36,16 @@ receive reports — still `p=none` monitoring mode.)*
 `_spf.cloudwebhosting.com`) — obsolete. Google Workspace only now. Resend's SPF lives
 on the `send` subdomain below, so the root SPF stays Google-only. **One SPF record only.***
 
-## ADD — Resend (sending), from the Resend dashboard `⧗`
+## ADD — Resend (sending) — confirmed from the Resend dashboard
 
 | Type | Host | Value | Priority |
 |---|---|---|---|
-| TXT | `resend._domainkey` | `⧗ p=…` (Resend DKIM) | — |
-| TXT | `send` | `⧗ v=spf1 include:amazonses.com ~all` (Resend) | — |
-| MX | `send` | `⧗ feedback-smtp.<region>.amazonses.com` (Resend) | 10 |
+| TXT | `resend._domainkey` | `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC03zDKDWPDZ27XF8LYtlJbE2lhmPyqTR+Pet/7i7hsNzkIY6KTZb4aY/i9IboXoHaU7Xsoi373SDfl7FjagqTWH/p0edI9mtw5J36OBg4h/+pyzTCv341EcNs2RD3qvycr+qvPqbKDQDtU/XX49dNDEke1zrrtGHfqw9DVTBtzQQIDAQAB` | — |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` | — |
+| MX | `send` | `feedback-smtp.us-east-1.amazonses.com` | 10 |
 
-*Copy these three exactly from Resend after you add the domain there.*
+*Paste the DKIM value verbatim (it's long — GoDaddy will accept it). The `send`
+subdomain keeps Resend's SPF/return-path separate from the root Google SPF.*
 
 ---
 
