@@ -67,7 +67,7 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <>
-    <article className="px-6 py-12">
+    <article className="px-6 py-6">
       <EditTarget href={`/admin/portfolio/${p.id}`} label="Edit this case study" />
       <nav className="mx-auto mb-8 max-w-5xl eyebrow text-center" aria-label="Breadcrumb">
         <Link href="/work" className="hover:text-tincture">

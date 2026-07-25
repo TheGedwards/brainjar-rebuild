@@ -37,7 +37,7 @@ export default async function PostPage({ params }: Params) {
   if (!post) notFound();
 
   return (
-    <article className="px-6 py-12">
+    <article className="px-6 py-6">
       <EditTarget href={`/admin/blog/${post.id}`} label="Edit this post" />
       <header className="mx-auto max-w-2xl text-center">
         <Link href="/blog" className="eyebrow hover:text-tincture">

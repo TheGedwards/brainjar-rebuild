@@ -102,9 +102,6 @@ export function SiteHeader() {
           <div className="display mt-2 text-lg tracking-[0.3em] text-ink sm:text-2xl sm:tracking-[0.28em]">
             BRAINJAR MEDIA
           </div>
-          <div className="mt-1 text-sm italic text-ink-faint">
-            purveyors of fine digital remedies
-          </div>
         </div>
       </header>
 

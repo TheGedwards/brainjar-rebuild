@@ -34,9 +34,17 @@ TypeScript + Tailwind v4, Supabase (Postgres + Storage), deployed on Vercel.
      (`text-xs`/`text-sm` and the `text-[9–14px]` micro-labels: eyebrows, nav,
      No. plates, stat/chip labels) are the documented exception — they're
      single-line UI labels, not paragraphs.
-   - **Density.** Section padding and gaps were tightened ~20% from the original
-     airy mockup. Keep that density; don't reintroduce large `py-20`/`py-24`
-     section padding without reason.
+   - **Density — locked section padding.** Public-page section vertical padding
+     is deliberately tight (halved 2026-07-25 from the earlier mockup values,
+     applied sitewide). Use these, and do NOT reintroduce
+     `py-12`/`py-16`/`py-20`/`py-24` on sections:
+     - hero sections: `py-6 sm:py-8`
+     - full-bleed content / stat / panel bands: `py-8` (or `py-6` for tight panels)
+     - one-sided section padding: `pb-8` / `pt-8`
+     - page `<article>` wrappers (case study, blog post): `py-6`
+     The shared `ServiceCTA` band is exempt (keeps its own larger padding by
+     design), as is `app/admin` (utilitarian). Inner content still follows the
+     8pt grid.
    `app/admin` is deliberately excluded from this system — it's internal,
    noindexed tooling and keeps its utilitarian spacing.
 4. **The blog uses a rich text editor.** As of Phase B1, posts are authored in a

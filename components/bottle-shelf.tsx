@@ -76,10 +76,9 @@ export function BottleShelf() {
   };
 
   return (
-    <section className="bg-paper px-6 py-16" aria-labelledby="shelf-heading">
+    <section className="bg-paper px-6 py-8" aria-labelledby="shelf-heading">
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
-          <div className="eyebrow">From the Shelf</div>
           <h2 id="shelf-heading" className="display mt-2 text-2xl text-ink sm:text-3xl">
             Our Expert Services
           </h2>
@@ -89,71 +88,79 @@ export function BottleShelf() {
           </p>
         </div>
 
-        {/* --- The shelf --------------------------------------------------- */}
-        <div
-          role="radiogroup"
-          aria-label="Our services"
-          onKeyDown={(e) => {
-            if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); move(1); }
-            if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); move(-1); }
-          }}
-          onMouseLeave={() => setHovered(null)}
-          className="mx-auto mt-10 flex max-w-2xl items-end justify-center gap-1 sm:gap-10"
-          style={{ perspective: "1200px", perspectiveOrigin: "50% 120%" }}
-        >
-          {SHELF.map((item, i) => {
-            const isActive = i === active;
-            return (
-              <button
-                key={item.name}
-                role="radio"
-                aria-checked={isActive}
-                tabIndex={isActive ? 0 : -1}
-                aria-label={item.name}
-                onMouseEnter={() => { setHovered(i); if (!committed) setActive(i); }}
-                onFocus={() => setActive(i)}
-                onClick={() => { setActive(i); setCommitted(true); }}
-                className="group relative flex flex-col items-center"
-                style={{ zIndex: isActive ? 10 : 1 }}
-              >
-                <Image
-                  src={item.bottle}
-                  alt=""
-                  width={280}
-                  height={600}
-                  className={`h-auto w-14 origin-bottom transition-all duration-300 ease-out sm:w-[72px] ${
-                    isActive
-                      ? "opacity-100"
-                      : "opacity-60 grayscale-[0.35] group-hover:opacity-80 group-hover:grayscale-[0.15]"
-                  }`}
-                  style={{
-                    transform: isActive ? "scale(1.28)" : "scale(1)",
-                    filter: isActive ? "drop-shadow(0 20px 26px rgba(59,52,42,0.32))" : undefined,
-                  }}
-                />
-                {/* No. plate under each bottle */}
+        {/* --- The cabinet card: the shelf (bottles) sits INSIDE the box --- */}
+        <div className="mx-auto mt-8 max-w-2xl border border-rule-strong p-2">
+          <div className="border-2 border-ink bg-card px-8 py-8 text-center">
+            {/* Shelf band — bottles + No. plates, framed like the nav bar:
+                a single rule above, a double rule below, full-bleed to the box
+                edges. The generous top padding lets the active bottle loom up
+                without crossing the top rule. */}
+            {/* Bottles — pt gives the active bottle room to loom up. */}
+            <div
+              role="radiogroup"
+              aria-label="Our services"
+              onKeyDown={(e) => {
+                if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); move(1); }
+                if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+              }}
+              onMouseLeave={() => setHovered(null)}
+              className="flex items-end justify-center gap-1 pt-6 sm:gap-10"
+              style={{ perspective: "1200px", perspectiveOrigin: "50% 120%" }}
+            >
+              {SHELF.map((item, i) => {
+                const isActive = i === active;
+                return (
+                  <button
+                    key={item.name}
+                    role="radio"
+                    aria-checked={isActive}
+                    tabIndex={isActive ? 0 : -1}
+                    aria-label={item.name}
+                    onMouseEnter={() => { setHovered(i); if (!committed) setActive(i); }}
+                    onFocus={() => setActive(i)}
+                    onClick={() => { setActive(i); setCommitted(true); }}
+                    className="group relative flex flex-col items-center"
+                    style={{ zIndex: isActive ? 10 : 1 }}
+                  >
+                    <Image
+                      src={item.bottle}
+                      alt=""
+                      width={280}
+                      height={600}
+                      className={`h-auto w-14 origin-bottom transition-all duration-300 ease-out sm:w-[72px] ${
+                        isActive
+                          ? "opacity-100"
+                          : "opacity-60 grayscale-[0.35] group-hover:opacity-80 group-hover:grayscale-[0.15]"
+                      }`}
+                      style={{
+                        transform: isActive ? "scale(1.28)" : "scale(1)",
+                        filter: isActive ? "drop-shadow(0 20px 26px rgba(59,52,42,0.32))" : undefined,
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* No. label strip — framed like the nav (a single rule above, a
+                double rule below), inset ~16px from the box edges (-mx-4 against
+                the px-8 padding), and column-aligned under the bottles. */}
+            <div className="double-rule -mx-4 mb-8 mt-3 flex justify-center gap-1 py-2 sm:gap-10" aria-hidden>
+              {SHELF.map((item, i) => (
                 <span
-                  className="mt-2 font-display text-[9px] font-bold tracking-[0.2em] transition-colors"
-                  style={{ color: isActive ? "var(--color-tincture)" : "var(--color-ink-faint)" }}
+                  key={item.no}
+                  className="w-14 text-center font-display text-[12px] font-bold tracking-[0.2em] transition-colors sm:w-[72px]"
+                  style={{ color: i === active ? "var(--color-tincture)" : "var(--color-ink-faint)" }}
                 >
                   No. {item.no}
                 </span>
-              </button>
-            );
-          })}
-        </div>
+              ))}
+            </div>
 
-        {/* The shelf board itself. A rule, then its shadow. */}
-        <div className="mx-auto mt-1 h-[3px] max-w-3xl bg-rule-strong" />
-        <div className="mx-auto h-2 max-w-3xl bg-gradient-to-b from-[rgba(59,52,42,0.10)] to-transparent" />
-
-        {/* --- The label card ---------------------------------------------- */}
-        <div className="mx-auto mt-10 max-w-2xl border border-rule-strong p-2">
-          <div className="border-2 border-ink bg-card px-8 py-8 text-center">
-            <div className="font-display text-[10px] font-bold tracking-[0.3em] text-cobalt">
+            <div className="display text-xl text-tincture sm:text-2xl">{s.name}</div>
+            <div className="mt-2 font-display text-[12px] font-bold tracking-[0.3em] text-cobalt">
               FORMULA No. {s.no}
             </div>
-            <div className="display mt-2 text-xl text-tincture sm:text-2xl">{s.name}</div>
 
             <Lozenge className="my-6" />
 

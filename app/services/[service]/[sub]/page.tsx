@@ -42,7 +42,7 @@ export default async function SubServicePage({ params }: Params) {
 
   return (
     <>
-      <section className="px-6 py-12 text-center sm:py-16">
+      <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <nav className="eyebrow" aria-label="Breadcrumb">
             <Link href="/services" className="hover:text-tincture">
@@ -64,7 +64,7 @@ export default async function SubServicePage({ params }: Params) {
         </Frame>
       </section>
 
-      <section className="px-6 pb-16">
+      <section className="px-6 pb-8">
         <div className="mx-auto max-w-2xl">
           <div className="prose-apothecary">
             {paras(c.content.intro)}

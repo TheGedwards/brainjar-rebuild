@@ -25,7 +25,7 @@ export default async function WorkPage() {
 
   return (
     <>
-      <section className="px-6 py-12 text-center sm:py-16">
+      <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
@@ -38,13 +38,13 @@ export default async function WorkPage() {
         </Frame>
       </section>
 
-      <section className="px-6 pb-16">
+      <section className="px-6 pb-8">
         <div className="mx-auto max-w-6xl">
           <WorkGrid projects={projects} />
         </div>
       </section>
 
-      <section className="border-y border-rule bg-panel px-6 py-12">
+      <section className="border-y border-rule bg-panel px-6 py-6">
         <div className="mx-auto grid max-w-4xl gap-8 text-center sm:grid-cols-4">
           {[
             ["20+", "YEARS PRACTICING"],

@@ -39,7 +39,7 @@ export default async function AboutPage() {
   const c = await getPageContent("/about");
   return (
     <>
-      <section className="px-6 py-12 text-center sm:py-16">
+      <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <Image
@@ -60,7 +60,7 @@ export default async function AboutPage() {
         </Frame>
       </section>
 
-      <section className="px-6 pb-16">
+      <section className="px-6 pb-8">
         <div className="mx-auto max-w-3xl">
           <SectionTitle eyebrow="How It Works">The Method</SectionTitle>
           <div className="mt-10 space-y-12">
@@ -79,7 +79,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="border-y border-rule bg-panel px-6 py-12">
+      <section className="border-y border-rule bg-panel px-6 py-6">
         <div className="mx-auto grid max-w-4xl gap-8 text-center sm:grid-cols-4">
           {[
             ["20+", "YEARS PRACTICING"],

@@ -49,7 +49,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ---------- HERO ---------- */}
-      <section className="px-6 py-12 text-center sm:py-16">
+      <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <Image
@@ -79,7 +79,7 @@ export default async function HomePage() {
       </section>
 
       {/* ---------- PRESS ---------- */}
-      <section className="border-y border-rule bg-panel px-6 py-8">
+      <section className="border-y border-rule bg-panel px-6 py-4">
         <div className="mx-auto max-w-4xl text-center">
           <div className="eyebrow">As Featured In</div>
           <div className="mt-4 flex flex-col items-center justify-center gap-2 text-lg italic text-ink-soft sm:flex-row sm:gap-10">
@@ -97,7 +97,7 @@ export default async function HomePage() {
 
       {/* ---------- FEATURED CASE STUDY ---------- */}
       {featured && (
-        <section className="border-y border-rule bg-panel px-6 py-16">
+        <section className="border-y border-rule bg-panel px-6 py-8">
           <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
             <SpecimenPlate
               src={featured.hero_image_url}
@@ -139,7 +139,7 @@ export default async function HomePage() {
       )}
 
       {/* ---------- THE METHOD ---------- */}
-      <section className="px-6 py-16">
+      <section className="px-6 py-8">
         <div className="mx-auto max-w-5xl">
           <SectionTitle>We&rsquo;ll Prescribe a Solution</SectionTitle>
 

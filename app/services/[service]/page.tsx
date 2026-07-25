@@ -36,7 +36,7 @@ export default async function ServicePage({ params }: Params) {
 
   return (
     <>
-      <section className="px-6 py-12 text-center sm:py-16">
+      <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <Image src={s.bottle} alt="" width={110} height={190} className="mx-auto h-32 w-auto sm:h-40" />
           <div className="eyebrow mt-6">Formula No. {s.no} · {s.label}</div>
@@ -50,7 +50,7 @@ export default async function ServicePage({ params }: Params) {
       </section>
 
       {s.subs.length > 0 && (
-        <section className="border-y border-rule bg-panel px-6 py-16">
+        <section className="border-y border-rule bg-panel px-6 py-8">
           <div className="mx-auto max-w-5xl">
             <SectionTitle eyebrow="What's In It">The Ingredients</SectionTitle>
             <div className="mt-10 grid gap-6 sm:grid-cols-3">
@@ -83,7 +83,7 @@ export default async function ServicePage({ params }: Params) {
       )}
 
       {related.length > 0 && (
-        <section className="px-6 py-16">
+        <section className="px-6 py-8">
           <div className="mx-auto max-w-5xl">
             <SectionTitle eyebrow="Proof">Taken By</SectionTitle>
             <div className="mt-12 grid gap-6 sm:grid-cols-3">

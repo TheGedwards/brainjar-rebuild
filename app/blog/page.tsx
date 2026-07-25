@@ -27,7 +27,7 @@ export default async function BlogPage() {
 
   return (
     <>
-      <section className="px-6 py-12 text-center sm:py-16">
+      <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <div className="eyebrow">{c.content.hero_eyebrow}</div>
           <h1 className="display mt-4 text-[32px] leading-tight sm:text-[48px]">
@@ -40,7 +40,7 @@ export default async function BlogPage() {
         </Frame>
       </section>
 
-      <section className="px-6 pb-16">
+      <section className="px-6 pb-8">
         <div className="mx-auto max-w-3xl divide-y divide-rule border-y border-rule">
           {posts.map((post) => (
             <article key={post.id} className="group relative py-8">
