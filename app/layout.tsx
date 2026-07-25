@@ -36,10 +36,22 @@ export const metadata: Metadata = {
   // Staging/localhost emit <meta name="robots" content="noindex,nofollow">.
   // robots.txt alone won't stop indexing of a URL linked from elsewhere.
   robots: IS_PRODUCTION_SITE ? undefined : { index: false, follow: false },
+  icons: {
+    icon: [
+      { url: "/assets/favicon.svg", type: "image/svg+xml" },
+      { url: "/assets/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [{ url: "/assets/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/assets/site.webmanifest",
   openGraph: {
     type: "website",
     siteName: "Brainjar Media",
     locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
