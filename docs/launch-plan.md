@@ -13,10 +13,23 @@ moved to GoDaddy, and full SEO due diligence — *before* the lead-gen build.
   exactly** through the move.
 - **Canonical host:** `https://www.brainjarmedia.com` (per CLAUDE.md). Apex 301s to www.
 
+## Chosen path: full GoDaddy move at launch (Path 2)
+GoDaddy locks its DNS zone editor while the domain points at third-party
+nameservers, so we **cannot pre-stage** the zone. The editor only unlocks *after*
+switching nameservers to GoDaddy. Therefore the safe procedure is **switch, then
+immediately populate** — de-risked by:
+- The **old zone stays intact** at cloudwebhosting, and most resolvers keep using
+  the *cached* old nameservers for hours after the switch, so mail/traffic largely
+  keep flowing on the old zone during the window.
+- We **pre-write the complete target zone** (Claude, from Guy's export) so data entry
+  is a 2–3 minute paste, not a hunt.
+- We **enter MX + mail records first**, off-hours, to shrink the email window to near zero.
+- **Rollback is instant:** switch nameservers back to cloudwebhosting; nothing there changed.
+
 ## The two hard rules
-1. **Rebuild the whole DNS zone at GoDaddy BEFORE switching nameservers.** Email has
-   zero downtime only if the MX (+ SPF/DKIM/DMARC) already exist in the GoDaddy zone
-   at cutover. Both the old and new zones carry the same Google MX, so mail never gaps.
+1. **At cutover, enter the MX + mail auth records into GoDaddy FIRST, within seconds
+   of the editor unlocking**, working from the pre-written list. That's what keeps
+   email from gapping, since we can't pre-stage.
 2. **`NEXT_PUBLIC_SITE_URL=https://www.brainjarmedia.com` must be set in Vercel
    Production at launch.** If it still points at a `*.vercel.app` URL, the live site
    ships `noindex` and Google will deindex it. This is the single most important
@@ -48,26 +61,31 @@ moved to GoDaddy, and full SEO due diligence — *before* the lead-gen build.
 - **B3. Verify `brainjarmedia.com` in Resend** — but *enter its records into the
   GoDaddy zone in Phase C*, not the old host (we're about to leave it).
 
-## Phase C — Build the GoDaddy zone  *(Guy + Claude, BEFORE cutover)*
+## Phase C — Prepare everything for a fast cutover  *(Guy + Claude, no NS change yet)*
 - **C1.** In Vercel, add `brainjarmedia.com` + `www` to the project. Vercel shows the
-  exact records (an A record for the apex, a CNAME for `www`).
-- **C2.** In **GoDaddy DNS Management**, build the full zone:
-  - Recreate **every** record from B1 **except** the old website A records
-    (`165.140.69.213`) for apex/www.
-  - Add **Vercel's** apex A + `www` CNAME (from C1).
-  - Add **Resend's** DKIM/SPF/MX (from B3) and the **DMARC** TXT
-    (`v=DMARC1; p=none; rua=mailto:hello@brainjarmedia.com; fo=1`).
-  - Keep the **Google MX** exactly as they are. One SPF record only (merge includes).
+  exact records to use (apex `A` = `76.76.21.21`; `www` `CNAME` = `cname.vercel-dns.com`
+  — use whatever Vercel displays).
+- **C2.** Add `brainjarmedia.com` in **Resend**; note its DKIM/SPF/MX records.
 - **C3.** In Vercel Production env, set: `NEXT_PUBLIC_SITE_URL=https://www.brainjarmedia.com`,
   Supabase URL/anon/service keys, `RESEND_API_KEY`, `CONTACT_TO_EMAIL=hello@brainjarmedia.com`.
-- **C4.** (Optional) Lower TTLs on the old host a day ahead to speed any rollback.
+  (Site is fully ready to serve before we touch DNS.)
+- **C4. Claude pre-writes the complete target zone** from Guy's export (B1): every
+  current record, **minus** the old website A records (`165.140.69.213`) for apex/www,
+  **plus** Vercel's apex A + `www` CNAME, **plus** Resend's records + the DMARC TXT
+  (`v=DMARC1; p=none; rua=mailto:hello@brainjarmedia.com; fo=1`). One SPF record only.
+  Google MX carried over verbatim. This becomes the paste-in checklist for D2.
+- **C5.** (Optional) Lower record TTLs at cloudwebhosting a day ahead — speeds rollback.
 
-## Phase D — Cutover  *(Guy)*
-- **D1.** At GoDaddy (registrar → Nameservers), switch from the cloudwebhosting
-  nameservers to **GoDaddy's** default nameservers. This activates the zone from C2.
-- **D2.** Propagation is 1–48h (usually much faster). During it, some visitors hit the
-  old host, some hit Vercel — both serve a working site, and email works on both
-  because both zones carry the Google MX.
+## Phase D — Cutover  *(Guy, off-hours)*
+- **D1.** At a low-traffic time, at GoDaddy (registrar → Nameservers), switch from the
+  cloudwebhosting nameservers to **GoDaddy's**. The DNS editor unlocks.
+- **D2.** Immediately enter the pre-written zone (C4) into GoDaddy DNS — **MX + mail
+  records first**, then Vercel A/CNAME, then TXT/Resend/DMARC, then the rest. Check
+  against the list.
+- **D3.** Most resolvers still use the cached old nameservers for a while, so email/traffic
+  keep flowing on the intact old zone during propagation (1–48h, usually faster).
+- **Rollback:** if anything's wrong, switch nameservers back to cloudwebhosting — its
+  zone is unchanged.
 
 ## Phase E — Post-cutover verification  *(Claude + Guy)*
 - **E1.** `https://www.brainjarmedia.com` loads with valid SSL (Vercel auto-issues).
