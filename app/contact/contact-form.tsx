@@ -4,24 +4,56 @@ import { useState } from "react";
 
 type State = "idle" | "sending" | "sent" | "error";
 
-const FIELD =
-  "w-full border border-rule-strong bg-card px-4 py-4 font-body text-lg text-ink placeholder:text-ink-faint/60 focus:border-tincture focus:outline-none";
+const FIELD_BASE =
+  "w-full border bg-card px-4 py-4 font-body text-lg text-ink placeholder:text-ink-faint/60 focus:outline-none";
+
+function fieldCls(hasError: boolean) {
+  return `${FIELD_BASE} ${
+    hasError
+      ? "border-tincture-dk focus:border-tincture-dk"
+      : "border-rule-strong focus:border-tincture"
+  }`;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ContactForm() {
   const [state, setState] = useState<State>("idle");
   const [error, setError] = useState<string>("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setState("sending");
-    setError("");
-
     const form = new FormData(e.currentTarget);
+
     // Honeypot: bots fill every field they find. Humans never see this one.
     if (form.get("website")) {
       setState("sent");
       return;
     }
+
+    // Required-field validation with clear, specific messages.
+    const name = String(form.get("name") ?? "").trim();
+    const email = String(form.get("email") ?? "").trim();
+    const phone = String(form.get("phone") ?? "").trim();
+
+    const next: Record<string, string> = {};
+    if (!name) next.name = "Please enter your name.";
+    if (!email) next.email = "Please enter your email address.";
+    else if (!EMAIL_RE.test(email)) next.email = "That doesn’t look like a valid email address.";
+    if (!phone) next.phone = "Please enter a phone number so we can reach you.";
+
+    if (Object.keys(next).length > 0) {
+      setErrors(next);
+      setState("idle");
+      setError("");
+      document.getElementById(Object.keys(next)[0])?.focus();
+      return;
+    }
+
+    setErrors({});
+    setState("sending");
+    setError("");
 
     const res = await fetch("/api/contact", {
       method: "POST",
@@ -37,7 +69,7 @@ export function ContactForm() {
       // Say what went wrong and what to do instead. Never just "Oops!"
       setError(
         body.error ??
-          "That didn't send. Call (503) 929-7436 and we'll take it down over the phone."
+          "That didn’t send. Call (503) 929-7436 and we’ll take it down over the phone."
       );
     }
   }
@@ -59,39 +91,76 @@ export function ContactForm() {
     );
   }
 
+  const req = (
+    <span aria-hidden="true" className="text-tincture-dk">
+      {" "}
+      *
+    </span>
+  );
+
+  // Per-field error line + wiring shared by the required inputs.
+  const errorLine = (field: string) =>
+    errors[field] ? (
+      <p id={`${field}-error`} role="alert" className="mt-1 font-body text-base italic text-tincture-dk">
+        {errors[field]}
+      </p>
+    ) : null;
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} noValidate className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="eyebrow mb-2 block">
-            Name
+            Name{req}
           </label>
-          <input id="name" name="name" required autoComplete="name" className={FIELD} />
+          <input
+            id="name"
+            name="name"
+            autoComplete="name"
+            aria-required="true"
+            aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? "name-error" : undefined}
+            className={fieldCls(!!errors.name)}
+          />
+          {errorLine("name")}
         </div>
         <div>
           <label htmlFor="email" className="eyebrow mb-2 block">
-            Email
+            Email{req}
           </label>
           <input
             id="email"
             name="email"
             type="email"
-            required
             autoComplete="email"
-            className={FIELD}
+            aria-required="true"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+            className={fieldCls(!!errors.email)}
           />
+          {errorLine("email")}
         </div>
         <div>
           <label htmlFor="phone" className="eyebrow mb-2 block">
-            Phone
+            Phone{req}
           </label>
-          <input id="phone" name="phone" type="tel" autoComplete="tel" className={FIELD} />
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            aria-required="true"
+            aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
+            className={fieldCls(!!errors.phone)}
+          />
+          {errorLine("phone")}
         </div>
         <div>
           <label htmlFor="company" className="eyebrow mb-2 block">
             Company
           </label>
-          <input id="company" name="company" autoComplete="organization" className={FIELD} />
+          <input id="company" name="company" autoComplete="organization" className={fieldCls(false)} />
         </div>
       </div>
 
@@ -99,7 +168,7 @@ export function ContactForm() {
         <label htmlFor="symptom" className="eyebrow mb-2 block">
           What&rsquo;s the symptom?
         </label>
-        <select id="symptom" name="symptom" className={FIELD} defaultValue="">
+        <select id="symptom" name="symptom" className={fieldCls(false)} defaultValue="">
           <option value="" disabled>
             Choose one
           </option>
@@ -116,7 +185,7 @@ export function ContactForm() {
         <label htmlFor="message" className="eyebrow mb-2 block">
           Tell us more
         </label>
-        <textarea id="message" name="message" rows={5} className={FIELD} />
+        <textarea id="message" name="message" rows={5} className={fieldCls(false)} />
       </div>
 
       {/* honeypot */}
@@ -128,6 +197,10 @@ export function ContactForm() {
         aria-hidden="true"
         className="absolute left-[-9999px] size-0"
       />
+
+      <p className="font-body text-base text-ink-faint">
+        <span className="text-tincture-dk">*</span> Required
+      </p>
 
       {state === "error" && (
         <p role="alert" className="border border-tincture bg-tincture-lt/40 px-4 py-2 text-base text-ink">

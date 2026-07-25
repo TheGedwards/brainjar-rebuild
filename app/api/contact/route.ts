@@ -6,6 +6,29 @@ import { supabaseAdmin } from "@/lib/supabase";
  * down or unconfigured, the lead still exists in the database — a lead is never
  * lost because SMTP had a bad afternoon. Check /admin, or the `leads` table.
  */
+
+// ---------------------------------------------------------------------------
+// Rate limit — per-IP throttle to blunt form-spam bursts.
+// TO CHANGE THE LIMITS: edit these two constants. RATE_MAX submissions are
+// allowed per IP within RATE_WINDOW_MS. e.g. 5 per 10 min = a generous ceiling
+// for real visitors, a wall for a bot hammering the endpoint.
+// NOTE: memory is per serverless instance, so this is best-effort (it stops a
+// burst from one IP hitting one instance), not a global guarantee. For durable,
+// global limits add a Vercel Firewall rate rule on /api/contact, or wire Upstash.
+// ---------------------------------------------------------------------------
+const RATE_MAX = 5;
+const RATE_WINDOW_MS = 10 * 60_000; // 10 minutes
+const rateHits = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  if (rateHits.size > 5000) rateHits.clear(); // crude guard against unbounded growth
+  const recent = (rateHits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  rateHits.set(ip, recent);
+  return recent.length > RATE_MAX;
+}
+
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Malformed request." }, { status: 400 });
@@ -13,8 +36,20 @@ export async function POST(req: Request) {
   const { name, email, phone, company, symptom, message, website } = body;
 
   if (website) return NextResponse.json({ ok: true }); // honeypot tripped
-  if (!name || !email) {
-    return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
+
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Too many submissions. Please wait a few minutes, or call (503) 929-7436." },
+      { status: 429 }
+    );
+  }
+
+  if (!name || !email || !phone) {
+    return NextResponse.json(
+      { error: "Name, email, and phone are required." },
+      { status: 400 }
+    );
   }
 
   const db = supabaseAdmin();
