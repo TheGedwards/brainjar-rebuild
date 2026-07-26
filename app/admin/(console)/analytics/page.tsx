@@ -20,42 +20,53 @@ const shortPath = (u: string) => {
 
 type Kind = "int" | "pp" | "position";
 
+const DELTA_GREEN = "#16a34a";
+const DELTA_RED = "#dc2626";
+
 function Delta({ cur, prev, kind }: { cur: number; prev: number | undefined; kind: Kind }) {
   if (prev === undefined) return null;
 
-  let dirUp: boolean;
   let good: boolean;
   let main: string;
   let prevText: string;
+  let flat = false;
 
   if (kind === "position") {
-    const diff = cur - prev;
-    if (cur === 0 && prev === 0) return <div className="mt-1 font-display text-[10px] text-ink-faint">—</div>;
-    dirUp = diff > 0;
-    good = diff < 0; // lower position is better
-    main = `${diff > 0 ? "+" : ""}${diff.toFixed(1)}`;
+    const diff = cur - prev; // negative = improved (lower position is better)
+    good = diff < 0;
+    if (Math.abs(diff) < 0.05) flat = true;
+    main = Math.abs(diff).toFixed(1);
     prevText = pos(prev);
   } else if (kind === "pp") {
     const diff = (cur - prev) * 100;
-    dirUp = diff > 0;
     good = diff >= 0;
-    main = `${diff > 0 ? "+" : ""}${diff.toFixed(1)} pp`;
+    if (Math.abs(diff) < 0.05) flat = true;
+    main = `${Math.abs(diff).toFixed(1)} pp`;
     prevText = pct(prev);
   } else {
     const diff = cur - prev;
-    dirUp = diff > 0;
     good = diff >= 0;
-    main = prev === 0 ? (cur > 0 ? "new" : "—") : `${diff > 0 ? "+" : ""}${Math.round((diff / prev) * 100)}%`;
+    if (prev === 0) {
+      if (cur === 0) flat = true;
+      main = "new";
+    } else {
+      if (diff === 0) flat = true;
+      main = `${Math.abs(Math.round((diff / prev) * 100))}%`;
+    }
     prevText = int(prev);
   }
 
-  const flat = main === "—";
-  const arrow = flat ? "" : main === "new" ? "▲" : dirUp ? "▲" : "▼";
-  const color = flat || !good ? "text-ink-faint" : "text-tincture";
+  if (flat) {
+    return <div className="mt-1.5 font-display text-sm text-ink-faint">— vs {prevText}</div>;
+  }
 
+  // Coupled arrow + color: favorable = up + green, unfavorable = down + red.
   return (
-    <div className={`mt-1 font-display text-[10px] tracking-[0.1em] ${color}`}>
-      {arrow} {main} <span className="text-ink-faint/80">vs {prevText}</span>
+    <div
+      className="mt-1.5 font-display text-sm font-bold tabular-nums"
+      style={{ color: good ? DELTA_GREEN : DELTA_RED }}
+    >
+      {good ? "▲" : "▼"} {main} <span className="font-normal">vs {prevText}</span>
     </div>
   );
 }
@@ -335,7 +346,8 @@ export default async function AnalyticsPage({
 
       <p className="font-body text-sm text-ink-faint">
         Cached hourly from Google Search Console + GA4. Search data lags ~2–3 days.
-        Deltas compare to the selected comparison period; tincture = favorable movement.
+        Deltas compare to the selected period; green = favorable, red = unfavorable
+        (Avg. Position is inverted — a lower number is better).
       </p>
     </div>
   );

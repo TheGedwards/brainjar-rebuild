@@ -6,7 +6,7 @@
  */
 
 export const MODES = [
-  { key: "weekWoW", label: "This week vs last week" },
+  { key: "last7", label: "Last 7 days vs previous 7" },
   { key: "monthMoM", label: "This month vs last month" },
   { key: "last28", label: "Last 28 days vs previous 28" },
   { key: "last3mo", label: "Last 3 months vs previous 3" },
@@ -35,10 +35,6 @@ function anchorDate(): Date {
   d.setUTCHours(0, 0, 0, 0);
   return addDays(d, -1); // yesterday — today's data is always partial
 }
-function mondayOf(d: Date): Date {
-  const day = (d.getUTCDay() + 6) % 7; // Mon=0 … Sun=6
-  return addDays(d, -day);
-}
 const firstOfMonth = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 const firstOfLastMonth = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 1, 1));
 const firstOfYear = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -56,9 +52,9 @@ export function rangesFor(mode: string, custom: { start?: string; end?: string }
   let cs: Date, ce: Date, ps: Date, pe: Date;
 
   switch (mode) {
-    case "weekWoW":
-      ce = anchor; cs = mondayOf(anchor);
-      ps = addDays(cs, -7); pe = addDays(ce, -7);
+    case "last7":
+      ce = anchor; cs = addDays(anchor, -6);
+      pe = addDays(cs, -1); ps = addDays(pe, -6);
       break;
     case "monthMoM": {
       ce = anchor; cs = firstOfMonth(anchor);
