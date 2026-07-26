@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getAnalytics, type AnalyticsResult } from "@/lib/google-reports";
-import { resolveRange, resolveCompare } from "@/lib/analytics-range";
+import { rangesFor } from "@/lib/analytics-range";
 import { ClicksImpressionsChart } from "@/components/admin/clicks-impressions-chart";
 import { AnalyticsControls } from "@/components/admin/analytics-controls";
 import { InfoTip } from "@/components/admin/info-tip";
@@ -118,13 +118,12 @@ export default async function AnalyticsPage({
   const sp = await searchParams;
   const get = (k: string) => (Array.isArray(sp[k]) ? sp[k]?.[0] : sp[k]) as string | undefined;
 
-  const range = resolveRange({ period: get("period"), start: get("start"), end: get("end") });
-  const compare = resolveCompare(range, get("compare"));
+  const rr = rangesFor(get("mode") ?? "last28", { start: get("start"), end: get("end") });
 
   let data: AnalyticsResult | null = null;
   let error: string | null = null;
   try {
-    data = await getAnalytics(range, compare);
+    data = await getAnalytics(rr.current, rr.previous);
   } catch (e) {
     error = e instanceof Error ? e.message : "Unknown error fetching analytics.";
   }
@@ -148,7 +147,7 @@ export default async function AnalyticsPage({
     );
   }
 
-  const { current, previous, range: r, compareRange } = data;
+  const { current, previous } = data;
   const sc = current.sc;
   const ga = current.ga;
   const pSc = previous?.sc.totals;
@@ -161,8 +160,7 @@ export default async function AnalyticsPage({
         <div>
           <h1 className="display text-2xl">Analytics</h1>
           <p className="mt-1 font-body text-base text-ink-faint">
-            {r.startDate} – {r.endDate}
-            {compareRange && ` · vs ${compareRange.startDate} – ${compareRange.endDate}`}
+            {rr.label} · vs {rr.prevLabel}
           </p>
         </div>
         <AnalyticsControls />

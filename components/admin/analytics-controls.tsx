@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { PERIODS, COMPARES } from "@/lib/analytics-range";
+import { MODES, CUSTOM_MODES, DEFAULT_MODE } from "@/lib/analytics-range";
 
-const SELECT =
+const PILL =
   "border border-rule bg-card px-3 py-2 font-display text-xs text-ink focus:border-tincture focus:outline-none";
 
 export function AnalyticsControls() {
@@ -12,64 +12,52 @@ export function AnalyticsControls() {
   const pathname = usePathname();
   const sp = useSearchParams();
 
-  const period = sp.get("period") ?? "28";
-  const compare = sp.get("compare") ?? "prev";
+  const [mode, setMode] = useState(sp.get("mode") ?? DEFAULT_MODE);
   const [start, setStart] = useState(sp.get("start") ?? "");
   const [end, setEnd] = useState(sp.get("end") ?? "");
+  const isCustom = CUSTOM_MODES.includes(mode);
 
-  const push = (updates: Record<string, string | null>) => {
-    const p = new URLSearchParams(sp.toString());
-    for (const [k, v] of Object.entries(updates)) {
-      if (v) p.set(k, v);
-      else p.delete(k);
+  /** Navigate (refetch) — only for a preset, or a custom range with both dates. */
+  const go = (m: string, s: string, e: string) => {
+    const p = new URLSearchParams();
+    p.set("mode", m);
+    if (CUSTOM_MODES.includes(m)) {
+      p.set("start", s);
+      p.set("end", e);
     }
     router.push(`${pathname}?${p.toString()}`);
   };
 
+  const onMode = (m: string) => {
+    setMode(m);
+    if (!CUSTOM_MODES.includes(m)) go(m, start, end); // preset → fetch now
+    else if (start && end) go(m, start, end); // custom, dates already set
+    // else: reveal the date inputs and wait until both are filled
+  };
+  const onStart = (v: string) => {
+    setStart(v);
+    if (isCustom && v && end) go(mode, v, end);
+  };
+  const onEnd = (v: string) => {
+    setEnd(v);
+    if (isCustom && start && v) go(mode, start, v);
+  };
+
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <select
-        aria-label="Time period"
-        className={SELECT}
-        value={period}
-        onChange={(e) => {
-          const v = e.target.value;
-          push(v === "custom" ? { period: v } : { period: v, start: null, end: null });
-        }}
-      >
-        {PERIODS.map((p) => (
-          <option key={p.key} value={p.key}>
-            {p.label}
-          </option>
-        ))}
-      </select>
-
-      {period === "custom" && (
-        <span className="flex items-center gap-2">
-          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className={SELECT} />
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Rendered BEFORE the select, so flex places them to its left; they simply
+          vanish for non-custom modes. */}
+      {isCustom && (
+        <>
+          <input type="date" aria-label="Start date" value={start} onChange={(e) => onStart(e.target.value)} className={PILL} />
           <span className="font-display text-[10px] tracking-[0.15em] text-ink-faint">TO</span>
-          <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className={SELECT} />
-          <button
-            type="button"
-            disabled={!start || !end}
-            onClick={() => push({ period: "custom", start, end })}
-            className="btn btn-outline !py-2 disabled:opacity-50"
-          >
-            APPLY
-          </button>
-        </span>
+          <input type="date" aria-label="End date" value={end} onChange={(e) => onEnd(e.target.value)} className={PILL} />
+        </>
       )}
-
-      <span className="font-display text-[10px] uppercase tracking-[0.2em] text-ink-faint">vs</span>
-      <select
-        aria-label="Comparison period"
-        className={SELECT}
-        value={compare}
-        onChange={(e) => push({ compare: e.target.value })}
-      >
-        {COMPARES.map((c) => (
-          <option key={c.key} value={c.key}>
-            {c.label}
+      <select aria-label="Comparison period" value={mode} onChange={(e) => onMode(e.target.value)} className={PILL}>
+        {MODES.map((o) => (
+          <option key={o.key} value={o.key}>
+            {o.label}
           </option>
         ))}
       </select>
