@@ -450,6 +450,34 @@ export async function savePost(fd: FormData) {
   redirect(published && !scheduled ? `/blog/${row.slug}` : "/admin/blog");
 }
 
+/** Inline quick-edit from the blog list — updates only the row-editable fields. */
+export async function quickUpdatePost(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
+  const id = str(fd, "id");
+  const title = str(fd, "title");
+  if (!id || !title) return;
+
+  const published = fd.get("is_published") === "true";
+  const publishedAt = published ? (str(fd, "published_at") || new Date().toISOString()) : null;
+  const row = {
+    title,
+    slug: str(fd, "slug") ?? slugify(title),
+    category: str(fd, "category"),
+    is_published: published,
+    published_at: publishedAt,
+    updated_at: new Date().toISOString(),
+  };
+  const db = supabaseAdmin();
+  let res = await db.from("posts").update(row).eq("id", id);
+  if (res.error && /category/i.test(res.error.message)) {
+    const { category: _omit, ...rest } = row;
+    res = await db.from("posts").update(rest).eq("id", id);
+  }
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  revalidatePath(`/blog/${row.slug}`);
+}
+
 export async function deletePost(fd: FormData) {
   await requireRole(CONTENT_ROLES);
   const id = str(fd, "id");
