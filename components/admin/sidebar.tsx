@@ -85,7 +85,7 @@ const NAV: NavItem[] = [
   { href: "/admin/blog", label: "Blog", icon: "news" },
   { href: "/admin/media", label: "Media", icon: "image" },
   { href: "/admin/pages", label: "Pages", icon: "file", roles: ["super_admin", "admin"] },
-  { href: "/admin/analytics", label: "Analytics", icon: "chart", soon: true },
+  { href: "/admin/analytics", label: "Analytics", icon: "chart" },
   { href: "/admin/users", label: "Users", icon: "users", roles: ["super_admin"] },
 ];
 
