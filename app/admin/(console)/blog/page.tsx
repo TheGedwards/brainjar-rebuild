@@ -2,7 +2,6 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import { deletePost } from "@/app/admin/actions";
 import { AdminTable, type Column, type Row } from "@/components/admin/admin-table";
-import { StatusBadge, fmtDate } from "@/components/admin/list-bits";
 
 export const dynamic = "force-dynamic";
 
@@ -10,32 +9,70 @@ const COLUMNS: Column[] = [
   { key: "title", label: "Title" },
   { key: "status", label: "Status" },
   { key: "category", label: "Category" },
-  { key: "updated", label: "Last Updated" },
+  { key: "published", label: "Publish Date" },
 ];
 
+type Status = "draft" | "scheduled" | "published";
+
+function StatusBadge({ status }: { status: Status }) {
+  const map: Record<Status, { text: string; cls: string }> = {
+    published: { text: "Published", cls: "text-tincture" },
+    scheduled: { text: "Scheduled", cls: "text-cobalt" },
+    draft: { text: "Draft", cls: "text-ink-faint" },
+  };
+  const s = map[status];
+  return <span className={`font-display text-[10px] font-bold uppercase tracking-[0.15em] ${s.cls}`}>{s.text}</span>;
+}
+
+function fmtDateTime(iso: string | null): string {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export default async function BlogListPage() {
-  // select("*") so a DB without blog-category.sql still works (category undefined).
   const { data: posts } = await supabaseAdmin()
     .from("posts")
     .select("*")
-    .order("updated_at", { ascending: false });
+    .order("published_at", { ascending: false, nullsFirst: false });
 
-  const rows: Row[] = (posts ?? []).map((p: any) => ({
-    id: p.id,
-    editHref: `/admin/blog/${p.id}`,
-    previewHref: `/blog/${p.slug}`,
-    deleteValue: p.id,
-    deleteConfirm: `Delete "${p.title}" permanently? This can't be undone.`,
-    cells: {
-      title: { sort: (p.title ?? "").toLowerCase(), node: p.title },
-      status: { sort: p.is_published ? 1 : 0, node: <StatusBadge published={p.is_published} /> },
-      category: {
-        sort: (p.category ?? "").toLowerCase(),
-        node: <span className="text-ink-soft">{p.category || "—"}</span>,
+  const now = Date.now();
+
+  const rows: Row[] = (posts ?? []).map((p: any) => {
+    const pubTs = p.published_at ? new Date(p.published_at).getTime() : null;
+    const status: Status = !p.is_published ? "draft" : pubTs !== null && pubTs > now ? "scheduled" : "published";
+    return {
+      id: p.id,
+      editHref: `/admin/blog/${p.id}`,
+      previewHref: `/blog/${p.slug}`,
+      deleteValue: p.id,
+      deleteConfirm: `Delete "${p.title}" permanently? This can't be undone.`,
+      cells: {
+        title: { sort: (p.title ?? "").toLowerCase(), node: p.title },
+        // sort weight keeps scheduled above published above drafts
+        status: { sort: status === "scheduled" ? 2 : status === "published" ? 1 : 0, node: <StatusBadge status={status} /> },
+        category: {
+          sort: (p.category ?? "").toLowerCase(),
+          node: <span className="text-ink-soft">{p.category || "—"}</span>,
+        },
+        published: {
+          sort: p.published_at ?? "",
+          node: (
+            <span className="text-ink-soft">
+              {fmtDateTime(p.published_at)}
+              {status === "scheduled" && <span className="ml-2 text-cobalt">(scheduled)</span>}
+            </span>
+          ),
+        },
       },
-      updated: { sort: p.updated_at ?? "", node: <span className="text-ink-soft">{fmtDate(p.updated_at)}</span> },
-    },
-  }));
+    };
+  });
 
   return (
     <div>
@@ -50,7 +87,7 @@ export default async function BlogListPage() {
         <AdminTable
           columns={COLUMNS}
           rows={rows}
-          initialSort="updated"
+          initialSort="published"
           initialDir="desc"
           deleteAction={deletePost}
           deleteField="id"

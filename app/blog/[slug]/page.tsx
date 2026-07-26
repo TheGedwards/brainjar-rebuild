@@ -7,6 +7,7 @@ import { Lozenge, PointedRule } from "@/components/ornaments";
 import { PostBody } from "@/components/post-body";
 import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 300;
 
@@ -39,6 +40,26 @@ export default async function PostPage({ params }: Params) {
   return (
     <article className="px-6 py-6">
       <EditTarget href={`/admin/blog/${post.id}`} label="Edit this post" />
+      {/* Article structured data — datePublished/dateModified use the publish
+          date, so Google treats the post's date as when it was published. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt ?? undefined,
+            datePublished: post.published_at ?? undefined,
+            dateModified: post.updated_at ?? post.published_at ?? undefined,
+            author: { "@type": "Organization", name: post.author ?? "Brainjar Media" },
+            publisher: { "@type": "Organization", name: "Brainjar Media" },
+            image: post.cover_image_url ? [post.cover_image_url] : undefined,
+            url: `${SITE_URL}/blog/${post.slug}`,
+            mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+          }),
+        }}
+      />
       <header className="mx-auto max-w-2xl text-center">
         <Link href="/blog" className="eyebrow hover:text-tincture">
           Notes from the Dispensary

@@ -415,6 +415,9 @@ export async function savePost(fd: FormData) {
   if (!title) return;
 
   const published = fd.get("is_published") === "on";
+  // An empty date on a published post means "now"; a future date = scheduled.
+  const publishedAt = published ? (str(fd, "published_at") || new Date().toISOString()) : null;
+  const scheduled = !!publishedAt && new Date(publishedAt).getTime() > Date.now();
   const row = {
     slug: str(fd, "slug") ?? slugify(title),
     title,
@@ -426,7 +429,7 @@ export async function savePost(fd: FormData) {
     category: str(fd, "category"),
     author: str(fd, "author") ?? "Brainjar Media",
     is_published: published,
-    published_at: published ? (str(fd, "published_at") ?? new Date().toISOString()) : null,
+    published_at: publishedAt,
     updated_at: new Date().toISOString(),
   };
 
@@ -442,9 +445,9 @@ export async function savePost(fd: FormData) {
   revalidatePath("/blog");
   revalidatePath(`/blog/${row.slug}`);
   revalidatePath("/admin/blog");
-  // Publishing lands you on the live post; a draft has no public URL, so go
-  // back to the list.
-  redirect(published ? `/blog/${row.slug}` : "/admin/blog");
+  // A live (published, past-dated) post lands you on the public page; a draft or
+  // a scheduled (future) post has no live URL yet, so go back to the list.
+  redirect(published && !scheduled ? `/blog/${row.slug}` : "/admin/blog");
 }
 
 export async function deletePost(fd: FormData) {

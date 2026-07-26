@@ -5,6 +5,7 @@ import { savePost, deletePost } from "@/app/admin/actions";
 import { field, label } from "@/components/admin/ui";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { RichEditor } from "@/components/admin/rich-editor";
+import { PublishDateField } from "@/components/admin/publish-date-field";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +39,8 @@ export default async function PostEditor({ params }: Params) {
         </span>
         <div className="flex items-center gap-3">
           {!isNew && post?.slug && (
-            <a href={`/blog/${post.slug}`} target="_blank" className="btn btn-outline !py-2.5">
-              VIEW PAGE ↗
+            <a href={`/blog/${post.slug}`} target="_blank" className="btn btn-outline whitespace-nowrap !py-2.5">
+              VIEW BLOG ↗
             </a>
           )}
           <button form="post-form" className="btn btn-fill !py-2.5">
@@ -111,7 +112,7 @@ export default async function PostEditor({ params }: Params) {
           </div>
         </div>
 
-        <div className="flex items-center gap-6 border-t border-rule pt-5">
+        <div className="flex flex-wrap items-end gap-6 border-t border-rule pt-5">
           <label className="flex items-center gap-2 text-base">
             <input
               type="checkbox"
@@ -121,6 +122,10 @@ export default async function PostEditor({ params }: Params) {
             />
             Published
           </label>
+          <div>
+            <label className={label}>Publish date &amp; time (Pacific · future = scheduled)</label>
+            <PublishDateField initialIso={post?.published_at ?? null} className={field} />
+          </div>
           <button className="btn btn-fill">SAVE POST</button>
         </div>
       </form>

@@ -86,6 +86,7 @@ export type Post = {
   tags: string[];
   category: string | null;
   published_at: string | null;
+  updated_at: string | null;
 };
 
 // `*` (rather than an explicit column list) so a newly-added column like
@@ -129,21 +130,26 @@ export async function getFeaturedProject(): Promise<Project | null> {
 }
 
 export async function getPosts(): Promise<Post[]> {
+  // Published AND not scheduled for the future (a null date = publish immediately).
+  const nowIso = new Date().toISOString();
   const { data, error } = await supabase
     .from("posts")
     .select("*")
     .eq("is_published", true)
+    .or(`published_at.is.null,published_at.lte.${nowIso}`)
     .order("published_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as Post[];
 }
 
 export async function getPost(slug: string): Promise<Post | null> {
+  const nowIso = new Date().toISOString();
   const { data, error } = await supabase
     .from("posts")
     .select("*")
     .eq("slug", slug)
     .eq("is_published", true)
+    .or(`published_at.is.null,published_at.lte.${nowIso}`)
     .maybeSingle();
   if (error) throw error;
   return (data as Post) ?? null;
