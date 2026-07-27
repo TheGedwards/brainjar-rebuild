@@ -7,9 +7,9 @@ import { ServiceCTA } from "@/components/service-cta";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Areas We Serve — Portland Metro & East County",
+  title: "Areas We Serve — Portland & East County",
   description:
-    "Brainjar Media serves Gresham, Portland, Troutdale, Happy Valley, Sandy, Fairview and Wood Village — digital marketing, SEO and web design from our home base in downtown Gresham since 2003.",
+    "Find your city — Brainjar delivers SEO, web design, and digital marketing across Gresham, Portland, and East County from our downtown Gresham base.",
   alternates: { canonical: "/locations" },
 };
 

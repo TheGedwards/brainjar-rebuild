@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const found = getSubService(service, sub);
   if (!found) return {};
   return {
-    title: `${found.sub.name} — ${found.service.name}`,
-    description: found.sub.blurb,
+    title: found.sub.seoTitle ?? `${found.sub.name} — ${found.service.name}`,
+    description: found.sub.seoDescription ?? found.sub.blurb,
     alternates: { canonical: `/services/${service}/${sub}` },
   };
 }

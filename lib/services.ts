@@ -31,6 +31,11 @@ export type SubService = {
   /** Body paragraph 2: how the intro turns into tangible results, plus a soft,
    *  unhurried nudge to get in touch. */
   payoff: string;
+  /** Optional SEO overrides. Default title is `${name} — ${service.name}` and
+   *  default description is the blurb; set these where that would be too long
+   *  (>60-char title) or too thin (<70-char description) for search results. */
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 export type Service = {
@@ -64,6 +69,7 @@ export const SERVICES: Service[] = [
         slug: "keyword-research",
         name: "Keyword Research",
         blurb: "We find the words your customers actually type — not the ones you wish they typed.",
+        seoTitle: "Keyword Research for SEO",
         intro:
           "Before we mix a single batch of Search Engine Optimization, we take a measurement: the exact words your customers type when they go looking for what you sell. Keyword research isn't something you add to the Search Tonic — it's the reading the whole formula is calibrated against. Skip it and you can rank beautifully for phrases nobody ever searches.",
         payoff:
@@ -73,6 +79,7 @@ export const SERVICES: Service[] = [
         slug: "competitive-analysis",
         name: "Competitive Analysis",
         blurb: "We take apart what's working for the leaders in your industry, then hand you the recipe.",
+        seoTitle: "SEO Competitive Analysis",
         intro:
           "Competitive analysis is the diagnosis we run before adjusting your Search Engine Optimization — a clear-eyed look at your site, your market, and the competitors already ranking above you. It comes standard with the Search Tonic because you can't out-rank a rival you haven't studied. We chart what they're doing right, where they're exposed, and exactly where there's room for you to move up.",
         payoff:
@@ -112,6 +119,8 @@ export const SERVICES: Service[] = [
         slug: "landing-pages",
         name: "Landing Pages",
         blurb: "One page, one job, one measurable outcome. Nowhere to wander off to.",
+        seoDescription:
+          "Convert more clicks into customers with focused landing pages built around one search, one message, and one measurable outcome.",
         intro:
           "Landing pages are built into your Site Elixir because depth is what earns rankings — and a lone homepage has none. Rather than a glorified backlink, we build content-rich pages with a job to do, each one optimized around a specific search and pointed at a specific outcome. It's how Bird Gard grew into hundreds of pages, one for every species and industry it serves.",
         payoff:
@@ -142,6 +151,8 @@ export const SERVICES: Service[] = [
         slug: "social-media",
         name: "Social Media",
         blurb: "A reason to follow you, published on a schedule you can live with.",
+        seoDescription:
+          "Give people a reason to follow with consistent, on-brand social content — published on a schedule your team can actually keep.",
         intro:
           "Social media is woven into your Story Serum because a story only works if it's told where people already spend their time. This is the ingredient that keeps you present — a steady rhythm of custom posts and blog content that gives followers a reason to stick around. The platform never sleeps, and neither does the impression you're making on it.",
         payoff:
@@ -151,6 +162,8 @@ export const SERVICES: Service[] = [
         slug: "email-campaigns",
         name: "Email Campaigns",
         blurb: "The list you already own, finally earning its keep.",
+        seoDescription:
+          "Turn the email list you already own into revenue with campaigns that get opened, read, and clicked — no rented attention required.",
         intro:
           "Email campaigns come with your Story Serum because the list you already own is the one audience no algorithm can take away from you. Done right — genuinely useful content, clean design, the right message at the right moment — email keeps you in front of customers without renting their attention back every single time. We build the strategy around what your people actually respond to, not guesswork.",
         payoff:
@@ -181,6 +194,8 @@ export const SERVICES: Service[] = [
         slug: "google-ppc",
         name: "Google PPC",
         blurb: "Buy the top of the page for the searches that end in a sale.",
+        seoDescription:
+          "Capture buyers the moment they search with Google PPC campaigns built to win the clicks that end in a sale — live the day we launch.",
         intro:
           "Google PPC comes standard with your Signal Boost because it's the fastest way onto the page — top placement for the searches that end in a sale, live the day we launch. Where SEO earns its rankings over months, this buys you the spot now, on a budget you set and adjust as the data comes in. It's the part of the formula built for when you can't wait to be found.",
         payoff:
@@ -190,6 +205,8 @@ export const SERVICES: Service[] = [
         slug: "facebook-ads",
         name: "Facebook Ads",
         blurb: "Find the people who don't know they need you yet.",
+        seoDescription:
+          "Reach customers who don't know you yet with targeted Facebook and Instagram ads that turn mid-scroll moments into real leads.",
         intro:
           "Facebook ads are part of your Signal Boost because not every customer is searching for you yet — some need to meet you mid-scroll. This is the ingredient that finds them: clean, professional creative placed in front of precise demographics, with several versions tested so the strongest one carries the budget. It's how we capitalize on the hours people already spend on the feed.",
         payoff:
@@ -199,6 +216,8 @@ export const SERVICES: Service[] = [
         slug: "facebook-boosting",
         name: "Facebook Boosting",
         blurb: "Put money behind the posts that are already working.",
+        seoDescription:
+          "Amplify the posts already working with strategic Facebook boosting that puts budget behind your best content and widens its reach.",
         intro:
           "Facebook boosting is included in your Signal Boost because your best-performing posts deserve more than the handful of people who'd see them for free. This is the ingredient that amplifies what's already resonating — highly shareable graphics and video, pushed to the right audience at the right moment for the widest reach. It's less about shouting louder and more about matching the right content with the right crowd.",
         payoff:

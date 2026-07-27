@@ -39,9 +39,9 @@ export const LOCATIONS: Location[] = [
     slug: "gresham",
     city: "Gresham",
     label: "Gresham",
-    title: "Gresham Digital Marketing Agency | SEO & Web Design — Brainjar Media",
+    title: "Gresham Digital Marketing Agency | Brainjar Media",
     description:
-      "Brainjar Media is a Gresham digital marketing agency on Main Avenue, building SEO, websites, content and ad campaigns for East County businesses since 2003.",
+      "Grow your Gresham business with an agency on Main Avenue since 2003 — local SEO, web design, and marketing built for East County.",
     eyebrow: "Gresham, Oregon · Est. 2003",
     heading: "Gresham's Own\n*Digital Marketing* Agency",
     lede:
@@ -87,7 +87,7 @@ export const LOCATIONS: Location[] = [
     label: "Troutdale",
     title: "Troutdale Digital Marketing & SEO | Brainjar Media",
     description:
-      "Digital marketing for Troutdale businesses — SEO, websites and advertising built for Gorge-gateway tourism, restaurants, retail and home services. Based next door in Gresham.",
+      "Turn Gorge-gateway traffic into customers with SEO, websites, and ads for Troutdale tourism, restaurants, and trades — from a Gresham agency next door.",
     eyebrow: "Serving Troutdale, Oregon",
     heading: "Digital Marketing for\n*Troutdale* Businesses",
     lede:
@@ -131,9 +131,9 @@ export const LOCATIONS: Location[] = [
     slug: "portland",
     city: "Portland",
     label: "Portland",
-    title: "Portland Digital Marketing Agency (Based in Gresham) | Brainjar Media",
+    title: "Portland Digital Marketing Agency | Brainjar Media",
     description:
-      "A Portland-metro digital marketing agency based in Gresham. SEO, web design, content and paid ads for East and Southeast Portland businesses — big-agency strategy without the overhead.",
+      "Get big-agency SEO, web design, and paid ads for your Portland business — from a Gresham-based team with lower overhead and 20+ years of results.",
     eyebrow: "Serving the Portland Metro",
     heading: "A Portland Digital Marketing Agency\n*Based in Gresham*",
     lede:
@@ -179,7 +179,7 @@ export const LOCATIONS: Location[] = [
     label: "Happy Valley",
     title: "Happy Valley Digital Marketing & SEO Agency | Brainjar Media",
     description:
-      "Digital marketing for Happy Valley's growing businesses — SEO, premium web design and advertising for medical, dental, real estate, home services and professional practices.",
+      "Grow your Happy Valley practice with premium web design and local SEO built for medical, dental, real estate, and home-services businesses.",
     eyebrow: "Serving Happy Valley, Oregon",
     heading: "Digital Marketing for\n*Happy Valley's* Growth",
     lede:
@@ -225,7 +225,7 @@ export const LOCATIONS: Location[] = [
     label: "Sandy",
     title: "Sandy, Oregon Digital Marketing & SEO | Brainjar Media",
     description:
-      "Digital marketing for Sandy, Oregon businesses — SEO, websites and advertising for contractors, tourism, retail and trades. Big-agency strategy without hiring a Portland firm.",
+      "Reach more Sandy customers with SEO, web design, and ads for contractors, tourism, and Main Street — big-agency strategy at a local price.",
     eyebrow: "Serving Sandy, Oregon",
     heading: "Sandy Businesses,\n*Big-League* Marketing",
     lede:
@@ -271,7 +271,7 @@ export const LOCATIONS: Location[] = [
     label: "Fairview & Wood Village",
     title: "Fairview & Wood Village Digital Marketing | Brainjar Media",
     description:
-      "Digital marketing for Fairview and Wood Village businesses — local SEO, websites and advertising from a Gresham agency right in your backyard, serving East Multnomah County since 2003.",
+      "Compete online from your own backyard with local SEO, websites, and ads for Fairview and Wood Village businesses — a Gresham agency minutes away.",
     eyebrow: "Serving Fairview & Wood Village",
     heading: "Digital Marketing for\n*Fairview & Wood Village*",
     lede:

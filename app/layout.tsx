@@ -29,7 +29,7 @@ import { JsonLd, organizationSchema } from "@/lib/schema";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Brainjar Media | Digital Marketing & SEO — Gresham, Portland, Oregon",
+    default: "Brainjar Media | Digital Marketing & SEO, Gresham OR",
     template: "%s | Brainjar Media",
   },
   description:

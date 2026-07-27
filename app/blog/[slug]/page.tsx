@@ -23,7 +23,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const post = await getPost((await params).slug).catch(() => null);
   if (!post) return {};
   return {
-    title: post.seo_title ?? post.title,
+    // Articles use the headline alone, no " | Brainjar Media" suffix — that
+    // frees the full ~60 chars for a descriptive, keyword-rich title.
+    title: { absolute: post.seo_title ?? post.title },
     description: post.seo_description ?? post.excerpt ?? undefined,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {

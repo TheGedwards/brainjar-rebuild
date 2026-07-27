@@ -243,19 +243,19 @@ export const PAGES: PageDef[] = [
 /** Default SEO title/description per page (fallback + editor placeholder). */
 export const PAGE_SEO: Record<string, { title: string; description: string }> = {
   home: {
-    title: "Brainjar Media | Digital Marketing & SEO — Gresham, Portland, Oregon",
+    title: "Brainjar Media | Digital Marketing & SEO, Gresham OR",
     description:
-      "A digital apothecary for ambitious brands. SEO, web development, content marketing and paid advertising from Gresham, Oregon. Two decades of measurable results.",
+      "Grow your brand with SEO, web development, content, and paid ads from a Gresham, Oregon agency with two decades of measurable results.",
   },
   about: {
     title: "About Our Process",
     description:
-      "Brainjar Media has been compounding digital remedies from Gresham, Oregon since 2003 — for Intel, Microsoft, NASCAR, Pendleton Woolen Mills, and the shop down the street.",
+      "Meet the Gresham agency compounding digital remedies since 2003 — for Intel, Microsoft, NASCAR, Pendleton, and the shop down the street.",
   },
   services: {
-    title: "The Formulary — SEO, Web, Content & Paid Ads",
+    title: "Our Services — SEO, Web, Content & Ads",
     description:
-      "Five proven compounds, mixed to order: search engine optimization, web development, content marketing, paid advertising and graphic design. Every prescription comes with measurable results.",
+      "Mix the right remedy for your goals — SEO, web development, content, and paid ads, each tied to measurable results. Book a free diagnosis.",
   },
   contact: {
     title: "Get a Diagnosis — Contact",
@@ -265,7 +265,7 @@ export const PAGE_SEO: Record<string, { title: string; description: string }> = 
   work: {
     title: "The Medicine Cabinet — Portfolio",
     description:
-      "Every jar on this shelf holds a result we can show you. Websites, SEO, content and ad campaigns for corporations, organizations, local business and public events across Portland and Gresham, Oregon.",
+      "See real results — websites, SEO, content, and ad campaigns for businesses, nonprofits, and events across Portland and Gresham, Oregon.",
   },
   blog: {
     title: "Notes from the Dispensary — Blog",

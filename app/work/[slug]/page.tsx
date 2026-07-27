@@ -9,6 +9,7 @@ import { SpecimenPlate } from "@/components/specimen-plate";
 import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
 import { JsonLd, breadcrumbSchema } from "@/lib/schema";
+import { clampMeta } from "@/lib/seo-text";
 
 export const revalidate = 300;
 
@@ -31,9 +32,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const p = await getProject((await params).slug).catch(() => null);
   if (!p) return {};
   const name = p.clients?.name ?? p.title;
+  // Title carries " | Brainjar Media" (17 chars) via the layout template, so the
+  // page portion must stay ≤43 to avoid SERP truncation. Drop "— Case Study"
+  // when the client name is long.
+  const withSuffix = `${name} — Case Study`;
+  const title = withSuffix.length <= 43 ? withSuffix : name;
   return {
-    title: `${name} — Case Study`,
-    description: p.summary ?? p.tagline ?? `How Brainjar Media helped ${name}.`,
+    title,
+    description: clampMeta(p.summary ?? p.tagline ?? `How Brainjar Media helped ${name} grow.`),
     alternates: { canonical: `/work/${p.slug}` },
     openGraph: p.hero_image_url ? { images: [p.hero_image_url] } : undefined,
   };
