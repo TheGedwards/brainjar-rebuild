@@ -229,6 +229,14 @@ export const SERVICES: Service[] = [
 
 export const getService = (slug: string) => SERVICES.find((s) => s.slug === slug);
 
+/**
+ * Resolve a service by its key. Used for blog topic clusters: a post's `category`
+ * column stores its service-pillar key (seo | web | content | paid), which links
+ * the post to its pillar service page and vice-versa.
+ */
+export const getServiceByKey = (key: string | null | undefined) =>
+  key ? SERVICES.find((s) => s.key === key) : undefined;
+
 export const getSubService = (serviceSlug: string, subSlug: string) => {
   const service = getService(serviceSlug);
   const sub = service?.subs.find((s) => s.slug === subSlug);

@@ -4,6 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { quickUpdatePost, deletePost } from "@/app/admin/actions";
+import { SERVICES } from "@/lib/services";
+
+/** A post's `category` stores its service-pillar key; show the service name. */
+const pillarName = (key: string | null) => SERVICES.find((s) => s.key === key)?.name ?? (key || "—");
 
 export type Status = "draft" | "scheduled" | "published";
 export type BlogRow = {
@@ -146,8 +150,13 @@ export function BlogList({ posts }: { posts: BlogRow[] }) {
                       <input className={FIELD} value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value })} />
                     </div>
                     <div>
-                      <label className={LBL}>Category</label>
-                      <input className={FIELD} value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} />
+                      <label className={LBL}>Service pillar</label>
+                      <select className={FIELD} value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })}>
+                        <option value="">— None —</option>
+                        {SERVICES.map((s) => (
+                          <option key={s.key} value={s.key}>{s.name}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className={LBL}>Status</label>
@@ -187,7 +196,7 @@ export function BlogList({ posts }: { posts: BlogRow[] }) {
                     {STATUS[p.status].t}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-ink-soft">{p.category || "—"}</td>
+                <td className="px-4 py-3 text-ink-soft">{pillarName(p.category)}</td>
                 <td className="px-4 py-3 text-ink-soft">
                   {fmtDateTime(p.published_at)}
                   {p.status === "scheduled" && <span className="ml-2 text-cobalt">(scheduled)</span>}

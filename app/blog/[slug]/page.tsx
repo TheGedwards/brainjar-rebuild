@@ -5,10 +5,12 @@ import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/supabase";
 import { Lozenge, PointedRule } from "@/components/ornaments";
 import { PostBody } from "@/components/post-body";
+import { PostLinks } from "@/components/post-links";
 import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
 import { SITE_URL } from "@/lib/site";
 import { JsonLd, breadcrumbSchema } from "@/lib/schema";
+import { getServiceByKey } from "@/lib/services";
 
 export const revalidate = 300;
 
@@ -39,6 +41,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function PostPage({ params }: Params) {
   const post = await getPost((await params).slug).catch(() => null);
   if (!post) notFound();
+
+  // Topic-cluster links: the post's pillar service + related posts (same pillar
+  // first, then most recent) to keep readers moving through the cluster.
+  const pillar = getServiceByKey(post.category);
+  const all = await getPosts().catch(() => []);
+  const others = all.filter((p) => p.slug !== post.slug);
+  const samePillar = post.category ? others.filter((p) => p.category === post.category) : [];
+  const related = [...samePillar, ...others.filter((p) => !samePillar.includes(p))].slice(0, 3);
 
   return (
     <>
@@ -111,6 +121,24 @@ export default async function PostPage({ params }: Params) {
 
       <PostBody body={post.body} className="mt-12" />
 
+      {/* Pillar link — sends this cluster post up to its service page. */}
+      {pillar && (
+        <div className="mx-auto mt-12 max-w-2xl border-y border-rule bg-panel px-6 py-6 text-center">
+          <div className="eyebrow mb-2">Filed under</div>
+          <Link href={`/services/${pillar.slug}`} className="display text-xl text-ink hover:text-tincture">
+            {pillar.name}
+          </Link>
+          <div className="mt-3">
+            <Link
+              href={`/services/${pillar.slug}`}
+              className="font-display text-[10px] font-bold tracking-[0.2em] text-tincture hover:text-tincture-dk"
+            >
+              SEE HOW WE DO {pillar.name.toUpperCase()} →
+            </Link>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto mt-12 max-w-2xl">
         <PointedRule />
         <div className="mt-8 text-center">
@@ -122,6 +150,14 @@ export default async function PostPage({ params }: Params) {
           </Link>
         </div>
       </div>
+
+      {/* Keep Reading — related cluster posts. */}
+      {related.length > 0 && (
+        <section className="mx-auto mt-16 max-w-5xl border-t border-rule pt-8">
+          <div className="eyebrow mb-8 text-center">Keep Reading</div>
+          <PostLinks posts={related} />
+        </section>
+      )}
 
     </article>
 

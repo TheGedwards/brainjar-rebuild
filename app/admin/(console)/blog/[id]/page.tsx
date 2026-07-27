@@ -6,6 +6,7 @@ import { field, label } from "@/components/admin/ui";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { RichEditor } from "@/components/admin/rich-editor";
 import { PublishDateField } from "@/components/admin/publish-date-field";
+import { SERVICES } from "@/lib/services";
 
 export const dynamic = "force-dynamic";
 
@@ -69,13 +70,15 @@ export default async function PostEditor({ params }: Params) {
             <input name="excerpt" defaultValue={post?.excerpt ?? ""} className={field} />
           </div>
           <div>
-            <label className={label}>Category (groups like posts)</label>
-            <input
-              name="category"
-              defaultValue={post?.category ?? ""}
-              placeholder="e.g. SEO, Case Study"
-              className={field}
-            />
+            <label className={label}>Service pillar (links this post to a service)</label>
+            <select name="category" defaultValue={post?.category ?? ""} className={field}>
+              <option value="">— None —</option>
+              {SERVICES.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

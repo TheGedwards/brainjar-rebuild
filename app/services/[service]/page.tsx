@@ -3,10 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { SERVICES, getService } from "@/lib/services";
-import { getProjects, getPageContent } from "@/lib/supabase";
+import { getProjects, getPosts, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
 import { ServiceCTA } from "@/components/service-cta";
 import { FaqSection } from "@/components/faq-section";
+import { PostLinks } from "@/components/post-links";
 import { JsonLd, serviceSchema, breadcrumbSchema } from "@/lib/schema";
 import { parseFaq, faqPageSchema } from "@/lib/faq";
 
@@ -33,6 +34,10 @@ export default async function ServicePage({ params }: Params) {
   // Related work: projects that used this compound.
   const projects = await getProjects().catch(() => []);
   const related = projects.filter((p) => p.services?.includes(s.key)).slice(0, 3);
+
+  // Cluster posts: blog posts filed under this service pillar (post.category).
+  const posts = await getPosts().catch(() => []);
+  const clusterPosts = posts.filter((p) => p.category === s.key).slice(0, 3);
 
   // CMS override for the hero lede, layered over the lib/services default.
   const c = await getPageContent(`/services/${s.slug}`);
@@ -112,6 +117,19 @@ export default async function ServicePage({ params }: Params) {
                   {p.tagline && <div className="mt-2 text-base italic text-ink-soft">{p.tagline}</div>}
                 </Link>
               ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {clusterPosts.length > 0 && (
+        <section className="border-t border-rule px-6 py-8">
+          <div className="mx-auto max-w-5xl">
+            <SectionTitle eyebrow="Notes from the Dispensary">
+              More on {s.name}
+            </SectionTitle>
+            <div className="mt-10">
+              <PostLinks posts={clusterPosts} />
             </div>
           </div>
         </section>
