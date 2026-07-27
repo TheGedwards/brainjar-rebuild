@@ -12,9 +12,13 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const c = await getPageContent("/");
-  // Home falls back to the site-wide default title/description from the layout.
+  // No DB override → OMIT title entirely so the layout's `title.default` (a full,
+  // brand-inclusive title) applies. Returning `title: undefined` here does NOT
+  // fall back to the default — it suppresses it, leaving the home page with no
+  // <title> at all. An override is a complete title (absolute), matching the
+  // default so the "%s | Brainjar Media" template can't double the brand.
   return {
-    title: c.seo_title ?? undefined,
+    ...(c.seo_title ? { title: { absolute: c.seo_title } } : {}),
     description: c.seo_description ?? undefined,
   };
 }

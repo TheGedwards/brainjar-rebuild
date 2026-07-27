@@ -58,11 +58,19 @@ Reality check: city pages help *organic* rankings ("Troutdale SEO company"), not
 the map pack — Google local ranking = relevance + distance + prominence, and a
 page can't erase distance. Set expectations accordingly.
 
-## Later phases (deferred, not yet scheduled)
+## Later phases
+
+### In-admin SEO health linter ✅ (shipped)
+`/admin/seo` — fetches every public page and parses the live HTML (title/desc
+length + duplicates, canonical, single H1, og:image, JSON-LD, image alt, thin
+content), cached hourly. **First run caught a real bug: the home page shipped no
+`<title>` (generateMetadata returned `title: undefined`, which suppresses the
+layout default instead of falling back) — fixed in `app/page.tsx`.**
+Also enriched `sameAs` (added YouTube, Yelp, Google Business Profile).
+
+### Deferred, not yet scheduled
 - **Reviews/testimonials model → `Review` + `AggregateRating`** (⭐ in SERP; we
   have 33 clients to draw on).
-- **In-admin SEO health linter** (missing/dupe/long titles & descriptions,
-  missing H1/OG/alt, thin content, orphans) — doubles as a sales demo.
 - **Redirect & broken-link integrity checker** (the 301 map is load-bearing).
 - **Content velocity**: blog topic clusters, each feeding a service page;
   contextual internal links from posts → service/work pages; related posts.

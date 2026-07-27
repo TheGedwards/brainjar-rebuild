@@ -67,6 +67,9 @@ export function organizationSchema() {
     sameAs: [
       "https://www.facebook.com/BrainjarMedia/",
       "https://x.com/brainjarmedia",
+      "https://www.youtube.com/@BrainjarMedia",
+      "https://www.yelp.com/biz/brainjar-media-gresham",
+      "https://maps.app.goo.gl/kqpewVLN6ppBaYSy8",
     ],
   };
 }
