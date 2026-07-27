@@ -19,6 +19,23 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+function fmtDate(iso: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+
+/** Four corner ticks — the specimen-plate detail, reused on the blog thumbnail. */
+function CornerTicks() {
+  return (
+    <>
+      <span aria-hidden className="pointer-events-none absolute left-1 top-1 h-3 w-3 border-l-2 border-t-2 border-ink/50" />
+      <span aria-hidden className="pointer-events-none absolute right-1 top-1 h-3 w-3 border-r-2 border-t-2 border-ink/50" />
+      <span aria-hidden className="pointer-events-none absolute bottom-1 left-1 h-3 w-3 border-b-2 border-l-2 border-ink/50" />
+      <span aria-hidden className="pointer-events-none absolute bottom-1 right-1 h-3 w-3 border-b-2 border-r-2 border-ink/50" />
+    </>
+  );
+}
+
 export default async function BlogPage() {
   const [posts, c] = await Promise.all([
     getPosts().catch(() => []),
@@ -41,75 +58,73 @@ export default async function BlogPage() {
       </section>
 
       <section className="px-6 pb-8">
-        <div className="mx-auto max-w-3xl divide-y divide-rule border-y border-rule">
-          {posts.map((post) => (
-            <article key={post.id} className="group relative py-8">
-              <AdminOnly>
-                <Link
-                  href={`/admin/blog/${post.id}`}
-                  className="absolute right-0 top-8 z-10 flex items-center rounded-full bg-ink/85 px-3 py-1 font-display text-[10px] font-bold tracking-[0.15em] text-paper opacity-0 transition-opacity hover:bg-ink group-hover:opacity-100"
-                >
-                  EDIT
-                </Link>
-              </AdminOnly>
-              <Link href={`/blog/${post.slug}`} className="grid gap-6 sm:grid-cols-[1fr_180px]">
-                <div>
-                  <time
-                    dateTime={post.published_at ?? undefined}
-                    className="font-display text-[10px] font-bold tracking-[0.2em] text-cobalt"
-                  >
-                    {formatDate(post.published_at)}
-                  </time>
-                  <h2 className="display mt-2 text-lg text-ink group-hover:text-tincture sm:text-xl">
-                    {post.title}
-                  </h2>
-                  {post.excerpt && (
-                    <p className="mt-2 text-lg italic leading-8 text-ink-soft">
-                      {post.excerpt}
-                    </p>
-                  )}
-                  <span className="mt-4 inline-block font-display text-[10px] font-bold tracking-[0.2em] text-tincture">
-                    READ ON →
-                  </span>
-                </div>
-
-                {post.cover_image_url && (
-                  <div className="relative aspect-16/10 border border-rule">
-                    <Image
-                      src={post.cover_image_url}
-                      alt=""
-                      fill
-                      sizes="180px"
-                      className="object-cover"
-                    />
-                  </div>
-                )}
+        <div className="mx-auto max-w-6xl">
+          {posts.length === 0 ? (
+            <p className="mx-auto max-w-md text-center text-lg italic text-ink-faint">
+              Nothing written down yet. Check back, or{" "}
+              <Link href="/contact" className="text-tincture underline underline-offset-4">
+                ask us a question directly
               </Link>
-            </article>
-          ))}
-        </div>
+              .
+            </p>
+          ) : (
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {posts.map((post) => (
+                <div key={post.id} className="group/card relative">
+                  <AdminOnly>
+                    <Link
+                      href={`/admin/blog/${post.id}`}
+                      className="absolute right-3 top-3 z-10 flex items-center rounded-full bg-ink/85 px-3 py-1 font-display text-[10px] font-bold tracking-[0.15em] text-paper opacity-0 transition-opacity hover:bg-ink group-hover/card:opacity-100"
+                    >
+                      EDIT
+                    </Link>
+                  </AdminOnly>
 
-        {posts.length === 0 && (
-          <p className="mx-auto max-w-md text-center text-lg italic text-ink-faint">
-            Nothing written down yet. Check back, or{" "}
-            <Link href="/contact" className="text-tincture underline underline-offset-4">
-              ask us a question directly
-            </Link>
-            .
-          </p>
-        )}
+                  <Link href={`/blog/${post.slug}`} className="group flex flex-col">
+                    {/* Framed thumbnail — matches the case-study specimen plate. */}
+                    <figure className="relative border border-rule-strong bg-card p-2.5 transition-all duration-200 group-hover:-translate-y-1 group-hover:border-tincture">
+                      <CornerTicks />
+                      {post.cover_image_url ? (
+                        <div className="relative aspect-16/10 overflow-hidden border border-rule">
+                          <Image
+                            src={post.cover_image_url}
+                            alt=""
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex aspect-16/10 items-center justify-center border border-rule bg-panel">
+                          <Lozenge />
+                        </div>
+                      )}
+                    </figure>
+
+                    <time
+                      dateTime={post.published_at ?? undefined}
+                      className="mt-3 block font-display text-[10px] font-bold tracking-[0.2em] text-cobalt"
+                    >
+                      {fmtDate(post.published_at)}
+                    </time>
+                    <h2 className="display mt-1 text-lg text-ink group-hover:text-tincture">
+                      {post.title}
+                    </h2>
+                    {post.excerpt && (
+                      <p className="mt-2 text-base italic leading-7 text-ink-soft">{post.excerpt}</p>
+                    )}
+                    <span className="mt-3 inline-block font-display text-[10px] font-bold tracking-[0.2em] text-tincture">
+                      READ ON →
+                    </span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
       <ServiceCTA />
     </>
   );
-}
-
-function formatDate(iso: string | null) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
