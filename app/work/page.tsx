@@ -50,7 +50,7 @@ export default async function WorkPage({
 
       <section className="px-6 pb-8">
         <div className="mx-auto max-w-6xl">
-          <WorkGrid projects={projects} />
+          <WorkGrid projects={projects} initialFilter={initialFilter} />
         </div>
       </section>
 
