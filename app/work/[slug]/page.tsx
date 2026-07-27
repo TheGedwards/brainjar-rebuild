@@ -10,6 +10,7 @@ import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
 import { JsonLd, breadcrumbSchema } from "@/lib/schema";
 import { clampMeta } from "@/lib/seo-text";
+import { getMediaAltMap, altFor } from "@/lib/media";
 
 export const revalidate = 300;
 
@@ -67,6 +68,10 @@ export default async function ProjectPage({ params }: Params) {
     .slice(0, 2);
 
   const hasNotes = !!(p.summary || p.challenge || p.approach || p.outcome);
+
+  // Hero alt from media_assets (falls back to the client name).
+  const altMap = await getMediaAltMap().catch(() => ({}));
+  const heroAlt = altFor(altMap, p.hero_image_url, name);
 
   // Split a body field on blank lines into paragraphs.
   const paras = (body: string) =>
@@ -134,7 +139,7 @@ export default async function ProjectPage({ params }: Params) {
 
             <div className="grid gap-10 md:grid-cols-[1.05fr_.95fr] md:items-start">
               {/* ---- The plate: screenshot + measurements ---- */}
-              <SpecimenPlate src={p.hero_image_url} name={name} host={host} priority>
+              <SpecimenPlate src={p.hero_image_url} name={name} host={host} alt={heroAlt} priority>
                 {metrics.length > 0 && (
                   <div className="mt-3 flex items-stretch justify-center border-t border-rule pt-4">
                     {metrics.map((m, i) => (

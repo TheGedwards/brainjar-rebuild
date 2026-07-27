@@ -7,6 +7,7 @@ import { ServiceCTA } from "@/components/service-cta";
 import { renderHeading } from "@/lib/render-copy";
 import { PAGE_SEO } from "@/lib/pages";
 import { AdminOnly } from "@/components/admin-bar";
+import { getMediaAltMap, altFor } from "@/lib/media";
 
 export const revalidate = 300;
 
@@ -37,9 +38,10 @@ function CornerTicks() {
 }
 
 export default async function BlogPage() {
-  const [posts, c] = await Promise.all([
+  const [posts, c, altMap] = await Promise.all([
     getPosts().catch(() => []),
     getPageContent("/blog"),
+    getMediaAltMap().catch(() => ({})),
   ]);
 
   return (
@@ -88,7 +90,7 @@ export default async function BlogPage() {
                         <div className="relative aspect-16/10 overflow-hidden border border-rule">
                           <Image
                             src={post.cover_image_url}
-                            alt={post.title}
+                            alt={altFor(altMap, post.cover_image_url, post.title)}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             className="object-cover"

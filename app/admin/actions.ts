@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { ServiceKey } from "@/lib/supabase";
@@ -172,7 +172,25 @@ export async function savePage(fd: FormData) {
 
 // --- Media uploads ----------------------------------------------------------
 
-/** Upload an image to the public "media" bucket. Returns its public URL. */
+/** SEO-friendly filename slug from a display name or original filename. */
+function slugifyName(s: string): string {
+  return (
+    s
+      .toLowerCase()
+      .replace(/\.[a-z0-9]+$/i, "") // drop extension
+      .normalize("NFKD")
+      .replace(/[^\x00-\x7F]/g, "") // strip accents/emoji
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "image"
+  );
+}
+
+/**
+ * Upload an image to the public "media" bucket. Names the file from an optional
+ * `name` (or the original filename) as an SEO slug rather than a random UUID,
+ * and records a media_assets row (alt editable later). Returns its public URL.
+ */
 export async function uploadImage(fd: FormData): Promise<{ url?: string; error?: string }> {
   await requireRole(CONTENT_ROLES);
   const file = fd.get("file");
@@ -182,15 +200,26 @@ export async function uploadImage(fd: FormData): Promise<{ url?: string; error?:
   if (file.size > 8 * 1024 * 1024) return { error: "Images must be under 8MB." };
 
   const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const path = `${folder}/${randomUUID()}.${ext}`;
+  const base = slugifyName(str(fd, "name") || file.name);
   const bytes = Buffer.from(await file.arrayBuffer());
-
   const db = supabaseAdmin();
-  const { error } = await db.storage
-    .from("media")
-    .upload(path, bytes, { contentType: file.type, upsert: false });
-  if (error) return { error: error.message };
 
+  // Prefer the clean name; on collision fall back to a short unique suffix.
+  let path = `${folder}/${base}.${ext}`;
+  let up = await db.storage.from("media").upload(path, bytes, { contentType: file.type, upsert: false });
+  if (up.error) {
+    path = `${folder}/${base}-${randomUUID().slice(0, 6)}.${ext}`;
+    up = await db.storage.from("media").upload(path, bytes, { contentType: file.type, upsert: false });
+    if (up.error) return { error: up.error.message };
+  }
+
+  // Metadata row (fail-soft if the media_assets table isn't migrated yet).
+  await db
+    .from("media_assets")
+    .upsert({ path, folder, alt: str(fd, "alt") ?? "", updated_at: new Date().toISOString() })
+    .then((r) => r, () => null);
+
+  revalidateTag("media-alt");
   return { url: db.storage.from("media").getPublicUrl(path).data.publicUrl };
 }
 
@@ -203,6 +232,8 @@ export type MediaItem = {
   folder: string;
   size: number;
   updatedAt: string | null;
+  alt: string;
+  title: string | null;
 };
 
 const isImageName = (n: string) => /\.(png|jpe?g|gif|webp|avif|svg)$/i.test(n);
@@ -214,6 +245,7 @@ export async function listMedia(): Promise<MediaItem[]> {
   const pub = (p: string) => db.storage.from("media").getPublicUrl(p).data.publicUrl;
   const opts = { limit: 1000, sortBy: { column: "updated_at", order: "desc" as const } };
   const out: MediaItem[] = [];
+  const blank = { alt: "", title: null as string | null };
 
   const { data: root } = await db.storage.from("media").list("", opts);
   const folders: string[] = [];
@@ -221,24 +253,54 @@ export async function listMedia(): Promise<MediaItem[]> {
     // Supabase returns folder "prefixes" as entries with a null id.
     if (it.id === null) folders.push(it.name);
     else if (isImageName(it.name))
-      out.push({ name: it.name, path: it.name, url: pub(it.name), folder: "", size: it.metadata?.size ?? 0, updatedAt: it.updated_at ?? null });
+      out.push({ name: it.name, path: it.name, url: pub(it.name), folder: "", size: it.metadata?.size ?? 0, updatedAt: it.updated_at ?? null, ...blank });
   }
   for (const f of folders) {
     const { data: files } = await db.storage.from("media").list(f, opts);
     for (const it of files ?? []) {
       if (it.id !== null && isImageName(it.name))
-        out.push({ name: it.name, path: `${f}/${it.name}`, url: pub(`${f}/${it.name}`), folder: f, size: it.metadata?.size ?? 0, updatedAt: it.updated_at ?? null });
+        out.push({ name: it.name, path: `${f}/${it.name}`, url: pub(`${f}/${it.name}`), folder: f, size: it.metadata?.size ?? 0, updatedAt: it.updated_at ?? null, ...blank });
+    }
+  }
+
+  // Overlay stored alt/title (fail-soft if the table isn't migrated yet).
+  const { data: metas } = await db
+    .from("media_assets")
+    .select("path, alt, title")
+    .then((r) => r, () => ({ data: null }));
+  const meta = new Map((metas ?? []).map((m: { path: string; alt: string | null; title: string | null }) => [m.path, m]));
+  for (const item of out) {
+    const m = meta.get(item.path);
+    if (m) {
+      item.alt = m.alt ?? "";
+      item.title = m.title ?? null;
     }
   }
   return out;
 }
 
-/** Permanently remove an image from the bucket. Managers+. */
+/** Save SEO alt text + title for an image. Managers+. */
+export async function updateMediaMeta(fd: FormData) {
+  await requireRole(CONTENT_ROLES);
+  const path = str(fd, "path");
+  if (!path) return;
+  const folder = path.includes("/") ? path.split("/")[0] : "";
+  await supabaseAdmin()
+    .from("media_assets")
+    .upsert({ path, folder, alt: str(fd, "alt") ?? "", title: str(fd, "title") || null, updated_at: new Date().toISOString() });
+  revalidateTag("media-alt"); // push new alt to public pages immediately
+  revalidatePath("/admin/media");
+}
+
+/** Permanently remove an image from the bucket + its metadata. Managers+. */
 export async function deleteMedia(fd: FormData) {
   await requireRole(CONTENT_ROLES);
   const path = str(fd, "path");
   if (!path) return;
-  await supabaseAdmin().storage.from("media").remove([path]);
+  const db = supabaseAdmin();
+  await db.storage.from("media").remove([path]);
+  await db.from("media_assets").delete().eq("path", path).then((r) => r, () => null);
+  revalidateTag("media-alt");
   revalidatePath("/admin/media");
 }
 

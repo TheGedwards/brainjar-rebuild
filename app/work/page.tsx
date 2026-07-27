@@ -5,6 +5,7 @@ import { WorkGrid } from "@/components/work-grid";
 import { Frame, Lozenge } from "@/components/ornaments";
 import { renderHeading } from "@/lib/render-copy";
 import { PAGE_SEO } from "@/lib/pages";
+import { getMediaAltMap, altFor } from "@/lib/media";
 
 export const revalidate = 300;
 
@@ -28,10 +29,16 @@ export default async function WorkPage({
   const initialFilter = (SERVICE_KEYS as readonly string[]).includes(service ?? "")
     ? (service as (typeof SERVICE_KEYS)[number])
     : "all";
-  const [projects, c] = await Promise.all([
+  const [projects, c, altMap] = await Promise.all([
     getProjects().catch(() => []),
     getPageContent("/work"),
+    getMediaAltMap().catch(() => ({})),
   ]);
+
+  // Resolve each card's hero alt server-side (WorkGrid is a client component),
+  // falling back to the client name when no alt has been set on the image.
+  const heroAlts: Record<string, string> = {};
+  for (const p of projects) heroAlts[p.id] = altFor(altMap, p.hero_image_url, p.clients?.name ?? p.title);
 
   return (
     <>
@@ -50,7 +57,7 @@ export default async function WorkPage({
 
       <section className="px-6 pb-8">
         <div className="mx-auto max-w-6xl">
-          <WorkGrid projects={projects} initialFilter={initialFilter} />
+          <WorkGrid projects={projects} initialFilter={initialFilter} heroAlts={heroAlts} />
         </div>
       </section>
 

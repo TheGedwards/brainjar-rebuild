@@ -19,9 +19,12 @@ const FILTERS: { key: ServiceKey | "all"; label: string }[] = [
 export function WorkGrid({
   projects,
   initialFilter = "all",
+  heroAlts = {},
 }: {
   projects: Project[];
   initialFilter?: ServiceKey | "all";
+  /** Per-project hero alt text (resolved server-side from media_assets). */
+  heroAlts?: Record<string, string>;
 }) {
   const [filter, setFilter] = useState<ServiceKey | "all">(initialFilter);
 
@@ -93,7 +96,7 @@ export function WorkGrid({
                 {p.hero_image_url ? (
                   <Image
                     src={p.hero_image_url}
-                    alt={p.title}
+                    alt={heroAlts[p.id] ?? p.title}
                     fill
                     sizes="(max-width: 640px) 100vw, 33vw"
                     className="object-cover"

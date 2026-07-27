@@ -11,6 +11,7 @@ import { EditTarget } from "@/components/admin-bar";
 import { SITE_URL } from "@/lib/site";
 import { JsonLd, breadcrumbSchema } from "@/lib/schema";
 import { getServiceByKey } from "@/lib/services";
+import { getMediaAltMap, altFor } from "@/lib/media";
 
 export const revalidate = 300;
 
@@ -45,6 +46,7 @@ export default async function PostPage({ params }: Params) {
   // Topic-cluster links: the post's pillar service + related posts (same pillar
   // first, then most recent) to keep readers moving through the cluster.
   const pillar = getServiceByKey(post.category);
+  const altMap = await getMediaAltMap().catch(() => ({}));
   const all = await getPosts().catch(() => []);
   const others = all.filter((p) => p.slug !== post.slug);
   const samePillar = post.category ? others.filter((p) => p.category === post.category) : [];
@@ -109,7 +111,7 @@ export default async function PostPage({ params }: Params) {
           <div className="relative aspect-16/10">
             <Image
               src={post.cover_image_url}
-              alt={post.title}
+              alt={altFor(altMap, post.cover_image_url, post.title)}
               fill
               sizes="(max-width: 768px) 100vw, 768px"
               priority
