@@ -16,8 +16,27 @@ const FILTERS: { key: ServiceKey | "all"; label: string }[] = [
   { key: "design", label: "DESIGN" },
 ];
 
-export function WorkGrid({ projects }: { projects: Project[] }) {
-  const [filter, setFilter] = useState<ServiceKey | "all">("all");
+export function WorkGrid({
+  projects,
+  initialFilter = "all",
+}: {
+  projects: Project[];
+  initialFilter?: ServiceKey | "all";
+}) {
+  const [filter, setFilter] = useState<ServiceKey | "all">(initialFilter);
+
+  // Mirror the active chip into the address bar (?service=seo) so a filtered
+  // view is shareable. Uses the History API directly — no navigation, no scroll,
+  // no refetch — so the UX is identical to before.
+  const applyFilter = (key: ServiceKey | "all") => {
+    setFilter(key);
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (key === "all") params.delete("service");
+    else params.set("service", key);
+    const qs = params.toString();
+    window.history.replaceState(window.history.state, "", qs ? `/work?${qs}` : "/work");
+  };
 
   // Only offer a filter chip if something is actually behind it. Until you tag
   // the 33 seeded projects with services, this correctly shows just "ALL"
@@ -39,7 +58,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
           {available.map((f) => (
             <button
               key={f.key}
-              onClick={() => setFilter(f.key)}
+              onClick={() => applyFilter(f.key)}
               aria-pressed={filter === f.key}
               className={`border px-4 py-2 font-display text-[11px] font-bold tracking-[0.18em] transition-colors ${
                 filter === f.key

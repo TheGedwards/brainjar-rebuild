@@ -17,7 +17,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function WorkPage() {
+const SERVICE_KEYS = ["seo", "web", "content", "paid", "design"] as const;
+
+export default async function WorkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ service?: string }>;
+}) {
+  const { service } = await searchParams;
+  const initialFilter = (SERVICE_KEYS as readonly string[]).includes(service ?? "")
+    ? (service as (typeof SERVICE_KEYS)[number])
+    : "all";
   const [projects, c] = await Promise.all([
     getProjects().catch(() => []),
     getPageContent("/work"),
