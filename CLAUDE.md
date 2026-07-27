@@ -117,7 +117,10 @@ Plus `posts` and `leads`.
 ## Indexability — read before launch
 
 `lib/site.ts` derives `IS_PRODUCTION_SITE` from **`NEXT_PUBLIC_SITE_URL`**
-(true only when it contains `brainjarmedia.com`). That one env var drives both
+(true only when its host is EXACTLY `www.brainjarmedia.com` or the apex — an
+exact host match, not a substring, so a `*.vercel.app` staging URL *or* a
+brainjarmedia.com **subdomain** like a temporary `preview.brainjarmedia.com` is
+treated as non-production and stays noindexed). That one env var drives both
 `app/robots.ts` and the `robots` meta tag in `app/layout.tsx`:
 
 - Not production (staging `*.vercel.app`, localhost) → `robots.txt` is
