@@ -5,6 +5,7 @@ import { SERVICES, getSubService } from "@/lib/services";
 import { getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge } from "@/components/ornaments";
 import { ServiceCTA } from "@/components/service-cta";
+import { JsonLd, breadcrumbSchema } from "@/lib/schema";
 
 type Params = { params: Promise<{ service: string; sub: string }> };
 
@@ -42,6 +43,14 @@ export default async function SubServicePage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: s.name, path: `/services/${s.slug}` },
+          { name: item.name, path: `/services/${s.slug}/${item.slug}` },
+        ])}
+      />
       <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <nav className="eyebrow" aria-label="Breadcrumb">

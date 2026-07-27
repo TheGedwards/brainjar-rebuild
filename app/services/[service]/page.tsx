@@ -6,6 +6,7 @@ import { SERVICES, getService } from "@/lib/services";
 import { getProjects, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
 import { ServiceCTA } from "@/components/service-cta";
+import { JsonLd, serviceSchema, breadcrumbSchema } from "@/lib/schema";
 
 type Params = { params: Promise<{ service: string }> };
 
@@ -36,6 +37,16 @@ export default async function ServicePage({ params }: Params) {
 
   return (
     <>
+      <JsonLd
+        data={[
+          serviceSchema({ name: s.name, description: c.content.lede, path: `/services/${s.slug}` }),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+            { name: s.name, path: `/services/${s.slug}` },
+          ]),
+        ]}
+      />
       <section className="px-6 py-6 text-center sm:py-8">
         <Frame>
           <Image src={s.bottle} alt="" width={110} height={190} className="mx-auto h-32 w-auto sm:h-40" />

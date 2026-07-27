@@ -88,7 +88,7 @@ export default async function BlogPage() {
                         <div className="relative aspect-16/10 overflow-hidden border border-rule">
                           <Image
                             src={post.cover_image_url}
-                            alt=""
+                            alt={post.title}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             className="object-cover"

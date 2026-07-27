@@ -8,6 +8,7 @@ import { PostBody } from "@/components/post-body";
 import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
 import { SITE_URL } from "@/lib/site";
+import { JsonLd, breadcrumbSchema } from "@/lib/schema";
 
 export const revalidate = 300;
 
@@ -61,6 +62,13 @@ export default async function PostPage({ params }: Params) {
           }),
         }}
       />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ])}
+      />
       <header className="mx-auto max-w-2xl text-center">
         <Link href="/blog" className="eyebrow hover:text-tincture">
           Notes from the Dispensary
@@ -89,7 +97,7 @@ export default async function PostPage({ params }: Params) {
           <div className="relative aspect-16/10">
             <Image
               src={post.cover_image_url}
-              alt=""
+              alt={post.title}
               fill
               sizes="(max-width: 768px) 100vw, 768px"
               priority

@@ -24,6 +24,7 @@ const spectral = Spectral({
 });
 
 import { SITE_URL as SITE, IS_PRODUCTION_SITE } from "@/lib/site";
+import { JsonLd, organizationSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -88,36 +89,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </AdminBarProvider>
 
         {/* LocalBusiness schema. The old site had none; this is free rich-result
-            eligibility and it matters for "digital agency gresham". */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ProfessionalService",
-              name: "Brainjar Media",
-              description:
-                "Digital marketing agency specializing in SEO, web development, content marketing and paid advertising.",
-              url: SITE,
-              telephone: "+1-503-929-7436",
-              foundingDate: "2003",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "109 N Main Ave #202",
-                addressLocality: "Gresham",
-                addressRegion: "OR",
-                postalCode: "97030",
-                addressCountry: "US",
-              },
-              geo: { "@type": "GeoCoordinates", latitude: 45.4985, longitude: -122.4334 },
-              areaServed: ["Gresham, OR", "Portland, OR"],
-              sameAs: [
-                "https://www.facebook.com/BrainjarMedia/",
-                "https://twitter.com/brainjarmedia",
-              ],
-            }),
-          }}
-        />
+            eligibility and it matters for "digital agency gresham". Built in
+            lib/schema.tsx with a stable @id everything else references. */}
+        <JsonLd data={organizationSchema()} />
       </body>
     </html>
   );

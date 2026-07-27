@@ -8,6 +8,7 @@ import { GallerySlideshow } from "@/components/gallery-slideshow";
 import { SpecimenPlate } from "@/components/specimen-plate";
 import { ServiceCTA } from "@/components/service-cta";
 import { EditTarget } from "@/components/admin-bar";
+import { JsonLd, breadcrumbSchema } from "@/lib/schema";
 
 export const revalidate = 300;
 
@@ -69,6 +70,13 @@ export default async function ProjectPage({ params }: Params) {
     <>
     <article className="px-6 py-6">
       <EditTarget href={`/admin/portfolio/${p.id}`} label="Edit this case study" />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "The Medicine Cabinet", path: "/work" },
+          { name, path: `/work/${p.slug}` },
+        ])}
+      />
       <nav className="mx-auto mb-8 max-w-5xl eyebrow text-center" aria-label="Breadcrumb">
         <Link href="/work" className="hover:text-tincture">
           The Medicine Cabinet
