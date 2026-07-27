@@ -6,7 +6,9 @@ import { SERVICES, getService } from "@/lib/services";
 import { getProjects, getPageContent } from "@/lib/supabase";
 import { Frame, Lozenge, SectionTitle } from "@/components/ornaments";
 import { ServiceCTA } from "@/components/service-cta";
+import { FaqSection } from "@/components/faq-section";
 import { JsonLd, serviceSchema, breadcrumbSchema } from "@/lib/schema";
+import { parseFaq, faqPageSchema } from "@/lib/faq";
 
 type Params = { params: Promise<{ service: string }> };
 
@@ -34,6 +36,7 @@ export default async function ServicePage({ params }: Params) {
 
   // CMS override for the hero lede, layered over the lib/services default.
   const c = await getPageContent(`/services/${s.slug}`);
+  const faqs = parseFaq(c.content.faq);
 
   return (
     <>
@@ -45,6 +48,7 @@ export default async function ServicePage({ params }: Params) {
             { name: "Services", path: "/services" },
             { name: s.name, path: `/services/${s.slug}` },
           ]),
+          ...(faqs.length ? [faqPageSchema(faqs)] : []),
         ]}
       />
       <section className="px-6 py-6 text-center sm:py-8">
@@ -112,6 +116,8 @@ export default async function ServicePage({ params }: Params) {
           </div>
         </section>
       )}
+
+      <FaqSection items={faqs} title={`${s.name}, Answered`} />
 
       <ServiceCTA />
     </>

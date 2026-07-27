@@ -6,6 +6,7 @@ import { getPageContent } from "@/lib/supabase";
 import { savePage } from "@/app/admin/actions";
 import { field, label } from "@/components/admin/ui";
 import { SeoFields } from "@/components/admin/seo-fields";
+import { FaqEditor } from "@/components/admin/faq-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -77,7 +78,9 @@ export default async function PageEditor({ params, searchParams }: Params) {
           {def.slots.map((s) => (
             <div key={s.key}>
               <label className={label}>{s.label}</label>
-              {s.type === "text" ? (
+              {s.type === "faq" ? (
+                <FaqEditor name={`slot_${s.key}`} initial={current.content[s.key]} />
+              ) : s.type === "text" ? (
                 <input
                   name={`slot_${s.key}`}
                   defaultValue={current.content[s.key] ?? ""}

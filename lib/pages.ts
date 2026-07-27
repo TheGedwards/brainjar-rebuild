@@ -14,7 +14,7 @@
 import type { ServiceKey } from "./supabase";
 import { SERVICES } from "./services";
 
-export type SlotType = "text" | "textarea" | "heading";
+export type SlotType = "text" | "textarea" | "heading" | "faq";
 export type Slot = { key: string; label: string; type: SlotType; default: string; hint?: string };
 export type PageType = "marketing" | "service" | "subservice";
 export type PageDef = {
@@ -94,6 +94,82 @@ const MARKETING_PAGES: Omit<PageDef, "type">[] = [
   },
 ];
 
+/**
+ * Seed FAQs per service. Stored as the default of each service page's "faq"
+ * slot (a JSON string). Honest, plain-English answers — no keyword stuffing —
+ * and eligible for Google's FAQ rich result via the FAQPage schema.
+ */
+const SERVICE_FAQS: Partial<Record<ServiceKey, { q: string; a: string }[]>> = {
+  seo: [
+    {
+      q: "How long until we see results from SEO?",
+      a: "For most local and small-business campaigns, meaningful movement shows in three to six months, with the biggest gains compounding after that. Low-competition and local-map terms can move faster; national, high-competition terms take longer. Anyone promising overnight rankings is selling something we wouldn't.",
+    },
+    {
+      q: "Do you guarantee first-page rankings?",
+      a: "No — and neither can anyone honest, because Google's algorithm isn't ours to control. What we guarantee is white-hat work, transparent reporting, and a strategy tied to the searches that actually bring you customers, not vanity keywords.",
+    },
+    {
+      q: "What's the difference between local SEO and regular SEO?",
+      a: "Local SEO targets the map pack and \"near me\" searches — it leans on your Google Business Profile, reviews, and consistent name-address-phone data across the web. Regular (organic) SEO is about ranking your website's pages. Most Gresham and Portland businesses need both, and we treat them together.",
+    },
+    {
+      q: "Do I have to sign a long-term contract?",
+      a: "No lock-in traps. SEO is ongoing work, so we recommend committing to a few months to let it take hold, but we keep terms flexible and earn the next month with results, not paperwork.",
+    },
+  ],
+  web: [
+    {
+      q: "What do you build websites with?",
+      a: "We choose the right tool for the job rather than forcing every client onto one platform — from modern frameworks for fast, custom sites to a well-configured content system when you need to edit copy yourself. The goal is always the same: fast, secure, easy to maintain, and built to rank.",
+    },
+    {
+      q: "Will my site be fast and mobile-friendly?",
+      a: "Yes. Every site we build is responsive by default and tuned for Core Web Vitals — the speed and stability signals Google uses for ranking. A slow site quietly costs you both rankings and customers, so performance isn't an add-on for us.",
+    },
+    {
+      q: "Do you offer hosting and ongoing maintenance?",
+      a: "We do — hosting, updates, backups, and security monitoring — so you're not left to babysit the site after launch. If you'd rather host it elsewhere, that's fine too; you're never locked in.",
+    },
+    {
+      q: "Who owns the website when it's finished?",
+      a: "You do — the site, the domain, and the content are yours. We build assets you keep, not a rental you can never leave.",
+    },
+  ],
+  content: [
+    {
+      q: "What kinds of content do you produce?",
+      a: "Blog posts and articles, service and landing-page copy, email, and the on-page writing that helps pages rank and convert. Everything is written by people who understand both your business and how search works.",
+    },
+    {
+      q: "How is content marketing different from SEO?",
+      a: "They're partners. SEO figures out what your customers are searching for; content marketing answers those searches with something genuinely worth reading. Without content, there's little for SEO to rank — and without SEO, good content goes unseen.",
+    },
+    {
+      q: "How often should we publish?",
+      a: "Consistency beats volume. A steady cadence of a few strong, useful pieces a month usually outperforms a burst of thin posts that stop. We'll set a pace you can sustain and that moves the needle.",
+    },
+  ],
+  paid: [
+    {
+      q: "Which advertising platforms do you manage?",
+      a: "Primarily Google Ads (search, display, and local) and Meta (Facebook and Instagram), plus others when they fit your audience. We recommend platforms based on where your customers actually are, not where it's easiest to spend.",
+    },
+    {
+      q: "How quickly do paid ads work compared to SEO?",
+      a: "Paid ads can put you in front of buyers today — that's their advantage. SEO builds durable, lower-cost traffic over months. The smartest plans use ads to generate leads now while SEO compounds in the background.",
+    },
+    {
+      q: "What budget do I need to get started?",
+      a: "It depends on your market and goals, but we scope campaigns to fit budgets across a wide range and are candid when a budget is too thin to compete. We'd rather tell you that up front than quietly waste it.",
+    },
+    {
+      q: "How is ad spend billed versus your management fee?",
+      a: "Your ad spend goes directly to the platforms on your own account — you keep ownership and full visibility. Our fee for building, running, and optimizing the campaigns is separate and transparent, with no hidden markup on your spend.",
+    },
+  ],
+};
+
 // Service + sub-service pages, generated from lib/services.ts. Their copy lives
 // in code (SERVICES) as the default; edits are stored as page_content overrides
 // keyed by path, exactly like the marketing pages.
@@ -106,6 +182,12 @@ const SERVICE_PAGES: PageDef[] = SERVICES.flatMap((s) => {
     serviceKey: s.key,
     slots: [
       { key: "lede", label: "Hero lede — the paragraph under the title", type: "textarea", default: s.lede },
+      {
+        key: "faq",
+        label: "FAQ — questions & answers (shown as an accordion + FAQ rich result)",
+        type: "faq",
+        default: JSON.stringify(SERVICE_FAQS[s.key] ?? []),
+      },
     ],
   };
   const subs: PageDef[] = s.subs.map((sub) => ({
