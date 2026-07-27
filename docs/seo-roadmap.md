@@ -68,14 +68,22 @@ content), cached hourly. **First run caught a real bug: the home page shipped no
 layout default instead of falling back) — fixed in `app/page.tsx`.**
 Also enriched `sameAs` (added YouTube, Yelp, Google Business Profile).
 
+### Content velocity ✅ (shipped 2026-07-27)
+Blog posts now belong to a **service-pillar topic cluster** (post `category` =
+service key). Post→pillar link + "Keep Reading" related posts; service page lists
+its cluster posts. Strategy + ~22-idea backlog in `docs/blog-content-plan.md`.
+Habit going forward: set the pillar on every post, add 1–2 in-body internal links.
+
+### Reviews → star ratings — CLOSED (not doing)
+Client already has 4.9★ / 69 Google reviews + a review-generation process. Google
+won't render self-serving on-site `AggregateRating` for the org, so on-site review
+schema would add no SERP stars. No work planned.
+
 ### Deferred, not yet scheduled
-- **Reviews/testimonials model → `Review` + `AggregateRating`** (⭐ in SERP; we
-  have 33 clients to draw on).
 - **Redirect & broken-link integrity checker** (the 301 map is load-bearing).
-- **Content velocity**: blog topic clusters, each feeding a service page;
-  contextual internal links from posts → service/work pages; related posts.
 - **Sitemap `lastModified`** from real `updated_at` instead of `new Date()`.
 
 ## Open client inputs
-- LinkedIn / Instagram / Google Business Profile URLs (for `sameAs`).
+- LinkedIn / Instagram URLs, if any, for `sameAs` (Facebook, X, YouTube, Yelp,
+  and Google Business Profile are already in).
 - Gresham/East-County client names + testimonials usable on location pages.
