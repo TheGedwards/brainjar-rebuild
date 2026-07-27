@@ -79,8 +79,14 @@ Client already has 4.9★ / 69 Google reviews + a review-generation process. Goo
 won't render self-serving on-site `AggregateRating` for the org, so on-site review
 schema would add no SERP stars. No work planned.
 
+### Redirect & broken-link integrity checker ✅ (shipped 2026-07-27)
+`/admin/redirects` — the 301 map now lives in `lib/redirects.ts` (single source
+of truth; `next.config.ts` and the checker both read it). The checker tests every
+rule against the live site (pattern rules sampled) and crawls the sitemap for
+broken internal links. Cached hourly. Note: `permanent: true` emits **308**
+(SEO-equivalent to 301); the checker accepts 301/308.
+
 ### Deferred, not yet scheduled
-- **Redirect & broken-link integrity checker** (the 301 map is load-bearing).
 - **Sitemap `lastModified`** from real `updated_at` instead of `new Date()`.
 
 ## Open client inputs
