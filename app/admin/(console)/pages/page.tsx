@@ -40,6 +40,9 @@ export default async function PagesList() {
       catNode = (
         <span className="text-ink-soft">↳ {p.serviceKey ? SERVICE_CHIPS[p.serviceKey] : "SUB"}</span>
       );
+    } else if (p.type === "location") {
+      catSort = `2-${p.name}`;
+      catNode = <span className="text-tincture">Location</span>;
     }
 
     return {

@@ -14,7 +14,7 @@ _Audit + build plan. Started 2026-07-26. This tracks the SEO work after launch._
 
 ## Build order (agreed with client 2026-07-26)
 
-### Phase 1 — Structured-data quick wins ✅ (shipping first)
+### Phase 1 — Structured-data quick wins ✅ (shipped, commit 4aadaa3)
 - `lib/schema.tsx`: shared builders + `<JsonLd>` component.
 - Enrich the org schema: `logo`, `image`, `priceRange` ($500–$10,000),
   `openingHoursSpecification` (Mon–Fri 08:00–17:00), fix `sameAs`
@@ -25,14 +25,13 @@ _Audit + build plan. Started 2026-07-26. This tracks the SEO work after launch._
   (visual breadcrumbs already exist; this marks them up).
 - Descriptive `alt` on blog cover images.
 
-### Phase 2 — FAQ blocks + `FAQPage` schema
+### Phase 2 — FAQ blocks + `FAQPage` schema ✅ (shipped, commit 7398390)
 - New `faq` slot type in the pages registry (`lib/pages.ts`) so any service /
   location page can carry admin-editable Q&A.
 - Public FAQ accordion component + `FAQPage` JSON-LD emitted from the same data.
 - Seed FAQs on the 4 service pages.
-- _Visual — mock up locally before deploy._
 
-### Phase 3 — Location landing pages (the growth engine)
+### Phase 3 — Location landing pages (the growth engine) ✅ (shipped)
 Honest local positioning, **no doorway pages** — each page gets its own audience,
 argument, service emphasis, proof, city-specific FAQ, local context, internal
 links, and CTA. No fake offices/addresses/GBPs; no schema implying we operate

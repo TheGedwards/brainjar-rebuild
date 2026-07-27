@@ -9,6 +9,11 @@ out
 Supabase DB Password.txt
 *password*.txt
 *secret*.txt
+# Google service-account keys. The app reads GOOGLE_SERVICE_ACCOUNT_JSON from an
+# env var — a key file must NEVER be committed, least of all under public/.
+*service-account*.json
+public/assets/*.json
+brainjar-analytics-*.json
 
 # Design working files — keep the exported PNGs, not the sources
 *.psd

@@ -13,10 +13,11 @@
 
 import type { ServiceKey } from "./supabase";
 import { SERVICES } from "./services";
+import { LOCATIONS } from "./locations";
 
 export type SlotType = "text" | "textarea" | "heading" | "faq";
 export type Slot = { key: string; label: string; type: SlotType; default: string; hint?: string };
-export type PageType = "marketing" | "service" | "subservice";
+export type PageType = "marketing" | "service" | "subservice" | "location";
 export type PageDef = {
   key: string;
   path: string;
@@ -206,10 +207,37 @@ const SERVICE_PAGES: PageDef[] = SERVICES.flatMap((s) => {
   return [service, ...subs];
 });
 
-/** Every editable page: the 6 marketing pages, then service + sub-service pages. */
+// Location landing pages, generated from lib/locations.ts. Editable slots layer
+// over the code defaults exactly like service pages; structural bits (heading,
+// eyebrow, audience list) stay in code.
+const LOCATION_PAGES: PageDef[] = LOCATIONS.map((l) => ({
+  key: `location-${l.slug}`,
+  path: `/locations/${l.slug}`,
+  name: l.label,
+  type: "location",
+  slots: [
+    { key: "lede", label: "Hero lede — the paragraph under the title", type: "textarea", default: l.lede },
+    {
+      key: "argument",
+      label: "Opening argument — one or more paragraphs (blank line = new paragraph)",
+      type: "textarea",
+      default: l.argument.join("\n\n"),
+    },
+    { key: "proof", label: "Proof paragraph — above the link to the portfolio", type: "textarea", default: l.proof },
+    {
+      key: "faq",
+      label: "City FAQ — questions & answers (accordion + FAQ rich result)",
+      type: "faq",
+      default: JSON.stringify(l.faq),
+    },
+  ],
+}));
+
+/** Every editable page: marketing, service + sub-service, then location pages. */
 export const PAGES: PageDef[] = [
   ...MARKETING_PAGES.map((p) => ({ ...p, type: "marketing" as const })),
   ...SERVICE_PAGES,
+  ...LOCATION_PAGES,
 ];
 
 /** Default SEO title/description per page (fallback + editor placeholder). */

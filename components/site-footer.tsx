@@ -1,26 +1,22 @@
 import Link from "next/link";
 import { SERVICES } from "@/lib/services";
+import { LOCATIONS } from "@/lib/locations";
 import { PointedRule } from "./ornaments";
 
 export function SiteFooter() {
   return (
     <footer className="mt-20 border-t border-rule bg-panel">
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <div className="display text-base tracking-[0.25em] text-ink">BRAINJAR MEDIA</div>
             <p className="mt-4 max-w-md text-lg italic leading-8 text-ink-soft">
               Two decades of remedies for recognizable brands and beloved local business alike.
               Praised in the Wall Street Journal, Barron&rsquo;s and the Portland Tribune.
             </p>
-          </div>
-
-          <div>
-            <div className="eyebrow mb-4">Visit</div>
-            <address className="space-y-1 text-base not-italic text-ink-soft">
-              <div>109 N Main Ave #202</div>
-              <div>Gresham, OR 97030</div>
-              <a href="tel:+15039297436" className="mt-2 block text-tincture hover:underline">
+            <address className="mt-6 space-y-1 text-base not-italic text-ink-soft">
+              <div>109 N Main Ave #202, Gresham, OR 97030</div>
+              <a href="tel:+15039297436" className="mt-1 block text-tincture hover:underline">
                 (503) 929-7436
               </a>
             </address>
@@ -36,6 +32,24 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-2">
+            <div className="eyebrow mb-4">Areas We Serve</div>
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2 text-base text-ink-soft">
+              {LOCATIONS.map((l) => (
+                <li key={l.slug}>
+                  <Link href={`/locations/${l.slug}`} className="hover:text-tincture">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/locations" className="text-tincture hover:underline">
+                  All areas →
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

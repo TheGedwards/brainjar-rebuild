@@ -89,6 +89,28 @@ export function serviceSchema(opts: {
   };
 }
 
+/**
+ * A location landing page's offering: digital marketing provided by the org,
+ * served to one city. Honest — it does NOT assert a physical location in that
+ * city (only the sitewide org schema carries the real Gresham address).
+ */
+export function localServiceSchema(opts: {
+  city: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: `Digital Marketing in ${opts.city}`,
+    serviceType: "Digital Marketing",
+    description: opts.description,
+    url: abs(opts.path),
+    provider: { "@id": ORG_ID },
+    areaServed: { "@type": "City", name: opts.city },
+  };
+}
+
 /** Breadcrumb trail. Pass items in order, root first. */
 export function breadcrumbSchema(items: { name: string; path: string }[]) {
   return {
