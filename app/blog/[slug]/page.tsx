@@ -38,6 +38,7 @@ export default async function PostPage({ params }: Params) {
   if (!post) notFound();
 
   return (
+    <>
     <article className="px-6 py-6">
       <EditTarget href={`/admin/blog/${post.id}`} label="Edit this post" />
       {/* Article structured data — datePublished/dateModified use the publish
@@ -112,7 +113,9 @@ export default async function PostPage({ params }: Params) {
         </div>
       </div>
 
-      <ServiceCTA />
     </article>
+
+    <ServiceCTA />
+    </>
   );
 }
