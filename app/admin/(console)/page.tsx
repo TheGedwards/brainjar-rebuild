@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
 import { requireUser, OWNER_ROLES } from "@/lib/auth";
@@ -62,22 +63,66 @@ export default async function DashboardPage() {
             </span>
           </div>
           {recentLeads.data?.length ? (
-            <table className="w-full text-base">
-              <tbody className="divide-y divide-rule">
-                {recentLeads.data.map((l) => (
-                  <tr key={l.id}>
-                    <td className="px-4 py-2.5">{l.name}</td>
-                    <td className="px-4 py-2.5 italic text-ink-soft">{l.symptom ?? "—"}</td>
-                    <td className="whitespace-nowrap px-4 py-2.5 text-right text-ink-faint">
-                      {new Date(l.created_at).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="divide-y divide-rule">
+              {recentLeads.data.map((l) => (
+                <details key={l.id} className="group">
+                  {/* Summary row — click to reveal the full form submission. */}
+                  <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-2.5 text-base hover:bg-panel/50 [&::-webkit-details-marker]:hidden">
+                    <span aria-hidden className="font-display text-[10px] text-ink-faint transition-transform group-open:rotate-90">
+                      ▶
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">
+                      <span className="text-ink">{l.name}</span>
+                      {l.symptom && <span className="ml-2 italic text-ink-soft">{l.symptom}</span>}
+                    </span>
+                    <span className="whitespace-nowrap text-sm text-ink-faint">
+                      {new Date(l.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </span>
+                  </summary>
+
+                  <div className="border-t border-rule bg-panel/40 px-4 py-3">
+                    <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                      <LeadField label="Email">
+                        <a href={`mailto:${l.email}`} className="text-cobalt hover:text-tincture">{l.email}</a>
+                      </LeadField>
+                      <LeadField label="Phone">
+                        {l.phone ? (
+                          <a href={`tel:${l.phone}`} className="text-cobalt hover:text-tincture">{l.phone}</a>
+                        ) : (
+                          "—"
+                        )}
+                      </LeadField>
+                      {l.company && <LeadField label="Company">{l.company}</LeadField>}
+                      <LeadField label="Received">
+                        {new Date(l.created_at).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}
+                      </LeadField>
+                      {l.symptom && <LeadField label="Symptom" full>{l.symptom}</LeadField>}
+                      {l.message && (
+                        <LeadField label="Message" full>
+                          <span className="whitespace-pre-wrap">{l.message}</span>
+                        </LeadField>
+                      )}
+                      {l.source_path && (
+                        <LeadField label="Submitted from">
+                          <span className="font-mono text-[12px]">{l.source_path}</span>
+                        </LeadField>
+                      )}
+                      <LeadField label="Email notification">
+                        {l.emailed_at
+                          ? `Sent ${new Date(l.emailed_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                          : "Not sent"}
+                      </LeadField>
+                    </dl>
+                    <a
+                      href={`mailto:${l.email}?subject=${encodeURIComponent("Re: your inquiry to Brainjar Media")}`}
+                      className="btn btn-outline mt-3 !py-1.5 !text-[10px]"
+                    >
+                      REPLY BY EMAIL
+                    </a>
+                  </div>
+                </details>
+              ))}
+            </div>
           ) : (
             <p className="px-4 py-6 text-base italic text-ink-faint">No leads yet.</p>
           )}
@@ -109,6 +154,15 @@ export default async function DashboardPage() {
           </div>
         </section>
       </div>
+    </div>
+  );
+}
+
+function LeadField({ label, children, full }: { label: string; children: ReactNode; full?: boolean }) {
+  return (
+    <div className={full ? "sm:col-span-2" : ""}>
+      <dt className="font-display text-[9px] font-bold uppercase tracking-[0.15em] text-ink-faint">{label}</dt>
+      <dd className="mt-0.5 text-base text-ink">{children}</dd>
     </div>
   );
 }
