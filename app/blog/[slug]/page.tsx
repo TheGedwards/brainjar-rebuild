@@ -121,7 +121,7 @@ export default async function PostPage({ params }: Params) {
         </div>
       )}
 
-      <PostBody body={post.body} className="mt-12" />
+      <PostBody body={post.body} className="mt-12" altMap={altMap} />
 
       {/* Pillar link — sends this cluster post up to its service page. */}
       {pillar && (

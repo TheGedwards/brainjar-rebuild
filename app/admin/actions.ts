@@ -304,6 +304,76 @@ export async function deleteMedia(fd: FormData) {
   revalidatePath("/admin/media");
 }
 
+type Db = ReturnType<typeof supabaseAdmin>;
+
+/**
+ * Repoint every reference to an image from oldUrl to newUrl across all content
+ * that can hold a media URL: post bodies + covers, project heroes + galleries,
+ * and page_content copy. Volumes are tiny, so a read-modify-write per row is fine.
+ */
+async function rewriteMediaUrl(db: Db, oldUrl: string, newUrl: string) {
+  const swap = (s: string) => s.split(oldUrl).join(newUrl);
+
+  const { data: posts } = await db.from("posts").select("id, body, cover_image_url").then((r) => r, () => ({ data: null }));
+  for (const p of (posts ?? []) as { id: string; body: string | null; cover_image_url: string | null }[]) {
+    const patch: Record<string, unknown> = {};
+    if (p.cover_image_url === oldUrl) patch.cover_image_url = newUrl;
+    if (typeof p.body === "string" && p.body.includes(oldUrl)) patch.body = swap(p.body);
+    if (Object.keys(patch).length) await db.from("posts").update(patch).eq("id", p.id);
+  }
+
+  const { data: projects } = await db.from("projects").select("id, hero_image_url, gallery").then((r) => r, () => ({ data: null }));
+  for (const pr of (projects ?? []) as { id: string; hero_image_url: string | null; gallery: unknown }[]) {
+    const patch: Record<string, unknown> = {};
+    if (pr.hero_image_url === oldUrl) patch.hero_image_url = newUrl;
+    const g = pr.gallery == null ? "" : JSON.stringify(pr.gallery);
+    if (g.includes(oldUrl)) patch.gallery = JSON.parse(swap(g));
+    if (Object.keys(patch).length) await db.from("projects").update(patch).eq("id", pr.id);
+  }
+
+  const { data: pages } = await db.from("page_content").select("path, content").then((r) => r, () => ({ data: null }));
+  for (const pg of (pages ?? []) as { path: string; content: unknown }[]) {
+    const c = pg.content == null ? "" : JSON.stringify(pg.content);
+    if (c.includes(oldUrl)) await db.from("page_content").update({ content: JSON.parse(swap(c)) }).eq("path", pg.path);
+  }
+}
+
+/**
+ * Rename an image to an SEO-friendly filename AND repoint every reference to it.
+ * Copy → rewrite → remove old, so there's never a window where a live page
+ * points at a missing file. Managers+.
+ */
+export async function renameMedia(fd: FormData): Promise<{ error?: string } | void> {
+  await requireRole(CONTENT_ROLES);
+  const oldPath = str(fd, "path");
+  const newName = str(fd, "name");
+  if (!oldPath || !newName) return { error: "Missing image or new name." };
+
+  const slash = oldPath.lastIndexOf("/");
+  const folder = slash >= 0 ? oldPath.slice(0, slash) : "";
+  const ext = (oldPath.split(".").pop() || "png").toLowerCase();
+  const base = slugifyName(newName);
+  const newPath = folder ? `${folder}/${base}.${ext}` : `${base}.${ext}`;
+  if (newPath === oldPath) return; // no change
+
+  const db = supabaseAdmin();
+  const pub = (p: string) => db.storage.from("media").getPublicUrl(p).data.publicUrl;
+
+  // 1. Copy to the new name (both files exist during the rewrite = no broken window).
+  const copy = await db.storage.from("media").copy(oldPath, newPath);
+  if (copy.error) return { error: `Couldn't rename — ${copy.error.message} (a file named "${base}.${ext}" may already exist).` };
+
+  // 2. Repoint every reference from old URL to new URL.
+  await rewriteMediaUrl(db, pub(oldPath), pub(newPath));
+
+  // 3. Move the metadata row, then drop the old object.
+  await db.from("media_assets").update({ path: newPath, folder }).eq("path", oldPath).then((r) => r, () => null);
+  await db.storage.from("media").remove([oldPath]);
+
+  revalidateTag("media-alt");
+  revalidatePath("/admin/media");
+}
+
 // --- Clients ----------------------------------------------------------------
 
 export async function createClient(fd: FormData) {
