@@ -86,7 +86,11 @@ export default async function DashboardPage() {
                   <div className="border-t border-rule bg-panel/40 px-4 py-3">
                     <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
                       <LeadField label="Email">
-                        <a href={`mailto:${l.email}`} className="text-cobalt hover:text-tincture">{l.email}</a>
+                        {l.email ? (
+                          <a href={`mailto:${l.email}`} className="text-cobalt hover:text-tincture">{l.email}</a>
+                        ) : (
+                          "—"
+                        )}
                       </LeadField>
                       <LeadField label="Phone">
                         {l.phone ? (

@@ -2,7 +2,10 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { updateLeadStatus } from "@/app/admin/actions";
+import { updateLeadStatus, createLead } from "@/app/admin/actions";
+
+const INPUT =
+  "w-full border border-rule bg-paper px-3 py-2 font-body text-base text-ink focus:border-tincture focus:outline-none";
 
 export type Lead = {
   id: string;
@@ -49,6 +52,25 @@ export function LeadsManager({ leads }: { leads: Lead[] }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | State>("all");
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [addBusy, setAddBusy] = useState(false);
+  const [addErr, setAddErr] = useState("");
+
+  async function submitAdd(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    setAddBusy(true);
+    setAddErr("");
+    const res = await createLead(new FormData(form));
+    setAddBusy(false);
+    if (res?.error) {
+      setAddErr(res.error);
+      return;
+    }
+    form.reset();
+    setAdding(false);
+    router.refresh();
+  }
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: leads.length, new: 0, contacted: 0, handled: 0, archived: 0 };
@@ -81,6 +103,39 @@ export function LeadsManager({ leads }: { leads: Lead[] }) {
 
   return (
     <div>
+      {/* Add a lead manually (bypasses the public contact form) */}
+      <div className="mb-4">
+        <button
+          type="button"
+          onClick={() => { setAdding((a) => !a); setAddErr(""); }}
+          className={adding ? "btn btn-outline !py-2" : "btn btn-fill !py-2"}
+        >
+          {adding ? "CANCEL" : "+ ADD LEAD"}
+        </button>
+
+        {adding && (
+          <form onSubmit={submitAdd} className="mt-3 space-y-3 border border-rule bg-card p-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input name="name" required placeholder="Name *" className={INPUT} />
+              <input name="company" placeholder="Company" className={INPUT} />
+              <input name="email" type="email" placeholder="Email" className={INPUT} />
+              <input name="phone" placeholder="Phone" className={INPUT} />
+            </div>
+            <input name="symptom" placeholder="What they need (short)" className={INPUT} />
+            <textarea name="message" rows={2} placeholder="Notes / message" className={INPUT} />
+            {addErr && <p className="text-base text-tincture">{addErr}</p>}
+            <div className="flex items-center gap-3">
+              <button disabled={addBusy} className="btn btn-fill">
+                {addBusy ? "SAVING…" : "SAVE LEAD"}
+              </button>
+              <span className="text-[12px] italic text-ink-faint">
+                Name required · add at least an email or phone.
+              </span>
+            </div>
+          </form>
+        )}
+      </div>
+
       {/* Search + status filter */}
       <input
         value={query}
@@ -133,7 +188,11 @@ export function LeadsManager({ leads }: { leads: Lead[] }) {
                   <div className="border-t border-rule bg-panel/40 px-4 py-3">
                     <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
                       <Field label="Email">
-                        <a href={`mailto:${l.email}`} className="text-cobalt hover:text-tincture">{l.email}</a>
+                        {l.email ? (
+                          <a href={`mailto:${l.email}`} className="text-cobalt hover:text-tincture">{l.email}</a>
+                        ) : (
+                          "—"
+                        )}
                       </Field>
                       <Field label="Phone">
                         {l.phone ? <a href={`tel:${l.phone}`} className="text-cobalt hover:text-tincture">{l.phone}</a> : "—"}

@@ -379,6 +379,35 @@ export async function renameMedia(fd: FormData): Promise<{ error?: string } | vo
 /** Lightweight lead workflow states (not the full parked lead-gen pipeline). */
 const LEAD_STATES = ["new", "contacted", "handled", "archived"];
 
+/**
+ * Manually add a lead to follow up with (bypasses the public contact form).
+ * Requires a name plus at least one way to reach them. Doesn't set `status` so
+ * it works even before leads-status.sql is run (the column default handles it).
+ * Admins+.
+ */
+export async function createLead(fd: FormData): Promise<{ error?: string } | void> {
+  await requireRole(ADMIN_ROLES);
+  const name = (str(fd, "name") ?? "").trim();
+  const email = (str(fd, "email") ?? "").trim();
+  const phone = (str(fd, "phone") ?? "").trim();
+  if (!name) return { error: "Name is required." };
+  if (!email && !phone) return { error: "Add at least an email or a phone number." };
+
+  const { error } = await supabaseAdmin().from("leads").insert({
+    name,
+    email, // "" is allowed (column is NOT NULL); UI shows a dash when empty
+    phone: phone || null,
+    company: str(fd, "company")?.trim() || null,
+    symptom: str(fd, "symptom")?.trim() || null,
+    message: str(fd, "message")?.trim() || null,
+    source_path: "(manual entry)",
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/leads");
+  revalidatePath("/admin");
+}
+
 /** Set a lead's status (new/contacted/handled/archived). Admins+. */
 export async function updateLeadStatus(fd: FormData) {
   await requireRole(ADMIN_ROLES);
