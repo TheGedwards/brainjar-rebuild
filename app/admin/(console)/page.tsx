@@ -58,9 +58,12 @@ export default async function DashboardPage() {
             <h2 className="font-display text-xs font-bold uppercase tracking-[0.15em]">
               Recent Leads
             </h2>
-            <span className="font-display text-[10px] tracking-[0.15em] text-ink-faint">
-              LATEST 6
-            </span>
+            <Link
+              href="/admin/leads"
+              className="font-display text-[10px] tracking-[0.15em] text-cobalt hover:text-tincture"
+            >
+              VIEW ALL →
+            </Link>
           </div>
           {recentLeads.data?.length ? (
             <div className="divide-y divide-rule">

@@ -38,6 +38,12 @@ const ICONS: Record<string, React.ReactNode> = {
       <path d="M8 16v-4M12 16V8M16 16v-6" />
     </>
   ),
+  inbox: (
+    <>
+      <path d="M3 12h5l2 3h4l2-3h5" />
+      <path d="M5 5h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" />
+    </>
+  ),
   seo: (
     <>
       <circle cx="11" cy="11" r="7" />
@@ -95,6 +101,7 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: "dashboard" },
+  { href: "/admin/leads", label: "Leads", icon: "inbox", roles: ["super_admin", "admin"] },
   { href: "/admin/portfolio", label: "Portfolio", icon: "flask" },
   { href: "/admin/blog", label: "Blog", icon: "news" },
   { href: "/admin/media", label: "Media", icon: "image" },

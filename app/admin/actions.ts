@@ -374,6 +374,22 @@ export async function renameMedia(fd: FormData): Promise<{ error?: string } | vo
   revalidatePath("/admin/media");
 }
 
+// --- Leads ------------------------------------------------------------------
+
+/** Lightweight lead workflow states (not the full parked lead-gen pipeline). */
+const LEAD_STATES = ["new", "contacted", "handled", "archived"];
+
+/** Set a lead's status (new/contacted/handled/archived). Admins+. */
+export async function updateLeadStatus(fd: FormData) {
+  await requireRole(ADMIN_ROLES);
+  const id = str(fd, "id");
+  const status = str(fd, "status");
+  if (!id || !status || !LEAD_STATES.includes(status)) return;
+  await supabaseAdmin().from("leads").update({ status }).eq("id", id).then((r) => r, () => null);
+  revalidatePath("/admin/leads");
+  revalidatePath("/admin");
+}
+
 // --- Clients ----------------------------------------------------------------
 
 export async function createClient(fd: FormData) {
