@@ -88,7 +88,9 @@ supabase/           schema.sql, seed.sql, cms-auth.sql, blog-media.sql,
                     Run in the Supabase SQL editor, in that order. specimen.sql
                     adds projects.binomial (the optional mock-Latin epithet on
                     the /work specimen plate). media-assets.sql adds per-image
-                    SEO alt/title; leads-status.sql adds leads.status.
+                    SEO alt/title; leads-status.sql adds leads.status;
+                    leads-pipeline.sql adds the pipeline fields (reason,
+                    next_action, next_action_at, notes, timestamps).
 ```
 
 ## Data model

@@ -7,6 +7,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 import type { ServiceKey } from "@/lib/supabase";
 import { sanitizeRichText } from "@/lib/sanitize";
 import { getPageDef } from "@/lib/pages";
+import { ALL_STATUSES, REASON_REQUIRED } from "@/lib/lead-pipeline";
 import {
   createServerSupabase,
   getCurrentUser,
@@ -376,9 +377,6 @@ export async function renameMedia(fd: FormData): Promise<{ error?: string } | vo
 
 // --- Leads ------------------------------------------------------------------
 
-/** Lightweight lead workflow states (not the full parked lead-gen pipeline). */
-const LEAD_STATES = ["new", "contacted", "handled", "archived"];
-
 /**
  * Manually add a lead to follow up with (bypasses the public contact form).
  * Requires a name plus at least one way to reach them. Doesn't set `status` so
@@ -408,13 +406,44 @@ export async function createLead(fd: FormData): Promise<{ error?: string } | voi
   revalidatePath("/admin");
 }
 
-/** Set a lead's status (new/contacted/handled/archived). Admins+. */
-export async function updateLeadStatus(fd: FormData) {
+/**
+ * Save a lead's pipeline state: stage/outcome + reason + the next-action engine
+ * + notes. Enforces the two rules that keep the pipeline honest — junk/
+ * disqualified/lost need a reason, and Nurture needs a revisit date. Stamps
+ * stage_changed_at when the stage actually moves (drives "time in stage").
+ * Admins+.
+ */
+export async function saveLeadPipeline(fd: FormData): Promise<{ error?: string } | void> {
   await requireRole(ADMIN_ROLES);
   const id = str(fd, "id");
-  const status = str(fd, "status");
-  if (!id || !status || !LEAD_STATES.includes(status)) return;
-  await supabaseAdmin().from("leads").update({ status }).eq("id", id).then((r) => r, () => null);
+  if (!id) return { error: "Missing lead." };
+  const status = str(fd, "status") ?? "new";
+  if (!(ALL_STATUSES as string[]).includes(status)) return { error: "Unknown status." };
+
+  const reason = str(fd, "reason")?.trim() || null;
+  const next_action = str(fd, "next_action")?.trim() || null;
+  const next_action_at = str(fd, "next_action_at") || null; // YYYY-MM-DD
+  const notes = str(fd, "notes")?.trim() || null;
+
+  if ((REASON_REQUIRED as string[]).includes(status) && !reason)
+    return { error: "Choose a reason for a junk, disqualified, or lost lead." };
+  if (status === "nurture" && !next_action_at)
+    return { error: "Nurture needs a revisit date (that's the whole point)." };
+
+  const db = supabaseAdmin();
+  const { data: cur } = await db
+    .from("leads")
+    .select("status")
+    .eq("id", id)
+    .maybeSingle()
+    .then((r) => r, () => ({ data: null }));
+
+  const now = new Date().toISOString();
+  const patch: Record<string, unknown> = { status, reason, next_action, next_action_at, notes, updated_at: now };
+  if (!cur || (cur as { status: string | null }).status !== status) patch.stage_changed_at = now;
+
+  const { error } = await db.from("leads").update(patch).eq("id", id);
+  if (error) return { error: error.message };
   revalidatePath("/admin/leads");
   revalidatePath("/admin");
 }
