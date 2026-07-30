@@ -53,17 +53,20 @@ export function LeadCard({ lead }: { lead: Lead }) {
   const [notes, setNotes] = useState(lead.notes ?? "");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [tried, setTried] = useState(false);
 
   const showReason = (REASON_REQUIRED as string[]).includes(status);
   const reasonOptions = status === "lost" ? LOST_REASONS : TRIAGE_REASONS;
+  const reasonMissing = showReason && !reason;
 
   // Summary signals use the SAVED lead (not the in-progress edits).
   const open = isOpen(saved);
   const overdue = open && !!lead.next_action_at && lead.next_action_at < todayStr();
 
   async function save() {
-    if (showReason && !reason) return setErr("Choose a reason.");
-    if (status === "nurture" && !nextAt) return setErr("Nurture needs a revisit date.");
+    setTried(true);
+    if (showReason && !reason) return setErr(`Pick a reason before saving as ${STATUS_META[status].label}.`);
+    if (status === "nurture" && !nextAt) return setErr("Set a revisit date before saving as Nurture.");
     setBusy(true);
     setErr("");
     const fd = new FormData();
@@ -155,11 +158,20 @@ export function LeadCard({ lead }: { lead: Lead }) {
 
           {showReason && (
             <div>
-              <label className="mb-1 block font-display text-[9px] font-bold uppercase tracking-[0.15em] text-ink-faint">Reason</label>
-              <select value={reason} onChange={(e) => setReason(e.target.value)} className={INPUT}>
+              <label className="mb-1 block font-display text-[9px] font-bold uppercase tracking-[0.15em] text-tincture">
+                Reason — required
+              </label>
+              <select
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className={`${INPUT} ${tried && reasonMissing ? "border-tincture ring-1 ring-tincture" : ""}`}
+              >
                 <option value="">— pick a reason —</option>
                 {reasonOptions.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
+              {tried && reasonMissing && (
+                <p className="mt-1 text-sm text-tincture">Choose a reason to save.</p>
+              )}
             </div>
           )}
 
@@ -182,7 +194,9 @@ export function LeadCard({ lead }: { lead: Lead }) {
           </div>
         </div>
 
-        {err && <p className="mt-2 text-base text-tincture">{err}</p>}
+        {err && (
+          <p className="mt-3 border border-tincture bg-tincture/5 px-3 py-2 text-base text-tincture">{err}</p>
+        )}
         <div className="mt-3 flex items-center gap-3">
           <button type="button" onClick={save} disabled={busy} className="btn btn-fill !py-1.5 !text-[10px]">
             {busy ? "SAVING…" : "SAVE"}

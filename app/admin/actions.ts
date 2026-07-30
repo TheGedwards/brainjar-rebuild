@@ -422,7 +422,10 @@ export async function saveLeadPipeline(fd: FormData): Promise<{ error?: string }
 
   const reason = str(fd, "reason")?.trim() || null;
   const next_action = str(fd, "next_action")?.trim() || null;
-  const next_action_at = str(fd, "next_action_at") || null; // YYYY-MM-DD
+  // Only accept a well-formed date; anything else (incl. "") becomes null so an
+  // empty string can never hit the date column and 500 the save.
+  const rawDate = str(fd, "next_action_at");
+  const next_action_at = rawDate && /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : null;
   const notes = str(fd, "notes")?.trim() || null;
 
   if ((REASON_REQUIRED as string[]).includes(status) && !reason)
