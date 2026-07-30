@@ -28,10 +28,17 @@ function fmtDay(s: string | null) {
   const [y, m, d] = s.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
-function daysAgo(iso: string | null): string {
-  if (!iso) return "";
+/** Elapsed since a timestamp, read as "today" / "yesterday" / "N days ago". */
+function ago(iso: string | null): string {
+  if (!iso) return "—";
   const n = Math.floor((Date.now() - Date.parse(iso)) / 86400000);
-  return n <= 0 ? "today" : n === 1 ? "1 day" : `${n} days`;
+  return n <= 0 ? "today" : n === 1 ? "yesterday" : `${n} days ago`;
+}
+/** Whole-day duration since a timestamp, for "in stage for …". */
+function inStage(iso: string | null): string {
+  if (!iso) return "—";
+  const n = Math.max(0, Math.floor((Date.now() - Date.parse(iso)) / 86400000));
+  return n === 0 ? "less than a day" : n === 1 ? "1 day" : `${n} days`;
 }
 
 function Field({ label, children, full }: { label: string; children: ReactNode; full?: boolean }) {
@@ -98,12 +105,12 @@ export function LeadCard({ lead, canDelete = false }: { lead: Lead; canDelete?: 
             overdue ? (
               <span className="font-display text-[10px] font-bold tracking-[0.1em] text-tincture">⚠ OVERDUE</span>
             ) : lead.next_action_at ? (
-              <span className="text-ink-faint">{fmtDay(lead.next_action_at)}</span>
+              <span className="text-ink-faint">Due {fmtDay(lead.next_action_at)}</span>
             ) : (
-              <span className="text-tincture">no next step</span>
+              <span className="text-tincture">No next step</span>
             )
           ) : (
-            <span className="text-ink-faint">{daysAgo(lead.updated_at)} ago</span>
+            <span className="text-ink-faint">Updated {ago(lead.updated_at)}</span>
           )}
         </span>
       </summary>
@@ -132,8 +139,8 @@ export function LeadCard({ lead, canDelete = false }: { lead: Lead; canDelete?: 
         </dl>
 
         <p className="mt-2 font-display text-[10px] tracking-[0.12em] text-ink-faint">
-          IN {STATUS_META[saved].label.toUpperCase()} FOR {daysAgo(lead.stage_changed_at) || "—"}
-          {lead.updated_at ? ` · LAST TOUCHED ${daysAgo(lead.updated_at)} AGO` : ""}
+          IN {STATUS_META[saved].label.toUpperCase()} FOR {inStage(lead.stage_changed_at)}
+          {lead.updated_at ? ` · LAST UPDATED ${ago(lead.updated_at)}` : ""}
         </p>
 
         {/* Pipeline editor */}
