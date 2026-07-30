@@ -43,7 +43,7 @@ function dueRank(l: Lead, today: string): number {
   return isOpen(s) && (!l.next_action_at || l.next_action_at <= today) ? 0 : 1;
 }
 
-export function LeadsManager({ leads }: { leads: Lead[] }) {
+export function LeadsManager({ leads, canDelete = false }: { leads: Lead[]; canDelete?: boolean }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [view, setView] = useState<View>("active");
@@ -149,7 +149,7 @@ export function LeadsManager({ leads }: { leads: Lead[] }) {
           </p>
         ) : (
           <div className="divide-y divide-rule">
-            {shown.map((l) => <LeadCard key={l.id} lead={l} />)}
+            {shown.map((l) => <LeadCard key={l.id} lead={l} canDelete={canDelete} />)}
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { saveLeadPipeline } from "@/app/admin/actions";
+import { saveLeadPipeline, deleteLead } from "@/app/admin/actions";
 import {
   STATUS_META,
   ACTIVE_STAGES,
@@ -43,7 +43,7 @@ function Field({ label, children, full }: { label: string; children: ReactNode; 
   );
 }
 
-export function LeadCard({ lead }: { lead: Lead }) {
+export function LeadCard({ lead, canDelete = false }: { lead: Lead; canDelete?: boolean }) {
   const router = useRouter();
   const saved = normalizeStatus(lead.status);
   const [status, setStatus] = useState<LeadStatus>(saved);
@@ -197,7 +197,7 @@ export function LeadCard({ lead }: { lead: Lead }) {
         {err && (
           <p className="mt-3 border border-tincture bg-tincture/5 px-3 py-2 text-base text-tincture">{err}</p>
         )}
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3 flex flex-wrap items-center gap-3">
           <button type="button" onClick={save} disabled={busy} className="btn btn-fill !py-1.5 !text-[10px]">
             {busy ? "SAVING…" : "SAVE"}
           </button>
@@ -208,6 +208,25 @@ export function LeadCard({ lead }: { lead: Lead }) {
             >
               REPLY BY EMAIL
             </a>
+          )}
+          {canDelete && (
+            <form
+              action={deleteLead}
+              className="ml-auto"
+              onSubmit={(e) => {
+                if (
+                  !window.confirm(
+                    `Permanently delete "${lead.name}"? This can't be undone.\n\nFor a real lead you're not pursuing, use Disqualified or Lost instead — delete is for test rows, duplicates, or data-removal requests.`
+                  )
+                )
+                  e.preventDefault();
+              }}
+            >
+              <input type="hidden" name="id" value={lead.id} />
+              <button className="font-display text-[10px] tracking-[0.15em] text-ink-faint hover:text-tincture">
+                DELETE LEAD
+              </button>
+            </form>
           )}
         </div>
       </div>

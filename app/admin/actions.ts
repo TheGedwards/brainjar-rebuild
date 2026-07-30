@@ -451,6 +451,20 @@ export async function saveLeadPipeline(fd: FormData): Promise<{ error?: string }
   revalidatePath("/admin");
 }
 
+/**
+ * Permanently delete a lead. The rare exception — for test rows, duplicates, or
+ * a data-removal request. (For a real lead you're not pursuing, use Disqualified
+ * or Lost, which keep the record.) Owner (super_admin) only, and irreversible.
+ */
+export async function deleteLead(fd: FormData) {
+  await requireRole(OWNER_ROLES);
+  const id = str(fd, "id");
+  if (!id) return;
+  await supabaseAdmin().from("leads").delete().eq("id", id);
+  revalidatePath("/admin/leads");
+  revalidatePath("/admin");
+}
+
 // --- Clients ----------------------------------------------------------------
 
 export async function createClient(fd: FormData) {

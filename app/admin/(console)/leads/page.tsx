@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireUser, ADMIN_ROLES } from "@/lib/auth";
+import { requireUser, ADMIN_ROLES, OWNER_ROLES } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { LeadsManager, type Lead } from "@/components/admin/leads-manager";
 
@@ -23,7 +23,7 @@ export default async function LeadsPage() {
         Every inquiry from the site. Search, filter by status, and mark each one as you work it.
       </p>
       <div className="mt-6">
-        <LeadsManager leads={leads} />
+        <LeadsManager leads={leads} canDelete={OWNER_ROLES.includes(profile.role)} />
       </div>
     </div>
   );
