@@ -128,7 +128,7 @@ export default async function ProjectEditor({ params, searchParams }: Params) {
         <div>
           <label className={label}>Hero image (the Fig. 1 plate)</label>
           <p className="mb-3 text-base italic text-ink-soft">
-            Best at <strong>1600×1000</strong> (a 16:10 landscape), min 1280×800, under 25MB.
+            Best at <strong>1600×1000</strong> (a 16:10 landscape), min 1280×800, under 4MB.
           </p>
           <HeroImageField name="hero_image_url" initialUrl={project.hero_image_url ?? ""} />
         </div>

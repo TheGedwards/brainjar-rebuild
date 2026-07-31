@@ -198,7 +198,9 @@ export async function uploadImage(fd: FormData): Promise<{ url?: string; error?:
   const folder = (str(fd, "folder") ?? "uploads").replace(/[^a-z0-9/_-]/gi, "");
   if (!(file instanceof File)) return { error: "No file selected." };
   if (!file.type.startsWith("image/")) return { error: "That isn't an image." };
-  if (file.size > 25 * 1024 * 1024) return { error: "Images must be under 25MB." };
+  // 4MB stays safely under Vercel's ~4.5MB function request-body limit (uploads
+  // run through a Server Action). Larger needs a direct-to-storage upload path.
+  if (file.size > 4 * 1024 * 1024) return { error: "Images must be under 4MB." };
 
   const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
   const base = slugifyName(str(fd, "name") || file.name);

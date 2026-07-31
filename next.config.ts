@@ -10,6 +10,14 @@ import { REDIRECTS } from "./lib/redirects";
  */
 
 const nextConfig: NextConfig = {
+  // Image uploads go through a Server Action, whose request body defaults to
+  // 1MB — too small for real photos. Raise it. NOTE the real ceiling on Vercel
+  // is the ~4.5MB serverless function body limit; for anything larger we'd need
+  // to upload straight to Supabase Storage from the browser (signed URL).
+  experimental: {
+    serverActions: { bodySizeLimit: "6mb" },
+  },
+
   images: {
     remotePatterns: [
       // Supabase Storage — portfolio screenshots and blog cover images
